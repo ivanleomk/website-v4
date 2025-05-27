@@ -1,6 +1,8 @@
+import { Navigation } from './Navigation';
+
 export function Hero() {
   return (
-    <div className="min-h-screen bg-gray-50 relative overflow-hidden">
+    <div id="home" className="min-h-screen bg-gray-50 relative overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">
         <div
@@ -16,21 +18,7 @@ export function Hero() {
         />
       </div>
       
-      {/* Navigation */}
-      <nav className="relative z-10 flex justify-between items-center px-8 py-6 sm:px-20">
-        <div className="text-2xl font-bold text-gray-900">IL</div>
-        <div className="flex gap-8 text-gray-700 font-[family-name:var(--font-lato)]">
-          <a href="#" className="hover:text-gray-900">
-            About
-          </a>
-          <a href="#" className="hover:text-gray-900">
-            Blog
-          </a>
-          <a href="#" className="hover:text-gray-900">
-            Projects
-          </a>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Main content - left aligned */}
       <main className="relative z-10 flex items-center min-h-[80vh] px-8 sm:px-20">
