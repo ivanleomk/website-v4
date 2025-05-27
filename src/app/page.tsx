@@ -38,20 +38,20 @@ export default function Home() {
               </div>
               <div className="space-y-5 text-base text-gray-700 font-[family-name:var(--font-lato)] leading-relaxed">
                 <p>
-                  Hailing from the sunny island of Singapore, I'm a Research
+                  Hailing from the sunny island of Singapore, I&apos;m a Research
                   Engineer passionate about Language Models. I maintain open
                   source libraries like Instructor (3M+ downloads) and actively
                   contribute to projects like Kura.
                 </p>
                 <p>
-                  I've had the privilege of working with clients like Hubspot
+                  I&apos;ve had the privilege of working with clients like Hubspot
                   and Raycast, and recently worked on a RAG course taken by
                   engineers from OpenAI, Anthropic, DeepMind, and Bain.
                 </p>
                 <p>
-                  I'm also a big fan of the outdoors, and love to go hiking,
-                  biking, and swimming. When I'm not working, you can find me
-                  exploring the great outdoors or Singapore's fantastic food
+                  I&apos;m also a big fan of the outdoors, and love to go hiking,
+                  biking, and swimming. When I&apos;m not working, you can find me
+                  exploring the great outdoors or Singapore&apos;s fantastic food
                   scene.
                 </p>
               </div>
@@ -101,7 +101,7 @@ export default function Home() {
             <BlogCard
               imageUrl="/article_1.png"
               title="Write Stupid Evals"
-              description="Start simple with evals and build up complexity gradually. The best evaluation isn't the most sophisticated one - it's the one you'll actually use consistently."
+              description="Start simple with evals and build up complexity gradually. The best evaluation isn&apos;t the most sophisticated one - it&apos;s the one you&apos;ll actually use consistently."
             />
             <BlogCard
               imageUrl="/article_2.png"
@@ -110,8 +110,8 @@ export default function Home() {
             />
             <BlogCard
               imageUrl="/article_3.png"
-              title="You're probably not doing experiments right"
-              description="Three key factors that make the biggest difference in LLM experiments: being clear about what you're varying, investing in infrastructure, and doing sensitivity analysis."
+              title="You&apos;re probably not doing experiments right"
+              description="Three key factors that make the biggest difference in LLM experiments: being clear about what you&apos;re varying, investing in infrastructure, and doing sensitivity analysis."
             />
           </div>
         </div>
