@@ -18,12 +18,18 @@ export function Navigation() {
     <nav 
       className={`${
         isScrolled 
-          ? "fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm" 
-          : "relative"
-      } z-50 flex justify-between items-center px-8 py-6 sm:px-20 transition-all duration-300`}
+          ? "fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm py-3 px-6 sm:px-12" 
+          : "relative py-6 px-8 sm:px-20"
+      } z-50 flex justify-between items-center transition-all duration-300`}
     >
-      <div className="text-2xl font-bold text-gray-900">IL</div>
-      <div className="flex gap-8 text-gray-700 font-[family-name:var(--font-lato)]">
+      <div className={`${
+        isScrolled ? "text-lg" : "text-2xl"
+      } font-bold text-gray-900 transition-all duration-300`}>
+        IL
+      </div>
+      <div className={`${
+        isScrolled ? "gap-6 text-sm" : "gap-8"
+      } flex text-gray-700 font-[family-name:var(--font-lato)] transition-all duration-300`}>
         <a
           href="#about"
           className="hover:text-gray-900 cursor-pointer"
