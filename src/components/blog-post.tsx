@@ -1,7 +1,6 @@
 "use client";
 
-import { BlogPost, formatDate } from "@/lib/markdown";
-import { cn } from "@/lib/utils";
+import { BlogPost } from "@/lib/markdown";
 import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import GithubSlugger from "github-slugger";
@@ -130,12 +129,16 @@ function TableOfContents({
 
       <motion.nav
         ref={tocRef}
-        className="bg-black/90 backdrop-blur-sm py-4 rounded-full px-6"
+        className="bg-black/90 backdrop-blur-sm py-4 rounded-full"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         animate={{
           paddingLeft: isHovered ? "1rem" : "0.75rem",
           paddingRight: isHovered ? "1rem" : "0.75rem",
+        }}
+        initial={{
+          paddingLeft: "0.75rem",
+          paddingRight: "0.75rem",
         }}
         style={{
           borderRadius: "1.5rem",
@@ -168,14 +171,15 @@ function TableOfContents({
                   }}
                 >
                   <motion.div
-                    className={`text-xs whitespace-nowrap py-0.5 text-right transition-colors duration-200 w-[200px] ${
+                    className={`text-xs whitespace-nowrap py-0.5 text-right transition-colors duration-200 overflow-hidden ${
                       isActive
                         ? "text-white"
                         : "text-gray-400 group-hover:text-white"
                     }`}
+                    initial={{ opacity: 0, width: 0 }}
                     animate={{
                       opacity: isHovered ? 1 : 0,
-                      width: isHovered ? "auto" : 0,
+                      width: isHovered ? "200px" : 0,
                     }}
                     transition={{
                       duration: 0.2,
@@ -285,7 +289,7 @@ export function BlogPostComponent({ post }: BlogPostProps) {
           </div>
         </header>
         <div
-          className="prose prose-base max-w-none prose-headings:text-black prose-p:text-gray-800 prose-a:text-black prose-a:underline prose-strong:text-black prose-code:bg-gray-100 prose-code:px-1 prose-code:rounded"
+          className="prose prose-base max-w-none prose-headings:text-black prose-p:text-gray-800 prose-a:text-black prose-a:underline prose-strong:text-black prose-code:bg-gray-100 prose-code:text-gray-800 prose-code:px-1 prose-code:rounded prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:prose-code:bg-transparent prose-pre:prose-code:text-gray-100"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
       </article>

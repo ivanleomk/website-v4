@@ -29,7 +29,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
   }
 
   return (
-    <div>
+    <div className="bg-gray-50">
       <Navigation />
       <BlogPostComponent post={post} />
       <div className="h-32"></div>

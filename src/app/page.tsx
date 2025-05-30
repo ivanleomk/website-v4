@@ -38,24 +38,24 @@ export default function Home() {
               </div>
               <div className="space-y-5 text-base text-gray-700 font-[family-name:var(--font-lato)] leading-relaxed">
                 <p>
-                  Hailing from the sunny island of Singapore, I&apos;m a Research
-                  Engineer passionate about Language Models. I maintain open
-                  source libraries like Instructor (3M+ downloads) and actively
-                  contribute to projects like Kura.
+                  Hailing from the sunny island of Singapore, I&apos;m a
+                  Research Engineer passionate about Language Models. I maintain
+                  open source libraries like Instructor (3M+ downloads) and
+                  actively contribute to projects like Kura.
                 </p>
                 <p>
-                  I&apos;ve had the privilege of working with clients like Hubspot
-                  and Raycast, and recently worked on a RAG course taken by
-                  engineers from OpenAI, Anthropic, DeepMind, and Bain.
+                  I&apos;ve had the privilege of working with clients like
+                  Hubspot and Raycast, and recently worked on a RAG course taken
+                  by engineers from OpenAI, Anthropic, DeepMind, and Bain.
                 </p>
                 <p>
-                  I&apos;m also a big fan of the outdoors, and love to go hiking,
-                  biking, and swimming. When I&apos;m not working, you can find me
-                  exploring the great outdoors or Singapore&apos;s fantastic food
-                  scene.
+                  I&apos;m also a big fan of the outdoors, and love to go
+                  hiking, biking, and swimming. When I&apos;m not working, you
+                  can find me exploring the great outdoors or Singapore&apos;s
+                  fantastic food scene.
                 </p>
               </div>
-              
+
               {/* Work With Me Button */}
               <div className="mt-8 text-center lg:text-left">
                 <a
@@ -99,19 +99,22 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <BlogCard
+              slug="write-stupid-evals"
               imageUrl="/article_1.png"
               title="Write Stupid Evals"
-              description="Start simple with evals and build up complexity gradually. The best evaluation isn&apos;t the most sophisticated one - it&apos;s the one you&apos;ll actually use consistently."
+              description="Start simple with evals and build up complexity gradually. The best evaluation isn't the most sophisticated one - it's the one you'll actually use consistently."
             />
             <BlogCard
+              slug="synthetic-data-is-not-a-free-lunch"
               imageUrl="/article_2.png"
               title="Synthetic Data is not a Free Lunch"
               description="Hard-earned lessons from generating millions of synthetic data points and why validation matters more than volume. Success requires careful thought and systematic validation."
             />
             <BlogCard
+              slug="youre-probably-not-doing-experiments-right"
               imageUrl="/article_3.png"
-              title="You&apos;re probably not doing experiments right"
-              description="Three key factors that make the biggest difference in LLM experiments: being clear about what you&apos;re varying, investing in infrastructure, and doing sensitivity analysis."
+              title="You're probably not doing experiments right"
+              description="Three key factors that make the biggest difference in LLM experiments: being clear about what you're varying, investing in infrastructure, and doing sensitivity analysis."
             />
           </div>
         </div>

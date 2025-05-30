@@ -12,6 +12,7 @@ export interface BlogPost {
   authors: string[];
   content: string;
   slug: string;
+  image?: string;
 }
 
 export async function parseMarkdown(markdownContent: string, slug: string): Promise<BlogPost> {
@@ -33,6 +34,7 @@ export async function parseMarkdown(markdownContent: string, slug: string): Prom
     authors: data.authors || [],
     content: htmlContent,
     slug,
+    image: data.image,
   };
 }
 
