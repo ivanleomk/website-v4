@@ -3,7 +3,7 @@
 import { BlogPost, formatDate } from "@/lib/markdown";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import GithubSlugger from "github-slugger";
 
 interface BlogPostProps {
@@ -16,23 +16,32 @@ interface TocItem {
   level: number;
 }
 
-function TableOfContents({ items }: { items: TocItem[] }) {
+function TableOfContents({
+  items,
+  tocRef,
+}: {
+  items: TocItem[];
+  tocRef?: React.RefObject<HTMLDivElement | null>;
+}) {
   const [activeId, setActiveId] = useState<string>("");
-  const [isHovered, setIsHovered] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     const updateActiveHeading = () => {
-      const headingElements = items.map(({ id }) => ({
-        id,
-        element: document.getElementById(id)
-      })).filter(({ element }) => element !== null);
+      const headingElements = items
+        .map(({ id }) => ({
+          id,
+          element: document.getElementById(id),
+        }))
+        .filter(({ element }) => element !== null);
 
       if (headingElements.length === 0) return;
 
       // Find the heading closest to the top of the viewport
       const scrollY = window.scrollY + 100; // Add offset for better UX
       let activeHeading = headingElements[0];
-      
+
       // Find the last heading that's above the current scroll position
       for (let i = headingElements.length - 1; i >= 0; i--) {
         const element = headingElements[i].element!;
@@ -45,17 +54,83 @@ function TableOfContents({ items }: { items: TocItem[] }) {
       setActiveId(activeHeading.id);
     };
 
-    updateActiveHeading();
-    window.addEventListener('scroll', updateActiveHeading, { passive: true });
-    return () => window.removeEventListener('scroll', updateActiveHeading);
+    const updateScrollProgress = () => {
+      const scrollTop = window.scrollY;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress = Math.min(
+        Math.max((scrollTop / docHeight) * 100, 0),
+        100
+      );
+      setScrollProgress(progress);
+    };
+
+    const updateBoth = () => {
+      updateActiveHeading();
+      updateScrollProgress();
+    };
+
+    updateBoth();
+    window.addEventListener("scroll", updateBoth, { passive: true });
+    return () => window.removeEventListener("scroll", updateBoth);
   }, [items]);
 
   if (items.length === 0) return null;
 
+  const shouldShowProgress = scrollProgress > 0.5;
+
+  // Calculate ejection offset based on scroll progress
+  const ejectionProgress = Math.max(
+    0,
+    Math.min((scrollProgress - 0.5) / 0.4, 1)
+  );
+  const ejectionOffset = ejectionProgress * -48; // Move up to -60px when fully ejected
+
   return (
     <div className="fixed right-8 top-1/2 transform -translate-y-1/2 z-10 hidden xl:block">
+      {/* Reading Progress Circle */}
+      <div className="absolute top-0 -right-0">
+        <motion.div
+          className="relative"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{
+            opacity: shouldShowProgress ? 1 : 0,
+            scale: shouldShowProgress ? 1 : 0.8,
+            y: shouldShowProgress ? ejectionOffset : 20,
+          }}
+          transition={{
+            duration: 0.4,
+            ease: "easeOut",
+          }}
+        >
+          <div className="relative w-10 h-10 ">
+            <svg className="w-10 h-10 transform -rotate-90" viewBox="0 0 36 36">
+              <path
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none"
+                stroke="rgb(229, 231, 235)"
+                strokeWidth="2"
+              />
+              <path
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+                strokeDasharray={`${scrollProgress}, 100`}
+              />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center bg-black rounded-full">
+              <span className="text-xs font-medium text-white">
+                {Math.round(scrollProgress)}%
+              </span>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
       <motion.nav
-        className="bg-black/90 backdrop-blur-sm py-4 rounded-full px-4"
+        ref={tocRef}
+        className="bg-black/90 backdrop-blur-sm py-4 rounded-full px-6"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         animate={{
@@ -128,6 +203,7 @@ function TableOfContents({ items }: { items: TocItem[] }) {
 
 export function BlogPostComponent({ post }: BlogPostProps) {
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
+  const tocRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const headings = document.querySelectorAll("h2, h3");
@@ -147,31 +223,66 @@ export function BlogPostComponent({ post }: BlogPostProps) {
 
   return (
     <div className="relative">
-      <TableOfContents items={tocItems} />
+      <TableOfContents items={tocItems} tocRef={tocRef} />
       <article className="max-w-3xl mx-auto px-4 py-8">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold mb-4 text-black">{post.title}</h1>
-          <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
-            <time dateTime={post.date}>{formatDate(post.date)}</time>
-            {post.authors.length > 0 && (
-              <span>by {post.authors.join(", ")}</span>
-            )}
-          </div>
+          {/* Title */}
+          <h1 className="text-6xl font-bold mb-8 text-black leading-tight">
+            {post.title}
+          </h1>
+
+          {/* Description */}
           {post.description && (
-            <p className="text-base text-gray-700 mb-4">{post.description}</p>
+            <p className="text-2xl text-gray-600 mb-8 leading-relaxed">
+              {post.description}
+            </p>
           )}
-          {post.categories.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {post.categories.map((category) => (
-                <span
-                  key={category}
-                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-                >
-                  {category}
-                </span>
-              ))}
+
+          {/* Horizontal Rule */}
+          <hr className="border-gray-200 mb-8" />
+
+          {/* Categories and Date */}
+          <div className="flex flex-wrap justify-between items-start gap-4">
+            {post.categories.length > 0 && (
+              <div className="flex flex-wrap gap-3">
+                {post.categories.map((category) => (
+                  <a
+                    key={category}
+                    href={`#${category.toLowerCase()}`}
+                    className="text-gray-800 font-normal text-sm cursor-pointer relative inline-block group hover:-translate-y-0.5 transition-transform duration-300 ease-out"
+                  >
+                    {category}
+                    <div className="absolute -bottom-1 left-0 h-0.5 bg-gray-800 rounded-full w-0 group-hover:w-1/2 transition-all duration-300 ease-out"></div>
+                    <div className="absolute -bottom-1 right-0 h-0.5 bg-gray-800 rounded-full w-0 group-hover:w-1/2 transition-all duration-300 ease-out"></div>
+                  </a>
+                ))}
+              </div>
+            )}
+            <div className="text-gray-500 text-sm">
+              <time dateTime={post.date}>
+                {(() => {
+                  const date = new Date(post.date);
+                  const now = new Date();
+                  const diffTime = Math.abs(now.getTime() - date.getTime());
+                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                  if (diffDays < 30) {
+                    return `Written ${diffDays} day${
+                      diffDays === 1 ? "" : "s"
+                    } ago`;
+                  } else if (diffDays < 365) {
+                    const months = Math.floor(diffDays / 30);
+                    return `Written ${months} month${
+                      months === 1 ? "" : "s"
+                    } ago`;
+                  } else {
+                    const years = Math.floor(diffDays / 365);
+                    return `Written ${years} year${years === 1 ? "" : "s"} ago`;
+                  }
+                })()}
+              </time>
             </div>
-          )}
+          </div>
         </header>
         <div
           className="prose prose-base max-w-none prose-headings:text-black prose-p:text-gray-800 prose-a:text-black prose-a:underline prose-strong:text-black prose-code:bg-gray-100 prose-code:px-1 prose-code:rounded"
