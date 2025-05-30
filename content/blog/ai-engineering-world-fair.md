@@ -9,8 +9,6 @@ authors:
   - ivanleomk
 ---
 
-# AI Engineering World Fair
-
 ## What's new?
 
 Last year, we saw a lot of interest in the use of LLMs for new use cases. This year, with more funding and interest in the space, we've finally started thinking about productionizing these models at scale and making sure that they're reliable, consistent and secure.
@@ -33,13 +31,13 @@ How do I see this coming together?
 
 Let's see what each specific component looks like.
 
-# Agents
+## Agents
 
 In my opinion, what separates an agent from a mere workflow is the orchestration. Workflows are going to be simple processes (Eg. Extract this data from this chunk of text) that have clearly defined inputs and outputs. Agents on the other hand, have multiple choices to be made at each round, with more fuzzy goals such as "**Help implement this new feature**".
 
 This is big because now we no longer need to laboriously code the logic for each of these decisions. We can instead just provide a model with some context and let it make decisions.
 
-## The end of BabyAGI
+### The end of BabyAGI
 
 Libraries such as BabyAGI and Langchain enabled people to chain together complex iterations. But, these agents often lacked conconistency and reliability with the open ended [ReACT](https://arxiv.org/pdf/2210.03629) methodology.
 
@@ -49,19 +47,19 @@ An example would be [Ionic Commerce](https://www.ioniccommerce.com/) which is he
 
 In short, instead of training a vLLM to be able to click a button, we can instead just give it more context and an api to call to make a decision/purchase.
 
-# Evaluations
+## Evaluations
 
 Evaluations were a huge thing this year. Last year everyone was excited about deploying these models into production but this year, we're seeing a lot more focus on the evaluation of these models and how to make them more reliable and trustworthy.
 
 We're deploying them at a larger scale with more complex scaffolding and it's tough to make a decision on which to choose without evaluations to understand the trade offs. But what's made it difficult to deploy has been the open ended nature of LLM generations.
 
-## What makes Evaluations Difficult?
+### What makes Evaluations Difficult?
 
 We can reduce a lot of the scaffolding around LLM applications to traditional machine learning metrics. The most classical case is the new viewpoint of retrieval in RAG as just information retrieval with recomendation system. This makes our life a lot easier.
 
 But, LLMs can generate any form of open-ended text. This means that it's a lot more difficult to evaluate the quality of the output on dimensions such as factuality and consistency.
 
-## Evaluations in Production.
+### Evaluations in Production.
 
 What I found interesting was Discord's approach to evaluations when they built a chatbot for 20M users. At that level, even small edge cases become highly probable. Therefore, in order to ensure that evaluations were robust, they focused on implementing evaluations that were easy to run locally and implemented quickly. This was released as their new open-source library [PromptFoo](https://www.promptfoo.dev/).
 
@@ -71,11 +69,11 @@ I also particularly liked the approach taken by Eugene Yan and Shreya SHankar wh
 
 Ultimately, these new ways of evaluating AI will help create better, safer AI systems that work well in the real world.
 
-# Synthethic Data
+## Synthethic Data
 
 Generating Synthethic Data is easy, generating good synthethic data is hard.
 
-## Learnings from the Conference
+### Learnings from the Conference
 
 One of my favourite talks at the Conference was by [Vikhyatk](https://x.com/vikhyatk) who talked about the Moondream model that he trained. Moondream is a small vision model, with ~1.5 billion parameters. That's significantly smaller than most models these days.
 
@@ -87,7 +85,7 @@ However, when using Mixtral to generate absurd questions, they found that it ten
 
 These strategies contribute to creating more robust and versatile models that can handle a wide range of inputs and scenarios.
 
-# Structured Extraction
+## Structured Extraction
 
 I believe that Structured Extraction is the key to integrating all of these components together. Structured Extraction simply means that we validate the outputs we get out of a LLM.
 
@@ -99,6 +97,6 @@ This could be as simple as getting a python object with the right types and prop
 
 Imagine parsing the raw chat completion from any model, that's simply not tenable and scalable anymore.
 
-# Conclusion
+## Conclusion
 
 I hope you found this article useful! I'd love to discuss and hear your thoughts on this topic.
