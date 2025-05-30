@@ -53,7 +53,7 @@ Evaluations were a huge thing this year. Last year everyone was excited about de
 
 We're deploying them at a larger scale with more complex scaffolding and it's tough to make a decision on which to choose without evaluations to understand the trade offs. But what's made it difficult to deploy has been the open ended nature of LLM generations.
 
-### What makes Evaluations Difficult?
+### What makes Evaluations Difficult? What makes Evaluations Difficult? What makes Evaluations Difficult?
 
 We can reduce a lot of the scaffolding around LLM applications to traditional machine learning metrics. The most classical case is the new viewpoint of retrieval in RAG as just information retrieval with recomendation system. This makes our life a lot easier.
 
