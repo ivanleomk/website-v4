@@ -1,5 +1,7 @@
 import { remark } from 'remark';
-import html from 'remark-html';
+import remarkRehype from 'remark-rehype';
+import rehypeSlug from 'rehype-slug';
+import rehypeStringify from 'rehype-stringify';
 import matter from 'gray-matter';
 
 export interface BlogPost {
@@ -10,13 +12,16 @@ export interface BlogPost {
   authors: string[];
   content: string;
   slug: string;
+  image?: string;
 }
 
 export async function parseMarkdown(markdownContent: string, slug: string): Promise<BlogPost> {
   const { data, content } = matter(markdownContent);
   
   const processedContent = await remark()
-    .use(html)
+    .use(remarkRehype)
+    .use(rehypeSlug)
+    .use(rehypeStringify)
     .process(content);
   
   const htmlContent = processedContent.toString();
@@ -29,6 +34,7 @@ export async function parseMarkdown(markdownContent: string, slug: string): Prom
     authors: data.authors || [],
     content: htmlContent,
     slug,
+    image: data.image,
   };
 }
 

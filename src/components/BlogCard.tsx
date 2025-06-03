@@ -1,25 +1,35 @@
 import Image from "next/image";
+import Link from "next/link";
 
 interface BlogCardProps {
   title: string;
   description: string;
   imageUrl: string;
+  slug: string;
 }
 
-export function BlogCard({ title, description, imageUrl }: BlogCardProps) {
+export function BlogCard({
+  slug,
+  title,
+  description,
+  imageUrl,
+}: BlogCardProps) {
   return (
-    <div className="relative rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex flex-col max-w-sm mx-auto h-[480px] overflow-hidden group cursor-pointer">
+    <Link
+      href={`/blog/${slug}`}
+      className="relative w-full rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex flex-col max-w-sm mx-auto h-[480px] overflow-hidden group cursor-pointer"
+    >
       {/* Background Image */}
-      <Image 
-        src={imageUrl} 
-        alt={title} 
-        fill 
-        className="object-cover transition-transform duration-300 group-hover:scale-105" 
+      <Image
+        src={imageUrl}
+        alt={title}
+        fill
+        className="object-cover transition-transform duration-300 group-hover:scale-105"
       />
-      
+
       {/* Dark overlay for better text readability */}
       <div className="absolute inset-0 bg-black/30 transition-opacity duration-300 group-hover:bg-black/40" />
-      
+
       {/* Content overlay */}
       <div className="relative z-10 p-8 flex flex-col h-full">
         {/* Title - fixed height */}
@@ -41,15 +51,14 @@ export function BlogCard({ title, description, imageUrl }: BlogCardProps) {
 
         {/* Read more link - positioned to the right */}
         <div className="mt-auto flex justify-end">
-          <a
-            href="#"
-            className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 text-white font-medium text-sm px-4 py-2 rounded-full hover:bg-white/30 hover:border-white/50 transition-all duration-200 font-[family-name:var(--font-lato)] drop-shadow-lg"
-          >
-            read more 
-            <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
-          </a>
+          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 text-white font-medium text-sm px-4 py-2 rounded-full hover:bg-white/30 hover:border-white/50 transition-all duration-200 font-[family-name:var(--font-lato)] drop-shadow-lg">
+            read more
+            <span className="transition-transform duration-200 group-hover:translate-x-1">
+              →
+            </span>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
