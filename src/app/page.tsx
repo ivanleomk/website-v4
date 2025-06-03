@@ -90,7 +90,7 @@ export default function Home() {
           {/* View All Articles Link */}
           <div className="text-center mb-12">
             <Link
-              href="#"
+              href="/blog"
               className="text-gray-600 hover:text-gray-900 transition-colors duration-200 font-[family-name:var(--font-lato)] text-sm tracking-wide"
             >
               View all articles →
