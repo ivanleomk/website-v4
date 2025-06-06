@@ -18,8 +18,6 @@ This comes in the form of three specific constraints that make building these in
 2. Complex end-to-end latency optimization challenges across the entire processing pipeline
 3. The lack of established UX patterns for different conversational contexts
 
-<!-- more -->
-
 ## The Unforgiving 500ms Response Window
 
 Current voice UX patterns assume a one-to-one relationship between users and agents, creating severe technical constraints that don't exist with text-based interfaces.

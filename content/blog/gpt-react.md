@@ -23,8 +23,6 @@ One eventful friday evening later, I ended up putting together a small prototype
 
 ![](./images/succesful_render.gif)
 
-<!-- more -->
-
 ### Overview
 
 Let's break down how it works under the hood. On a high level, whenerver a user submits a prompt we do the following

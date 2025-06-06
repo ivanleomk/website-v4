@@ -18,8 +18,6 @@ If you've ever used Google Maps, you've definitely struggled to decide where to 
 
 ![](./images/Google_Maps.png)
 
-<!-- more -->
-
 There's not even a simple way to filter the saved places by keywords, categories or even just the location. You need to manually pan and find something that you like.
 
 So i thought I'd crawl it for the fun of it since I wanted more control over my data. I'd seen some jupyter notebooks but no fine-grained script online so I built my own.

@@ -17,8 +17,6 @@ This is a living document that I'll be updating over the next few weeks as I con
 
 I kept things minimal for my general development environment, following most of Eugene's recommendations but focusing on just the essentials:
 
-<!-- more -->
-
 ```bash
 # Core development tools I use daily
 brew install git htop warp uv node bun gh

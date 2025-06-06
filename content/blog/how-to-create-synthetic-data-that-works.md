@@ -17,8 +17,6 @@ We'll do by covering
 2. **Entropy and why it matters** : Techniques to increase diversity in synthetic datasets
 3. **Practical Implementations** : Some simple examples of how to increase entropy and diversity to get better synthetic data
 
-<!-- more -->
-
 ## Using the same prompt for all experiments
 
 Many practitioners rely on straightforward API calls to Large Language Models (LLMs) for synthetic data generation. This approach often leads to unexpected homogeneity.

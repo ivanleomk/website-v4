@@ -32,7 +32,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
   return (
     <div className="bg-gray-50">
       <Navigation />
-      <div className="max-w-3xl mx-auto px-4 pt-8">
+      <div className="max-w-7xl mx-auto px-4 pt-8">
         <Link
           href="/blog"
           className="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors duration-200 mb-8 group"

@@ -29,8 +29,6 @@ We'll do so in 3 steps
 
 Let's walk through these concepts in detail.
 
-<!-- more -->
-
 ## CLIO
 
 ### High Level Overview

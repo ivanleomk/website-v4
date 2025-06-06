@@ -21,8 +21,6 @@ Let's explore this concept using [Peek](https://peek.money), an AI personal fina
 
 By examining how synthetic data generation evolves from basic documentation-based approaches to intent-driven synthesis, we'll see why focusing on user intent produces more valuable training data.
 
-<!-- more -->
-
 I've scraped their FAQ into a markdown document ahead of time and used it to generate some synthetic queries.
 
 ??? note "Download Peek's FAQ"

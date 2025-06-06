@@ -19,8 +19,6 @@ I'll write a separate post on how I did the analysis but I thought I'd share som
 
 I was inspired by this [post by Boretti Fernando](https://borretti.me/article/how-i-use-claude) and thought I'd try to do something similar.
 
-<!-- more -->
-
 ## Analysis
 
 I used `gemini-flash` to and `text-embedding-3-small` to generate descriptions of my conversations which I then embedded and clustered. These clusters were then recursively combined with new higher level clusters being generated until I had ~10 unique clusters.

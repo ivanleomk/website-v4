@@ -19,8 +19,6 @@ Here's what we'll cover:
 2. Writing our first task to evaluate an LLM's response to the GSM8k with Instructor
 3. Simple recipes that you'll need
 
-<!-- more -->
-
 ## Why bother evaluating?
 
 Evaluations are key to building a great application. While we want to ship fast to prpduction and put features into the hands of our users, It's important to have tests so that we know how changes in our prompts, model choices and even the response object is affecting the output that we get.

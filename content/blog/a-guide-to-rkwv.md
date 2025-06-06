@@ -19,8 +19,6 @@ Here are some other resources which you might find useful about RWKVs
 
 - [RKWV in 100 lines](https://johanwind.github.io/2023/03/23/rwkv_details.html) Which covers the implementation of RWKV in 100 lines of code. Much of this article is based off the content here - I try to extend and provide my own intuition for some proofs. I've also attached a [colab notebook](https://colab.research.google.com/drive/1ZRHKtJsYY8DSh09Mm2WH7iHayX7NUrMX?usp=sharing) for you if you want to play with the code.
 
-<!-- more -->
-
 With that being said, let's dive into RWKVs.
 
 > I'm using the 430M model here. Hence why my embedding space is 1024. Other models might differ so do take note if you are experimenting with the larger models.

@@ -26,8 +26,6 @@ Here's a quick snapshot of it in action
 
 The model uses Open AI's GPT 3.5 under the hood with the instructor library for function calls.
 
-<!-- more -->
-
 ## The Challenge
 
 On a high level, our challenge functions almost identically to that of Gandalf. However, we have slightly less levels than them - since they have more money to spend.

@@ -23,8 +23,6 @@ We'll do so in three steps:
 2. Then we'll demonstrate how to do bootstrapping using nothing but `numpy` before visualising the results with `matplotlib`
 3. Finally we'll perform a paired t-test to determine if the differences are statistically significant
 
-<!-- more -->
-
 Let's start by installing the necessary libraries:
 
 ```bash

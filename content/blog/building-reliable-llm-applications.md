@@ -18,8 +18,6 @@ LLM applications in 2025 face a unique challenge: while they enable rapid deploy
 
 In this article, I'll explain why structured outputs remain crucial for building robust LLM applications, and how they enable faster iteration and testing.
 
-<!-- more -->
-
 <iframe 
     src=https://r2-workers.ivanleomk9297.workers.dev/presentation.pdf
     width="100%" 

@@ -17,8 +17,6 @@ Don't overthink it and really just use a `assert` statement at the start.
 
 There's a famous story about a pottery teacher who divided their class into two groups. The first group would be graded solely on quantity - how many pieces they could produce. The second group would be graded on quality - they just needed to produce one perfect piece. When grading time came, something interesting happened: the best pieces all came from the quantity group. While the quality group got stuck theorizing about perfection, the quantity group learned through iterative practice.
 
-<!-- more -->
-
 This perfectly captures my philosophy on LLM evaluations: start simple, start now, and improve through practice.
 
 ### The Case for Simple Evaluations

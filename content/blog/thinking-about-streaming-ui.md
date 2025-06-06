@@ -18,8 +18,6 @@ If you're not building your application with streaming in mind, you're making tw
 
 I've built a fair bit of user interaces that rely on streaming content with tools like the [`ai-sdk` by `vercel`](https://sdk.vercel.ai/docs/introduction) and I've found that there are three main considerations to think about when building out your application.
 
-<!-- more -->
-
 In this article we'll cover
 
 1. Why streaming becomes increasingly important

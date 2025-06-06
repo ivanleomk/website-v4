@@ -20,8 +20,6 @@ Four achievements stand out from this transformative year:
 - Got into better shape, lost about 6kg total and total cholesterol dropped by 32% w lifestyle changes
 - Delivered a total of 4 technical talks this year for the first time
 
-<!-- more -->
-
 ## Personal Growth and Health Journey
 
 The most fundamental change this year has been in my approach to health and well-being. After a concerning health screening 2 years ago showed my total cholestrol at a dangerously high level, I committed to making real changes. Through consistent diet modifications and lifestyle adjustments, I managed to bring the total cholestrol down by almost 32%.

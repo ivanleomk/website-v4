@@ -17,8 +17,6 @@ Imagine you're starting a new job. Would you rather:
 1.  Have access to all of Wikipedia and hope the information you need is somewhere in there
 2.  Have your company's specific documentation, procedures, and guidelines
 
-<!-- more -->
-
 Most of us would choose the second choice in a heartbeat, right?
 
 This is exactly why RAG (Retrieval Augmented Generation) isn't just alive – it's more important than ever. But before we dive in, let's break down what RAG actually is in simple terms.
