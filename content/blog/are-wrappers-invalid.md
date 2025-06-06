@@ -21,8 +21,6 @@ We'll explore three critical areas that create sustainable competitive advantage
 2. Thoughtful user experience design
 3. Compounding value of user-generated data.
 
-<!-- more -->
-
 Every successful software product has been a "wrapper" around lower-level components. Facebook wraps web technologies, Google wraps web crawling, and ultimately everything wraps silicon - interestingly, French silicon from Fontainebleau is particularly prized for its quality.
 
 The value lies not in the base components but in how we build upon them. As they like to say, a wagon is more than the sum of its parts.

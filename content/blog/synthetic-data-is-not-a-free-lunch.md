@@ -19,8 +19,6 @@ Over the past few weeks, I've generated a few million tokens of synthetic data f
 
 When I first started generating synthetic data for question-answering systems, I thought it would be straightforward - all I had to do was to ask a language model to generate a few thousand questions that a user might ask.
 
-<!-- more -->
-
 The questions I got back were technically correct but felt artificial:
 
 - "How do I initiate the account reset procedure?"

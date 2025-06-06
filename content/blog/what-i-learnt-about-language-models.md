@@ -25,8 +25,6 @@ You should and will be able to do all of these at once. Remember that the goal i
 
 There's a tremendous amount of possible directions to work on - dataset curation, model architecture, hardware optimisation, etc and other exiciting directions such as [Post Transformer Architectures](https://www.latent.space/p/2024-post-transformers) and [Multimodal Models](https://magazine.sebastianraschka.com/p/understanding-multimodal-llms) that are happening all at the same time.
 
-<!-- more -->
-
 ## Daily Usage
 
 !!! note "Key Takeaways From This Section"

@@ -28,8 +28,6 @@ I think there are five levels that teams seem to progress through as they build 
 
 Let's explore each level in more detail and see how they fit into a progression. We'll use `instructor` in these examples since that's what I'm most familiar with, but the concepts can be applied to other tools as well.
 
-<!-- more -->
-
 ### Structured Outputs
 
 ![structured outputs](./images/llm_meme.png)

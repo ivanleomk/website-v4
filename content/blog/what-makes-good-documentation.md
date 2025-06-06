@@ -13,8 +13,6 @@ authors:
 
 Over the past year, we've grown instructor's documentation to over 60,000 lines of content. This means for every line of code in our library, we've written 5 lines of documentation. Through this process, I've realized that great documentation isn't just about explaining features - it's about demonstrating value.
 
-<!-- more -->
-
 Alex Hormozi's value equation provides a perfect framework for thinking about documentation:
 
 ![Value Equation](./images/hormozi.png)

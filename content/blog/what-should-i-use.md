@@ -18,8 +18,6 @@ If you're building LLM applications, a common question is which framework to use
 2. Then we'll explain why you should be evaluating a framework's ability to experiment quickly with different models and prompts and adopt new features quickly.
 3. Finally, we'll consider why long term maintenance is also an important factor and why Instructor often provides a balanced solution, offering both simplicity and flexibility.
 
-<!-- more -->
-
 By the end of this article, you'll have a good idea of how to decide which framework to use for your LLM application. As a caveat, I've used langchain sparringly and have only used it for a few applications so I might be missing out on some features that would sway my opinion more heavily if I used it more.
 
 ## Testing and Granular Controls

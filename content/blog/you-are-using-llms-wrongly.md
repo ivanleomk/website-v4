@@ -10,17 +10,15 @@ authors:
 
 # You're probably using LLMs wrongly
 
-In this post, I'll share three simple strategies that have transformed how I work with language models. 
+In this post, I'll share three simple strategies that have transformed how I work with language models.
 
 1. Treat working with language models as an iterative process where you improve the quality of your outputs over time.
 2. Collect good examples that you can use as references for future prompts.
 3. Regularly review your prompts and examples to understand what works and what doesn't.
 
-Most complaints I hear about language models are about hallucinations or bad outputs. These aren't issues with the technology itself. It's usually because we're not using these models the right way. Think about the last time you hired someone new. You didn't expect them to nail everything perfectly on day one. 
+Most complaints I hear about language models are about hallucinations or bad outputs. These aren't issues with the technology itself. It's usually because we're not using these models the right way. Think about the last time you hired someone new. You didn't expect them to nail everything perfectly on day one.
 
 The same principle applies to language models.
-
-<!-- more -->
 
 ## It's an Iterative Process
 
@@ -29,11 +27,12 @@ Most of the tasks we do daily have unwritten rules about what makes them good or
 When I first started using Claude for writing, I would take entire project documents and throw them at the model, repeatedly prompting it to improve various aspects. This approach was inefficient and inconsistent. I found myself asking for the same improvements over and over, essentially starting from scratch each time.
 
 The breakthrough came when I started maintaining a Claude project where I could:
+
 1. Store examples of my preferred writing style
 2. Keep track of prompts that worked well
 3. Iteratively refine these prompts based on results
 
-This systematic approach dramatically improved the quality of generated content. Instead of getting maybe 20% of the way there on the first try, I was consistently hitting 60-70% of my target quality in just the first couple of messages. 
+This systematic approach dramatically improved the quality of generated content. Instead of getting maybe 20% of the way there on the first try, I was consistently hitting 60-70% of my target quality in just the first couple of messages.
 
 The key wasn't just better prompts – it was having a reliable reference point for what "good" looks like.
 
@@ -55,7 +54,7 @@ For example, during data analysis projects, I treat the model as a second pair o
 
 This helps us to refine and show the model what exceptional outputs look like over time and raises the average quality of everything you generate. And when we have these good examples, pulling them into something like Cursor becomes invaluable because we can show the model what we like.
 
-This is essentially what we call a positive feedback loop. 
+This is essentially what we call a positive feedback loop.
 
 The better our examples get, the better our outputs become. The better the outputs, the stronger our example collection grows.
 

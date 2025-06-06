@@ -10,8 +10,6 @@ It's really fun to create your own tools. With some extra time on my hands this 
 
 For those who are unaware, when you work in tools like Obsidian, the default tends to be wikilinks that look like this [[wiki-link]]. This is great if you're only using obsidian but limits the portability of your markdown script itself. For platforms such as Github, the lack of absolute links means that you can't easily click and navigate between markdown files on their web platform.
 
-<!-- more -->
-
 So, with that in mind, I thought I would give Rust a spin. My brief idea was quite simple
 
 1. Iterate through all the files in a given directory and find all of the relevant markdown files.

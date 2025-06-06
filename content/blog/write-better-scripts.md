@@ -17,8 +17,6 @@ There were four main issues that I struggled with
 3. Running a single job takes days or more
 4. Optimizing hyper-parameters is genuinely difficult
 
-<!-- more -->
-
 This means that when we write these scripts, there are a different set of considerations that need to be kept in mind. I find it useful to keep these few things in mind when writing my training scripts.
 
 1. Write your pipeline first

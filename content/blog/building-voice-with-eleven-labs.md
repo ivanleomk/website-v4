@@ -22,8 +22,6 @@ To build great user experiences with these voice agents, there are three critica
 
 This article unpacks the practical lessons learned while building a voice-based training solution with ElevenLabs's new conversational AI that enables flight attendants to perfect premium cabin service interactions—without risking passenger satisfaction or airline reputation during the learning process.
 
-<!-- more -->
-
 ## Thoughtful Context Design
 
 Unlike text interfaces, voice applications demand authentic context to create meaningful interactions. My flight attendant training simulator succeeded largely because it was grounded in real-world data and scenarios.

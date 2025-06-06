@@ -1,7 +1,3 @@
-import { remark } from 'remark';
-import remarkRehype from 'remark-rehype';
-import rehypeSlug from 'rehype-slug';
-import rehypeStringify from 'rehype-stringify';
 import matter from 'gray-matter';
 
 export interface BlogPost {
@@ -18,21 +14,13 @@ export interface BlogPost {
 export async function parseMarkdown(markdownContent: string, slug: string): Promise<BlogPost> {
   const { data, content } = matter(markdownContent);
   
-  const processedContent = await remark()
-    .use(remarkRehype)
-    .use(rehypeSlug)
-    .use(rehypeStringify)
-    .process(content);
-  
-  const htmlContent = processedContent.toString();
-  
   return {
     title: data.title || '',
     date: data.date || '',
     description: data.description || '',
     categories: data.categories || [],
     authors: data.authors || [],
-    content: htmlContent,
+    content: content, // Raw markdown content for react-markdown
     slug,
     image: data.image,
   };

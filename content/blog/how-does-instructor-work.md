@@ -18,8 +18,6 @@ We'll start by looking at
 
 By the end of this article, you'll have a good understand of how `instructor` helps you get validated outputs from your LLM calls and a better understanding of how you might be able to contribute to the library yourself.
 
-<!-- more -->
-
 ### Why should you care?
 
 For developers integrating AI into production systems, structured outputs are crucial. Here's why:

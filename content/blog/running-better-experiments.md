@@ -19,8 +19,6 @@ I recently started working as a research engineer and it's been a significant mi
 
 Let's see how each of these can make a difference in your experimental workflow.
 
-<!-- more -->
-
 ## Knowing what to vary
 
 It's important to think a bit upfront about what you're varying. If you're not sure, you might probably want to try prompting O1 for a fair bit.

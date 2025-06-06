@@ -17,8 +17,6 @@ In the past 6 months, I've 10xed the amount of python code I've written. In this
 4. being a bit lazier - earn the abstraction
 5. decouple your implementation
 
-<!-- more -->
-
 ## Use the classmethod decorator
 
 You should be using the `@classmethod` decorator when dealing with complex logic. A good example is that of the [Instructor API schema](https://python.useinstructor.com/api/?h=openai#instructor.function_calls.OpenAISchema) which has clear explicit ways for you to instantiate the different API providers.

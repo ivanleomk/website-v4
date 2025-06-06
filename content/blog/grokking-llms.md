@@ -15,8 +15,6 @@ It should take about 10-15 minutes at most to read and I've added some resources
 
 I hope that after reading this essay, you walk away with an enthusiasm that these models are going to change so much things that we know today. We have models with reasoning abilities and knowledge capacities that dwarf many humans today in tasks such as Mathetical Reasoning, QnA and more.
 
-<!-- more -->
-
 Please feel free to reach on twitter at @ivanleomk if you're interested to chat more!
 
 # Some Background

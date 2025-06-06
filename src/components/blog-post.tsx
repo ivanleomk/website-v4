@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import GithubSlugger from "github-slugger";
 import Link from "next/link";
+import { Markdown } from "./Markdown";
 
 interface BlogPostProps {
   post: BlogPost;
@@ -289,10 +290,7 @@ export function BlogPostComponent({ post }: BlogPostProps) {
             </div>
           </div>
         </header>
-        <div
-          className="prose prose-base max-w-none prose-headings:text-black prose-p:text-gray-800 prose-a:text-black prose-a:underline prose-strong:text-black prose-code:bg-gray-100 prose-code:text-gray-800 prose-code:px-1 prose-code:rounded prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:prose-code:bg-transparent prose-pre:prose-code:text-gray-100"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        <Markdown content={post.content} />
       </article>
     </div>
   );

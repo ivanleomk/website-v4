@@ -18,8 +18,6 @@ I had a lot of fun playing around with text to image models over the weekend and
 
 This was mainly for a small project i've been working on called CYOA where users get to create their own stories and have a language model automatically generate images and choices for each of them.
 
-<!-- more -->
-
 ## Model Capabilities and Examples
 
 I played around with 3 different models over the weekend - flux, ltx-video and mochi. At the end, I think I'll end up going with flux for the final version of CYOA's graphics since it produces the most consistently good results. I've found LTX-Video and Mochi to be a bit inconsistent ( it is after all much harder to get good results with video generations ).

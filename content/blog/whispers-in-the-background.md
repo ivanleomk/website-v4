@@ -17,8 +17,6 @@ I recently ran into two problems when trying to generate transcript for audio fi
 1. They were taking too long and the request would time out
 2. The files were too large and I couldn't send them through the request body of a api route
 
-<!-- more -->
-
 If you're not familiar with NextJS deployed on Vercel, there are two limits that they place on your functions - they have to finish executing in at most 30s and the request body can't be larger than 4.5MB. You can try overriding body parser to take maybe 8mb of data but that's not a good idea since large audio files are often significantly larger than that.
 
 I decided to try and solve this problem by using a long-running docker container which would act as a server and would be able to handle large files. I also decided to use a queue to handle the requests so that I could handle multiple requests at once.

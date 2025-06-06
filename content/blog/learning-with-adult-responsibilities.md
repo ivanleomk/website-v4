@@ -16,8 +16,6 @@ That amounts to roughly 10-20 hours a week since I don't have much of a social l
 
 I've had some people reach out to me for advice on what to do and I figured I'd write a longer blog post so that I could refer to it myself and consolidate some of my ramblings.
 
-<!-- more -->
-
 ## Lessons
 
 If I could summarize everything, I would say I had around 3 key takeaways on what I might do differently.

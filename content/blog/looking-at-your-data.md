@@ -20,8 +20,6 @@ There really are two things that make debugging these issues much easier
 
 Ultimately debugging these systems is all about asking intelligent questions and systematically hunting for failure modes. By the end of the post, you'll have a better idea of how to think about data debugging as an iterative process.
 
-<!-- more -->
-
 ## Background
 
 In this specific case, our filtering system takes in a user query and returns a list of products that match the user's query. We can think of it as follows.

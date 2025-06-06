@@ -19,8 +19,6 @@ We'll walk through a practical process for converting subjective evaluations to 
 
 By the end of this article, you'll have concrete techniques for making subjective tasks measurable and iterating quickly on LLM applications.
 
-<!-- more -->
-
 ## The Initial Challenge
 
 I recently faced what seemed like a straightforward task: extract question-answer pairs from office hours transcripts. The actual implementation, however, revealed 3 main challenges

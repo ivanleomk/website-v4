@@ -16,8 +16,6 @@ Anthropic's Model Context Protocol (MCPs) offers a potential solution by providi
 
 In this article, I'll explore what makes MCPs promising, the challenges they solve, and what's still missing for them to move towards become production-ready. This largely serves as some of my own thoughts after chatting with people about them over the past week or so, I'd love to know if you think differently.
 
-<!-- more -->
-
 ## The Current State of Tool Integration
 
 Today's language model applications face a fundamental challenge: to be truly useful, they need seamless access to user data and external services. Consider a simple query like "What events do I have tomorrow?"
