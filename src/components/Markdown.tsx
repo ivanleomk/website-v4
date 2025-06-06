@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeHighlight from 'rehype-highlight';
-import rehypeSlug from 'rehype-slug';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
-
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeSlug from "rehype-slug";
+import Image from "next/image";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { codeToHtml } from "shiki";
 
 interface MarkdownProps {
   content: string;
@@ -14,46 +13,114 @@ interface MarkdownProps {
 
 // Helper function to recursively extract text from React elements
 function extractTextFromElement(element: any): string {
-  if (typeof element === 'string') {
+  if (typeof element === "string") {
     return element;
   }
-  
+
   if (Array.isArray(element)) {
-    return element.map(extractTextFromElement).join('');
+    return element.map(extractTextFromElement).join("");
   }
-  
+
   if (element?.props?.children) {
     return extractTextFromElement(element.props.children);
   }
-  
-  return '';
+
+  return "";
+}
+
+// Separate component for inline/block code with Shiki highlighting
+function CodeElement({
+  children,
+  className,
+}: {
+  children: any;
+  className?: string;
+}) {
+  const [highlightedCode, setHighlightedCode] = useState<string>("");
+  const isInline = !className;
+
+  useEffect(() => {
+    if (className && children) {
+      const language = className.replace("language-", "");
+      const codeText = extractTextFromElement(children);
+
+      codeToHtml(codeText, {
+        lang: language,
+        theme: "github-dark",
+        transformers: [
+          {
+            pre(node) {
+              // Remove the background color from the pre element
+              if (node.properties.style) {
+                node.properties.style = (
+                  node.properties.style as string
+                ).replace(/background-color:[^;]+;?/, "");
+              }
+            },
+          },
+        ],
+      })
+        .then((html) => {
+          setHighlightedCode(html);
+        })
+        .catch(() => {
+          // Fallback if language not supported
+          setHighlightedCode(`<pre><code>${codeText}</code></pre>`);
+        });
+    }
+  }, [className, children]);
+
+  if (isInline) {
+    return (
+      <code className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono text-gray-800">
+        {children}
+      </code>
+    );
+  }
+
+  if (highlightedCode) {
+    return <div dangerouslySetInnerHTML={{ __html: highlightedCode }} />;
+  }
+
+  return <code className={className}>{children}</code>;
 }
 
 // Separate component for code blocks with copy functionality
 function CodeBlock({ children }: { children: any }) {
   const [copied, setCopied] = useState(false);
-  
+
   const handleCopy = () => {
     // Extract text content from the entire children structure
     const textContent = extractTextFromElement(children);
-    
+
     navigator.clipboard.writeText(textContent).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
   };
 
+  // Check if children is already highlighted HTML (from Shiki)
+  const isHighlightedHtml =
+    typeof children === "string" ||
+    (children?.type === "div" && children?.props?.dangerouslySetInnerHTML);
+
   return (
     <div className="relative group mb-4">
       <button
         onClick={handleCopy}
-        className="absolute top-2 right-2 z-10 px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white text-xs rounded transition-all duration-200 opacity-0 group-hover:opacity-100"
+        className="absolute top-2 right-2 z-10 px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white text-xs rounded transition-all duration-200 "
       >
-        {copied ? 'Copied!' : 'Copy'}
+        {copied ? "Copied!" : "Copy"}
       </button>
-      <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm">
-        {children}
-      </pre>
+      {isHighlightedHtml ? (
+        <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto [&>pre]:!bg-transparent [&>pre]:!p-0 [&>pre]:!m-0 [&>pre]:!rounded-none [&>pre]:!overflow-visible [&>pre]:text-sm">
+          {children}
+        </div>
+      ) : (
+        <pre className=" text-gray-100 p-4 rounded-lg overflow-x-auto text-sm">
+          {children}
+        </pre>
+      )}
     </div>
   );
 }
@@ -76,13 +143,11 @@ const markdownComponents = {
     </h3>
   ),
   p: ({ children }: any) => (
-    <p className="text-gray-800 leading-relaxed mb-4">
-      {children}
-    </p>
+    <p className="text-gray-800 leading-relaxed mb-4">{children}</p>
   ),
   a: ({ href, children }: any) => (
-    <Link 
-      href={href || '#'} 
+    <Link
+      href={href || "#"}
       className="text-black underline hover:no-underline transition-all duration-200"
     >
       {children}
@@ -99,44 +164,32 @@ const markdownComponents = {
     </ol>
   ),
   li: ({ children }: any) => (
-    <li className="leading-relaxed pl-2">
-      {children}
-    </li>
+    <li className="leading-relaxed pl-2">{children}</li>
   ),
   blockquote: ({ children }: any) => (
     <blockquote className="border-l-4 border-gray-400 pl-4 italic text-gray-700 mb-4">
       {children}
     </blockquote>
   ),
-  code: ({ children, className }: any) => {
-    const isInline = !className;
-    
-    if (isInline) {
-      return (
-        <code className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono text-gray-800">
-          {children}
-        </code>
-      );
-    }
-    
-    return (
-      <code className={className}>
-        {children}
-      </code>
-    );
-  },
+  code: ({ children, className }: any) => (
+    <CodeElement className={className}>{children}</CodeElement>
+  ),
   pre: ({ children }: any) => <CodeBlock>{children}</CodeBlock>,
   img: ({ src, alt }: any) => {
     if (!src) return null;
-    
+
     // Handle local image paths - convert ./images/ to /images/
     let imageSrc = src;
-    if (src.startsWith('./images/')) {
-      imageSrc = src.replace('./', '/');
+    if (src.startsWith("./images/")) {
+      imageSrc = src.replace("./", "/");
     }
-    
+
     // For video files, render as video element instead of Image
-    if (imageSrc.endsWith('.mp4') || imageSrc.endsWith('.webm') || imageSrc.endsWith('.mov')) {
+    if (
+      imageSrc.endsWith(".mp4") ||
+      imageSrc.endsWith(".webm") ||
+      imageSrc.endsWith(".mov")
+    ) {
       return (
         <div className="mb-4">
           <video
@@ -151,12 +204,12 @@ const markdownComponents = {
         </div>
       );
     }
-    
+
     return (
       <div className="mb-4">
         <Image
           src={imageSrc}
-          alt={alt || ''}
+          alt={alt || ""}
           width={800}
           height={400}
           className="rounded-lg"
@@ -177,23 +230,13 @@ const markdownComponents = {
     </th>
   ),
   td: ({ children }: any) => (
-    <td className="border border-gray-300 px-4 py-2">
-      {children}
-    </td>
+    <td className="border border-gray-300 px-4 py-2">{children}</td>
   ),
-  hr: () => (
-    <hr className="border-t border-gray-300 my-8" />
-  ),
+  hr: () => <hr className="border-t border-gray-300 my-8" />,
   strong: ({ children }: any) => (
-    <strong className="font-semibold text-black">
-      {children}
-    </strong>
+    <strong className="font-semibold text-black">{children}</strong>
   ),
-  em: ({ children }: any) => (
-    <em className="italic">
-      {children}
-    </em>
-  ),
+  em: ({ children }: any) => <em className="italic">{children}</em>,
 };
 
 export function Markdown({ content }: MarkdownProps) {
@@ -201,7 +244,7 @@ export function Markdown({ content }: MarkdownProps) {
     <div className="prose prose-lg max-w-none">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeHighlight, rehypeSlug]}
+        rehypePlugins={[rehypeSlug]}
         components={markdownComponents}
       >
         {content}
