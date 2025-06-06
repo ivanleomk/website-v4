@@ -119,3 +119,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+.circle-path {
+  stroke-dasharray: 282.74;
+  stroke-dashoffset: 282.74;
+  transition: stroke-dashoffset 0.5s ease-in-out;
+}
+
+/* 2) When the wrapper is hovered (or has .active), draw the ellipse in */
+.sketchy-wrapper:hover .circle-path,
+.sketchy-wrapper.active .circle-path {
+  stroke-dashoffset: 0;
+}

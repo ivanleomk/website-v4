@@ -1,10 +1,10 @@
 "use client";
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function Navigation() {
   const pathname = usePathname();
-  const isHomePage = pathname === '/';
+  const isHomePage = pathname === "/";
 
   const handleAboutClick = (e: React.MouseEvent) => {
     if (isHomePage) {
@@ -17,7 +17,10 @@ export function Navigation() {
 
   return (
     <nav className="relative z-10 flex justify-between items-center px-8 py-6 sm:px-20">
-      <Link href="/" className="text-2xl font-bold text-gray-900 hover:text-gray-700">
+      <Link
+        href="/"
+        className="text-2xl font-bold text-gray-900 hover:text-gray-700"
+      >
         IL
       </Link>
       <div className="flex gap-8 text-gray-700 font-[family-name:var(--font-lato)]">
