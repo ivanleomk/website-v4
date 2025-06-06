@@ -4,6 +4,7 @@ import { BlogPost } from "@/lib/markdown";
 import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import GithubSlugger from "github-slugger";
+import Link from "next/link";
 
 interface BlogPostProps {
   post: BlogPost;
@@ -228,7 +229,7 @@ export function BlogPostComponent({ post }: BlogPostProps) {
   return (
     <div className="relative">
       <TableOfContents items={tocItems} tocRef={tocRef} />
-      <article className="max-w-3xl mx-auto px-4 py-8">
+      <article className="max-w-3xl mx-auto px-4 pb-8">
         <header className="mb-8">
           {/* Title */}
           <h1 className="text-6xl font-bold mb-8 text-black leading-tight">
@@ -250,15 +251,15 @@ export function BlogPostComponent({ post }: BlogPostProps) {
             {post.categories.length > 0 && (
               <div className="flex flex-wrap gap-3">
                 {post.categories.map((category) => (
-                  <a
+                  <Link
                     key={category}
-                    href={`#${category.toLowerCase()}`}
+                    href={`/blog?tags=${encodeURIComponent(category)}#posts`}
                     className="text-gray-800 font-normal text-sm cursor-pointer relative inline-block group hover:-translate-y-0.5 transition-transform duration-300 ease-out"
                   >
                     {category}
                     <div className="absolute -bottom-1 left-0 h-0.5 bg-gray-800 rounded-full w-0 group-hover:w-1/2 transition-all duration-300 ease-out"></div>
                     <div className="absolute -bottom-1 right-0 h-0.5 bg-gray-800 rounded-full w-0 group-hover:w-1/2 transition-all duration-300 ease-out"></div>
-                  </a>
+                  </Link>
                 ))}
               </div>
             )}

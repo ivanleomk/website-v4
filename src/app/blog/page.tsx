@@ -3,6 +3,7 @@ import { Navigation } from "@/components/Navigation";
 import { Posts } from "@/components/Posts";
 import Link from "next/link";
 import Image from "next/image";
+import { Suspense } from "react";
 
 const categories = [
   "LLM",
@@ -157,7 +158,11 @@ export default async function BlogPage() {
           </div>
         </div>
 
-        <Posts posts={posts} />
+        <div id="posts">
+          <Suspense fallback={<div>Loading posts...</div>}>
+            <Posts posts={posts} />
+          </Suspense>
+        </div>
       </div>
     </div>
   );

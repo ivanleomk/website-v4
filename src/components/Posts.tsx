@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Post {
   title: string;
@@ -15,8 +16,30 @@ interface PostsProps {
 }
 
 export function Posts({ posts }: PostsProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  // Read tags from URL on mount
+  useEffect(() => {
+    const tagsParam = searchParams.get("tags");
+    if (tagsParam) {
+      setSelectedTags(tagsParam.split(",").filter(Boolean));
+    }
+  }, [searchParams]);
+
+  // Update URL when selectedTags changes
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (selectedTags.length > 0) {
+      params.set("tags", selectedTags.join(","));
+    } else {
+      params.delete("tags");
+    }
+    const newUrl = params.toString() ? `?${params.toString()}` : "";
+    router.replace(`${window.location.pathname}${newUrl}`, { scroll: false });
+  }, [selectedTags, router, searchParams]);
 
   const filteredPosts = useMemo(() => {
     let filtered = posts;
