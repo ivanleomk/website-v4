@@ -230,7 +230,7 @@ export function BlogPostComponent({ post }: BlogPostProps) {
   return (
     <div className="relative">
       <TableOfContents items={tocItems} tocRef={tocRef} />
-      <article className="max-w-3xl mx-auto px-4 pb-8">
+      <article className="max-w-5xl mx-auto px-4 pb-8">
         <header className="mb-8">
           {/* Title */}
           <h1 className="text-6xl font-bold mb-8 text-black leading-tight">
