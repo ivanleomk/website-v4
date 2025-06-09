@@ -4,7 +4,7 @@ date: 2024-11-26
 image: "/article_1.png"
 description: Keep it simple and worry about the rest later
 categories:
-  - Evaluations
+  - Evals
 authors:
   - ivanleomk
 ---

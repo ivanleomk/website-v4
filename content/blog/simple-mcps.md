@@ -5,7 +5,6 @@ description: "How the Model Context Protocol is really just a precursor to LLM a
 categories:
   - MCPs
   - LLM
-  - Trends
 authors:
   - ivanleomk
 ---

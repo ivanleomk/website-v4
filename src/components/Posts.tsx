@@ -48,13 +48,18 @@ export function Posts({ posts }: PostsProps) {
       filtered = filtered.filter(
         (post) =>
           post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          post.description.toLowerCase().includes(searchTerm.toLowerCase())
+          post.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          post.categories?.some((category) =>
+            category.toLowerCase().includes(searchTerm.toLowerCase())
+          )
       );
     }
 
     if (selectedTags.length > 0) {
       filtered = filtered.filter((post) =>
-        post.categories?.some((category) => selectedTags.includes(category))
+        post.categories?.some((category) =>
+          selectedTags.includes(category.toLowerCase())
+        )
       );
     }
 
@@ -66,13 +71,15 @@ export function Posts({ posts }: PostsProps) {
       if (prev.includes(tag)) {
         return prev.filter((t) => t !== tag);
       } else {
-        return [...prev, tag];
+        return [...prev, tag.toLowerCase()];
       }
     });
   };
 
   const removeTag = (tagToRemove: string) => {
-    setSelectedTags((prev) => prev.filter((tag) => tag !== tagToRemove));
+    setSelectedTags((prev) =>
+      prev.filter((tag) => tag.toLowerCase() !== tagToRemove.toLowerCase())
+    );
   };
 
   const clearFilters = () => {
@@ -92,7 +99,6 @@ export function Posts({ posts }: PostsProps) {
 
   return (
     <div className="pt-12">
-      {/* Search Bar */}
       <div className="mb-8 flex justify-center">
         <div className="relative w-full max-w-xl">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -137,7 +143,7 @@ export function Posts({ posts }: PostsProps) {
                     key={tag}
                     className="inline-flex items-center gap-1 px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded-full"
                   >
-                    {tag}
+                    {tag.toUpperCase()}
                     <button
                       onClick={() => removeTag(tag)}
                       className="text-gray-500 hover:text-gray-700 transition-colors"
