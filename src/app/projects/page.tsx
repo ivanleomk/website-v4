@@ -29,18 +29,18 @@ export default async function ProjectsPage() {
   return (
     <div className="bg-white min-h-screen">
       <Navigation />
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <header className="text-center mb-16">
+      <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
+        <header className="text-center mb-12 md:mb-16">
           <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">
             MY WORK
           </p>
-          <h1 className="text-5xl md:text-6xl font-bold text-black leading-tight mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-black leading-tight mb-6">
             Things I&apos;ve built,
             <br />
             all in one place
           </h1>
         </header>
-        <div className="space-y-8">
+        <div className="space-y-4 md:space-y-8">
           {projects.map((project, index) => (
             <ProjectCard
               key={index}
