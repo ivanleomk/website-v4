@@ -1,6 +1,4 @@
-import { readFileSync, readdirSync } from "fs";
-import { join } from "path";
-import { parseMarkdown } from "@/lib/markdown";
+import { generatePost, generateStaticSlugs } from "@/lib/posts";
 import { BlogPostComponent } from "@/components/blog-post";
 import { Navigation } from "@/components/Navigation";
 import { notFound } from "next/navigation";
@@ -11,13 +9,17 @@ interface BlogPageProps {
 }
 
 async function getPost(slug: string) {
+  // Try to load from pre-generated static data first
   try {
-    const postsDirectory = join(process.cwd(), "content", "blog");
-    const fullPath = join(postsDirectory, `${slug}.md`);
-    const fileContents = readFileSync(fullPath, "utf8");
-    return await parseMarkdown(fileContents, slug);
+    const postData = await import(`@/data/posts/${slug}.json`).then(m => m.default);
+    return postData;
   } catch {
-    return null;
+    // Fallback to file system (development only)
+    if (process.env.NODE_ENV === 'production') {
+      return null;
+    }
+    
+    return await generatePost(slug);
   }
 }
 
@@ -60,16 +62,6 @@ export default async function BlogPage({ params }: BlogPageProps) {
 }
 
 export async function generateStaticParams() {
-  try {
-    const postsDirectory = join(process.cwd(), "content", "blog");
-    const filenames = readdirSync(postsDirectory);
-
-    return filenames
-      .filter((name: string) => name.endsWith(".md"))
-      .map((name: string) => ({
-        slug: name.replace(/\.md$/, ""),
-      }));
-  } catch {
-    return [];
-  }
+  const slugs = generateStaticSlugs();
+  return slugs.map((slug) => ({ slug }));
 }

@@ -1,26 +1,26 @@
-import { readFileSync, readdirSync } from 'fs';
-import { join } from 'path';
-import { parseMarkdown, BlogPost } from './markdown';
+import { BlogPost } from './markdown';
+import { generateAllPosts } from './posts';
+
+let cachedPosts: BlogPost[] | null = null;
 
 export async function getAllPosts(): Promise<BlogPost[]> {
+  if (cachedPosts) {
+    return cachedPosts;
+  }
+  
+  // Try to load from pre-generated static data first
   try {
-    const postsDirectory = join(process.cwd(), 'content', 'blog');
-    const filenames = readdirSync(postsDirectory);
-    
-    const posts = await Promise.all(
-      filenames
-        .filter((name) => name.endsWith('.md'))
-        .map(async (name) => {
-          const slug = name.replace(/\.md$/, '');
-          const fullPath = join(postsDirectory, name);
-          const fileContents = readFileSync(fullPath, 'utf8');
-          return await parseMarkdown(fileContents, slug);
-        })
-    );
-
-    // Sort posts by date (newest first)
-    return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    // Use dynamic import with assertion for JSON
+    const postsData = await import('../data/posts.json').then(m => m.default);
+    cachedPosts = postsData as BlogPost[];
+    return cachedPosts;
   } catch {
-    return [];
+    // Fallback to file system (development only)
+    if (process.env.NODE_ENV === 'production') {
+      return [];
+    }
+    
+    cachedPosts = await generateAllPosts();
+    return cachedPosts;
   }
 }
