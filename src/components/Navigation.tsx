@@ -40,7 +40,7 @@ export function Navigation() {
         <Link href="/blog" className="hover:text-gray-900">
           Blog
         </Link>
-        <a href="#" className="hover:text-gray-900">
+        <a href="/projects" className="hover:text-gray-900">
           Projects
         </a>
       </div>
