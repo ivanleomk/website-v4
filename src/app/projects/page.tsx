@@ -35,7 +35,7 @@ export default async function ProjectsPage() {
             MY WORK
           </p>
           <h1 className="text-5xl md:text-6xl font-bold text-black leading-tight mb-6">
-            Things I've built,
+            Things I&apos;ve built,
             <br />
             all in one place
           </h1>
