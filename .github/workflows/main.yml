@@ -1,4 +1,4 @@
-name: Dongyo AI Assistant
+name: Benchod AI Assistant
 
 on:
   issue_comment:
@@ -8,15 +8,15 @@ on:
 
 jobs:
   dongyo:
-    if: contains(github.event.comment.body, '@amp')
+    if: contains(github.event.comment.body, '@benchod')
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         
-      - name: Run Dongyo
-        uses: ivanleomk/dongyo@v1
+      - name: Run Code
+        uses: ivanleomk/bhenchod@0.0.1
         with:
           agent: 'claude'
           model: 'claude-3-sonnet'
