@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
         
       - name: Run Code
-        uses: ivanleomk/bhenchod@0.0.2
+        uses: ivanleomk/bhenchod@0.0.3
         with:
           agent: 'claude'
           model: 'claude-3-sonnet'
