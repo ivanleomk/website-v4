@@ -1,0 +1,26 @@
+name: Dongyo AI Assistant
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+jobs:
+  dongyo:
+    if: contains(github.event.comment.body, '@amp')
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Run Dongyo
+        uses: ivanleomk/dongyo@v1
+        with:
+          agent: 'claude'
+          model: 'claude-3-sonnet'
+          trigger-word: '@amp'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
