@@ -3,6 +3,7 @@ import { BlogPostComponent } from "@/components/blog-post";
 import { Navigation } from "@/components/Navigation";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Metadata } from "next";
 
 interface BlogPageProps {
   params: Promise<{ slug: string }>;
@@ -59,6 +60,48 @@ export default async function BlogPage({ params }: BlogPageProps) {
       <div className="h-32"></div>
     </div>
   );
+}
+
+export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPost(slug);
+
+  if (!post) {
+    return {
+      title: 'Post Not Found',
+      description: 'The requested blog post could not be found.',
+    };
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ivanleo.com';
+  
+  return {
+    title: post.title,
+    description: post.description,
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      type: 'article',
+      publishedTime: post.date,
+      authors: post.authors,
+      url: `${baseUrl}/blog/${slug}`,
+      siteName: 'Ivan Leo',
+      images: [
+        {
+          url: `${baseUrl}/blog/${slug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.description,
+      images: [`${baseUrl}/blog/${slug}/opengraph-image`],
+    },
+  };
 }
 
 export async function generateStaticParams() {
