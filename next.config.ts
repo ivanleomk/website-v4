@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: 'r2-workers.ivanleomk9297.workers.dev',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'miro.medium.com',
+        pathname: '/**',
+      },
     ],
   },
 };
