@@ -1,73 +1,106 @@
 ---
-title: Why Coding Agents Are Here to Stay
+title: Coding is the New Writing
 date: 2025-06-27
-description: Why I Use Coding Agents (And Why You Should Too)
+description: Turns out I never liked coding all along
 categories:
-  - AI
-  - Coding
-  - Productivity
+  - LLM
+  - Personal Development
+  - Agents
 authors:
   - ivanleomk
 ---
 
 # Why I Use Coding Agents (And Why You Should Too)
 
-Coding agents are here to stay. You have 2-3 months to build trust with these tools before the learning curve becomes painful. Developers who wait struggle with steeper adoption. The choice isn't whether to use them, but whether to start now or later when everyone else has months of experience.
+> The most common sentiment that I've heard over the past few months has been "I don't write code anymore, I just prompt models".
 
-Six months ago, Claude transformed my writing. Instead of perfectionism about finding the perfect description, I focused on getting content out. Claude handled the initial pass, organizing ideas while I iterated on prompts. Output became more concise. I produced content faster.
+Six months ago, Claude transformed my writing. Instead of perfectionism about finding the perfect description, I focused on getting content out. Claude handled the initial pass, organizing ideas while I iterated on prompts. Output became more concise and I produced content faster. More importantly, this allowed me to focus on what I enjoyed the most - bringing my ideas to life.
 
-Coding agents work the same way. Experienced developers tell me: "I don't write much code anymore, I prompt models to do it." This means focusing on the hard part of programming - figuring out what to build, not grinding out implementation.
+The same could be said for coding agents. They allow you to focus on the hard part of programming - figuring out what to build, not grinding out implementation.
+
+Coding agents are here to stay - you need 2-3 months to build trust with these tools, get comfortable with the learning curve and then start getting productive with them. It's very much similar to when you learn a new programming language, except this time you're learning a new way of thinking.
+
+I hope that through this article, you'll be convinced of two things
+
+1. You need to start thinking of how to ratchet up your spend on Coding Agents - or whatever domain you're working on.
+2. If you're not already using them, you should start now.
 
 ## When Agents Excel (And When They Struggle)
 
-Coding agents work best on clearly defined tasks from training data. Adding buttons, changing text, refactoring common patterns - these have thousands of examples across GitHub. The model has seen this work before.
+Agents tend to excel best on easy and common tasks and struggle with one-off debugging and edge cases.
 
-Agents struggle with one-off debugging and edge cases. I learned this optimizing imports in a package. The model couldn't understand my `__getattr__` usage for exporting main modules - too rare a pattern. When debugging a build issue with `uv` package manager, multiple agents looped endlessly. I spent hours realizing I'd added static exports to `.gitignore`, preventing bundling. Cursor and other tools couldn't bridge this gap.
+For instance, adding a button, changing some text or refactoring to fit common patterns are tasks which have thousands of examples across Github and in the training dataset. Models don't struggle on this.
 
-The pattern: agents excel when your problem resembles training data. They struggle in uncharted territory.
+What they tend to struggle with are more unique tasks. I'll give a few examples here where coding agents like Amp, Cursor etc all struggled and looped endlessly
 
-## My Workflow
+1. Adding diskcaching using custom keys on Pydantic models and keyword arguments : I wanted to use the diskcache module and cache cases whereby the user had asked for a specific pydantic response model and passed in a specific prompt.
+2. Optimising exports in a package using the `__getattr__` function in Python : I was importing everything in my package's `__init__.py` file and wanted to speed up what was otherwise 16s of imports.
+3. Static Assets not being included in `uv` : It tooks me 2 hours of looping before I realized I'd added static exports to `.gitignore`, preventing bundling.
 
-Prompt iteration matters as much as code iteration. I identify where models struggle and provide context to prevent failures.
+In short, agents excel when your problem resembles training data. They struggle in uncharted territory.
 
-For complex projects, I maintain `agents.md` files with coding standards, architectural decisions, and common patterns. When models need more context, I add relevant MCPs or run multiple instances to compare outputs. Sometimes I ask directly: "What didn't I give you initially?"
+## Three Essential Tips for Using Coding Agents
 
-Coding has two stages. Planning - deciding what code needs to accomplish. Implementation - writing it. For developers in large organizations, writing code is the easy part. The hard work is understanding requirements, considering edge cases, designing clean interfaces.
+By now, you've hopefully become curious about coding agents or realized they're indeed incredible tools. Based on months of experience, here are three key takeaways that will transform how you work with them:
 
-I've shifted to type-first development. After agents started generating 8,000-line PRs that were hard to review, I began defining types and interfaces early. This lets me refactor confidently and ship stable code. Agents handle implementation while I focus on architecture.
+### Treat Coding Agents Like Tunable Slot Machines
 
-## The Verification Bottleneck
+It's often useful to think of coding agents as slot machines that can be tuned to produce better results. **Your best strategy is either rerunning the model with the same prompt or iterating on the prompt itself.**
 
-The bottleneck shifted from generating code to verifying it. Agents produce hundreds of lines in minutes. Human review capacity stays fixed. Volume of changes explodes.
+This approach requires clarity and precision:
 
-Clear coding standards become essential. If you can't trust agent output, you can't work with it. Be explicit about patterns, establish consistent approaches, build confidence through incremental changes.
+- Have a clear idea of what you want before you start
+- Use version control to track all changes and iterations
+- Be specific about which files you want the model to edit
+- Communicate the scope of changes clearly so the agent understands boundaries
+- This precision becomes crucial when multiple coding agents work on the same repository
 
-Don't limit agents to small changes. My biggest improvements come from agents running five minutes, changing types across files, handling complex refactors. Constraining PRs to 200 lines misses the point - you get stuck in local minima.
+The key insight: instead of accepting the first output, treat each generation as one pull of the slot machine. Keep pulling (or adjust your approach) until you hit the jackpot.
 
-Focus on systems that help verify changes efficiently. Better tooling, clearer commit messages, structuring changes for easier review.
+### Verification Has Become the Expensive Part
 
-## What This Means for Junior Developers
+The bottleneck has shifted from writing code to verifying it. Where I used to spend an hour coding, I now spend 30-40 minutes thinking about the code, reviewing tests, and considering types before writing anything.
 
-Traditional junior developer paths are disappearing. Tasks we gave new hires - framework migrations, codebase updates, simple features - agents handle now. Junior roles aren't going away. Required skills are changing.
+This happens because:
 
-You need more agency. Instead of following detailed tickets, identify problems, propose solutions, think architecturally. The bar for "entry-level" work rises because mechanical programming gets automated.
+- Generating code is now cheap and fast
+- Verifying code quality remains expensive and time-consuming
+- Human review capacity stays fixed while AI output volume explodes
 
-This affects everyone. If you're not developing prompt engineering, AI collaboration, and high-level system design skills, you're falling behind regardless of experience.
+The solution is front-loading your verification systems. Build comprehensive tests that guarantee functionality for the interfaces you care about. When you have robust testing infrastructure, getting agents to write more concise, abstract code becomes trivial. You can trust the output because your safety nets catch any issues.
 
-## Beyond Coding
+### Don't Limit Agents to Small Changes
 
-This transformation extends beyond programming. I use similar workflows for writing, research, problem-solving. The pattern stays consistent: AI handles initial heavy lifting while I focus on direction, refinement, verification.
+This might be counterintuitive, but constraining agents to small changes misses the point entirely. You'll get stuck in local minima, making incremental improvements instead of meaningful progress.
 
-Productivity gains are real. These tools make me 4x more productive on tasks that fit their capabilities. Time saved on implementation goes toward planning, architecture, problems requiring human insight.
+My biggest improvements come from agents running for five minutes and:
 
-## The Choice
+- Changing types across multiple files
+- Handling complex refactors
+- Managing large-scale architectural changes
 
-Coding agents aren't perfect. They're here. The question isn't whether they'll improve your workflow - it's whether you'll start learning now or wait until adjustment becomes painful.
+The traditional approach of limiting PRs to 200 lines doesn't apply here. Agents can handle 8,000-line changes that would take humans weeks. The challenge isn't the size of the change—it's having systems in place to verify those changes efficiently.
 
-The 2-3 month learning curve is real. You need time to build trust, understand capabilities and limitations, develop collaboration patterns. Developers who started months ago have that experience. Those who wait face steeper climbs as tools improve and expectations shift.
+## What This Means for You
 
-Look at who's already using these tools. Michio Hashimoto, Jared Summers, Fly.io's CTO, Torsten Baum - god-tier programmers across the industry have adopted coding agents. I've spent $300 on Cursor already this month. When the best developers are investing heavily in these tools, that tells you something about where the industry is heading.
+These principles extend far beyond coding. Whether you're writing, researching, or problem-solving, the pattern remains consistent: AI handles the initial heavy lifting while you focus on direction, refinement, and verification.
 
-This isn't just about staying competitive in coding. It's about adapting to AI augmentation becoming standard across knowledge work. Start building these skills now.
+The productivity gains are real—these tools make me 4x more productive on tasks that fit their capabilities. Time saved on implementation goes toward planning, architecture, and problems requiring human insight.
 
-*In future articles, I'll dive deeper into specific workflows, prompt techniques, and how I actually use these agents day-to-day. For now, the question is simple: will you start learning, or wait until everyone else has a head start?*
+For developers, this shift is particularly significant. Traditional junior developer paths are disappearing as agents handle framework migrations, codebase updates, and simple features. The bar for "entry-level" work rises because mechanical programming gets automated. Success now requires more agency: identifying problems, proposing solutions, and thinking architecturally.
+
+## Conclusion
+
+Coding agents aren't perfect, but they're here to stay.
+
+The evidence is everywhere:
+
+- [Thorsten Ball now lets agents write 70-80% of his code]().
+- [Jared Summers from Bun talking about how the bun redis client was written mostly by claude code](https://x.com/jarredsumner/status/1911277883810783744)
+- [Mitchell Hashimoto who co-founded HashiCorp](https://x.com/zeddotdev/status/1935802037301649634)
+
+All of these programmers have fundamentally changed how they work. What used to require hours of tutorial-diving and careful implementation now happens in minutes through well-crafted prompts. This makes **exploration trivial and experimentation cheap**.
+
+If you need to spin up load testing scripts, different architectures, try a new library, these are just a prompt away. If anything, the barrier to trying new ideas has collapsed.
+
+The choice is simple: will you start learning, or wait until everyone else has a head start?
