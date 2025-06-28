@@ -10,8 +10,6 @@ authors:
   - ivanleomk
 ---
 
-# Why I Use Coding Agents (And Why You Should Too)
-
 > The most common sentiment that I've heard over the past few months has been "I don't write code anymore, I just prompt models".
 
 Six months ago, Claude transformed my writing. Instead of perfectionism about finding the perfect description, I focused on getting content out. Claude handled the initial pass, organizing ideas while I iterated on prompts. Output became more concise and I produced content faster. More importantly, this allowed me to focus on what I enjoyed the most - bringing my ideas to life.
