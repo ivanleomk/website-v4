@@ -1,5 +1,4 @@
 import { ImageResponse } from 'next/og';
-import { generatePost } from '@/lib/posts';
 
 export const runtime = 'edge';
 
@@ -16,10 +15,7 @@ async function getPost(slug: string) {
     const postData = await import(`@/data/posts/${slug}.json`).then(m => m.default);
     return postData;
   } catch {
-    if (process.env.NODE_ENV === 'production') {
-      return null;
-    }
-    return await generatePost(slug);
+    return null;
   }
 }
 
