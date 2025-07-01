@@ -11,136 +11,93 @@ authors:
 
 # Building MCPs for Tiny Automations
 
-Model Context Protocol (MCP) servers represent a fundamental shift in how we build personal automation. Instead of creating entire applications, you can prototype and extend functionality in hours, not weeks. My experience building an [Anki MCP for Korean learning](https://github.com/ivanleomk/Jishik) demonstrates this potential: what used to take 3 hours of manual flashcard creation after each lesson now takes 5 minutes of AI-assisted automation.
+What if you could turn a 3-hour manual workflow into a 5-minute conversation with Claude? My [Korean learning MCP](https://github.com/ivanleomk/Jishik) did exactly that, automatically creating flashcards with AI-generated audio and importing them into Anki. The time investment to build this automation was roughly the same as doing the manual work once—but now it saves hours every week.
 
-## Two Key Insights About MCPs
+MCPs are bridges between tools you already use. Instead of building entire applications to test integration ideas, you can prototype automations in a single afternoon and discover what actually works. The key insight is using MCPs for rapid discovery of valuable use cases, not perfect solutions.
 
-### MCPs as Rapid Prototyping Tools
+In this article, I'll talk briefly of how I scoped out my MCP framework with Claude and used Amp to build my Korean learning MCP. I'll try my best to link to the relevant sections of the Amp documentation.
 
-MCPs excel as simple ways to extend core functionality and prototype new features. The traditional development cycle of planning, building, deploying, and iterating gets compressed into rapid experimentation cycles. You can test integration ideas, validate workflows, and refine functionality without the overhead of full application development.
+<!-- more -->
 
-The Korean learning MCP exemplifies this. Rather than building a complete language learning platform, I created a bridge between existing tools: Claude for content generation, ElevenLabs for pronunciation, and Anki for spaced repetition. This approach leverages each tool's strengths while adding the specific automation I needed.
+## MCPs as Discovery Tools
 
-### Universal Integration Layer
+MCPs excel at revealing automation opportunities you didn't know existed. Rather than planning elaborate systems upfront, you can quickly test whether specific integrations add real value to your workflow.
 
-If you're building any chat application or AI workflow, MCP integration comes out of the box with major providers. This should be something you actively seek rather than an afterthought. MCPs provide a standardized way to expose functionality that any MCP-compatible client can consume.
+The traditional approach requires building entire applications to validate integration ideas. MCPs flip this model. You create simple bridges between existing tools, test them in real workflows, and iterate based on what actually saves time. This discovery-first approach prevents over-engineering solutions to problems that don't matter.
 
-This universality means you can build once and integrate everywhere. A well-designed MCP works with Claude Desktop, custom applications, or any system that supports the protocol. You're not locked into a specific platform or framework.
+When you install a Gmail MCP and start using it with Claude Desktop, you quickly discover which email tasks benefit from AI assistance and which don't. You find the boundaries of what works well versus what feels clunky. These insights guide where to invest deeper automation effort.
 
-## The Development Reality: 90% AI-Generated Code
+## Why the Time Investment Makes Sense
 
-The Jishik (Korean learning) MCP is roughly 80-90% AI-generated code. This isn't a limitation—it's a feature. The real work involves finding the right context, understanding library APIs, and providing specific functionality requirements for the model to implement.
+Building an MCP takes roughly the same time as doing the manual work once. The difference is that manual work stays manual, while the MCP saves time on every future iteration.
 
-My actual time investment was 2-3 hours of monitoring a coding agent while learning how the YankiConnect library works. The AI handled the boilerplate, error handling, and API integration patterns. I focused on architecture decisions and workflow design.
+For my Korean learning workflow, creating flashcards manually took 2-3 hours after each lesson: transcribing vocabulary, finding pronunciation audio, formatting everything in Anki, and adding contextual notes. Building the MCP took about the same time investment, but now the entire process takes 5 minutes of conversation with Claude.
 
-This development pattern reveals something important about modern software building: the bottleneck isn't writing code, it's understanding requirements and system boundaries. MCPs optimize for this reality.
+This creates a simple decision framework. If you do something manually that takes more than a few hours, and you'll need to repeat it regularly, an MCP prototype is worth the experiment. You're not risking months of development time—you're investing a single afternoon to potentially save hours every week.
 
-## From Hours to Minutes: The Korean Learning Case Study
+The math becomes compelling quickly. Even if the MCP only works 80% of the time and requires occasional manual cleanup, you're still saving significant time while learning what automation patterns work for your specific needs.
 
-Learning Korean highlighted a specific automation opportunity. After each lesson, I'd spend 2-3 hours creating flashcards:
+## How I Built This: A Three-Part Process
 
-1. Transcribe new vocabulary and phrases
-2. Find or create pronunciation audio
-3. Format everything correctly in Anki
-4. Add contextual notes and tags
+> Here's the [link to the chat](https://claude.ai/share/994e73d0-14ca-459a-9b81-3d2581604352) where I sketched it out using the [vibeallcoding MCP](https://github.com/essencevc/vibeallcoding) as a starting point.
 
-The MCP collapses this into a 5-minute conversation with Claude:
+Building an MCP with AI assistance follows a predictable pattern:
 
-```typescript
-// Core handler that orchestrates the entire workflow
-export const addBasicCardHandler = async ({
-  front,
-  back,
-  deckName,
-  media,
-  tags,
-}) => {
-  const client = new YankiConnect();
+1. Scope carefully
+2. Allocate work to agents effectively
+3. Iterate quickly
 
-  // Store media files first
-  const storedMedia: string[] = [];
-  if (media?.length > 0) {
-    for (const mediaPath of media) {
-      const filename = mediaPath.split("/").pop() || mediaPath;
-      const fileBuffer = await fs.readFile(mediaPath);
-      const base64Data = fileBuffer.toString("base64");
+The most critical step is scoping—breaking down the project into small, validatable pieces that agents can handle independently.
 
-      await client.media.storeMediaFile({
-        filename,
-        data: base64Data,
-      });
-      storedMedia.push(filename);
-    }
-  }
+### Planning and Scoping
 
-  // Create note with embedded media references
-  const noteData = {
-    note: {
-      deckName,
-      modelName: "Basic",
-      fields: { Front: front, Back: back },
-      tags: tags || [],
-    },
-  };
+Good scoping means creating 4-5 focused issues instead of one broad "implement MCP server" task. For example:
 
-  return await client.note.addNote(noteData);
-};
-```
+- Bootstrap project using the TypeScript MCP SDK
+- Set up publishing workflow
+- Create the core server structure with tool definitions
+- Implement the first tool with proper error handling
 
-Now I simply tell Claude: "Create flashcards for today's lesson" and provide the vocabulary list. Claude generates appropriate cards, ElevenLabs synthesizes pronunciation audio, and everything appears in Anki ready for study.
+Each issue should take 3-5 minutes to validate and involve roughly 300-400 lines of code. This keeps the feedback loop tight and prevents agents from going down rabbit holes. When issues are too broad, agents make assumptions that compound into larger problems.
 
-## The 5-Hour Weekly Investment Strategy
+### Work Allocation Strategy
 
-This experience suggests a broader strategy: invest 5 hours per week building tiny automations. Each small tool compounds with others, creating increasingly powerful personal systems.
+I use the [vibe-all-coding MCP](https://github.com/essencevc/vibeallcoding) to break down projects into manageable issues. This MCP learns from past successful breakdowns using ChromaDB, improving its suggestions over time. The key insight is that AI agents excel at implementation but need clear, specific guidance on what to build.
 
-Current automations in development:
+The workflow looks like this: Claude creates issues based on examples of successful breakdowns, saves them for future reference, and then implements each piece. This creates a compound learning effect. Each project improves the breakdown quality for future projects, while building a repository of working patterns that agents can reference.
 
-**Call Transcription Pipeline**: Automatically convert meeting recordings into study material and flashcards
+### Rapid Iteration and Testing
 
-**Project Planning Assistant**: The [vibe-all-coding MCP](https://github.com/essencevc/vibeallcoding) that breaks down coding projects into manageable issues with ChromaDB learning from past successful breakdowns
+For manual testing, I run two versions of the MCP simultaneously—the latest published version and the local development version. I label the development one using a suffix of `dev` so it's easy to toggle between them and test new functionality immediately. This means that for me it's just `Jishik` vs `Jishik-dev`. Once I've validated a change that I like, I just push it up, publish a new release and fix it.
 
-**Email Automation**: Context-aware response generation based on sender patterns and conversation history
+This quick local iteration cycle works better than complex deployment setups. When building the Korean learning MCP, I could test vocabulary generation, audio synthesis, and Anki integration in real conversations with Claude. Each iteration took minutes, not hours.
 
-The pattern is consistent: identify repetitive tasks, build minimal automation, iterate based on usage.
+The development process became: make changes locally, test with real Korean vocabulary, identify what worked or broke, and iterate. This tight feedback loop meant I could validate each piece of functionality as I built it, preventing larger integration issues later.
 
-## Current Limitations and Workarounds
+## What I'd Do Differently
 
-MCPs aren't perfect. Current pain points include:
+The biggest lesson from building this MCP is that agent workflows need better tooling and context from day one. Traditional single-agent monitoring doesn't scale when you want autonomous development with proper discovery and research phases.
 
-**No Audio Preview**: I can't preview generated pronunciation before adding cards. The workaround is generating audio files first, manually reviewing them, then proceeding with card creation.
+### Add GitHub Integration Earlier
 
-**Manual Media Management**: Images still require downloading to a local folder and referencing individual files. This is faster than pure manual work but not seamless.
+I would integrate the GitHub MCP immediately and force agents to do extensive discovery before writing any code. The goal is making agents research existing patterns, understand library APIs, and scope tasks based on actual code examples rather than assumptions.
 
-**Authentication Complexity**: Managing credentials across multiple services creates friction, especially for team or shared automations.
+This means agents would spend time reading documentation, examining similar implementations, and understanding the full context before proposing solutions. Tools like Notion and Linear become essential for consolidating the implicit knowledge we carry about our projects.
 
-**Resource Sharing**: MCPs run as separate processes, making it difficult to share context or resources between different automation tools.
+Creating dedicated test projects also accelerated development. I created one project specifically for testing the MCP in Claude Desktop and another for tracking planning improvements. This let me measure how my task scoping was improving over time and identify which breakdown patterns worked best.
 
-Despite these limitations, the time savings are dramatic. What took 3 hours now takes 5 minutes of setup plus minimal manual cleanup.
+### Design APIs for AI Consumption
 
-## Why MCPs Matter for Personal Systems
+Initially, my MCP was just a wrapper around existing APIs. This created unnecessary complexity for AI agents to navigate. I learned to reduce scope and optimize for agent usage patterns.
 
-Traditional automation required building entire applications. You needed authentication systems, databases, user interfaces, and deployment infrastructure. This overhead killed most personal automation projects before they started.
+For the Korean learning MCP, I focused only on front and back cards since everything else could be handled with HTML. This simplified the API dramatically—smaller payloads, better error handling, and automatic file system integration for approved directories.
 
-MCPs flip this model. They're lightweight service processes that expose specific functionality to any compatible client. The model decides whether to use available tools based on context and user intent.
+The principle is designing tools that agents can use effectively rather than trying to expose every possible feature. When you constrain the scope appropriately, you can add smart defaults, better validation, and context-aware behavior that makes the tools much more reliable for AI consumption.
 
-This architecture enables emergent behavior. As you build more MCPs, they create a personal ecosystem of capabilities that compound in unexpected ways. The language learning MCP might integrate with the project planning MCP to help learn technical vocabulary for coding projects.
+## The Future of personal Automation
 
-## The Broader Vision
+MCPs represent a shift in how we think about automation. Instead of grand plans and months of development, we can now validate ideas in an afternoon. The real power isn't in the technology—it's in lowering the barrier to experimentation so dramatically that trying becomes easier than not trying.
 
-MCPs represent a new category of personal computing. Instead of monolithic applications, we're moving toward composable tool ecosystems. Each MCP does one thing well, and AI orchestrates them based on context and goals.
+Start small. Pick one workflow that annoys you—something you do weekly that takes an hour or two. Build an MCP for it this weekend. Even if it only half-works, you'll learn something valuable about what automation patterns fit your actual needs. And if it does work? You just bought yourself hours of time every week.
 
-Imagine logical groupings of tools around different life areas:
-
-**Learning Stack**: Language MCPs, note-taking integration, spaced repetition systems
-**Productivity Stack**: Task planning, email automation, calendar integration  
-**Development Stack**: Code generation, issue tracking, deployment automation
-
-The power comes from composition. These tools work together in ways their individual creators never anticipated, mediated by AI that understands your specific context and goals.
-
-## Getting Started
-
-Building your first MCP takes a weekend, not months. Start with a single annoying task in your daily workflow. Build the smallest possible automation that eliminates that specific friction.
-
-The key insight is that personal automation doesn't need to be perfect or comprehensive. It needs to save time on tasks you do repeatedly. MCPs make this accessible to anyone willing to spend a few hours experimenting with AI-assisted development.
-
-The future of personal productivity isn't one application that does everything. It's many small tools that each excel at specific tasks, orchestrated by AI that learns your patterns and preferences. MCPs make this future available today.
+The tools are ready. The only question is what will you automate first?
