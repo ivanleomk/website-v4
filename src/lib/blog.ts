@@ -1,9 +1,25 @@
 import { BlogPost } from './markdown';
 import { generateAllPosts } from './posts';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 let cachedPosts: BlogPost[] | null = null;
 
 export async function getAllPosts(): Promise<BlogPost[]> {
+  // In development, always regenerate to ensure hot reload works
+  if (process.env.NODE_ENV === 'development') {
+    try {
+      // Try to read from static JSON first (faster)
+      const postsPath = join(process.cwd(), 'src/data/posts.json');
+      const postsData = JSON.parse(readFileSync(postsPath, 'utf8'));
+      return postsData as BlogPost[];
+    } catch {
+      // Fallback to file system generation
+      return await generateAllPosts();
+    }
+  }
+  
+  // Production: use caching
   if (cachedPosts) {
     return cachedPosts;
   }
@@ -15,12 +31,6 @@ export async function getAllPosts(): Promise<BlogPost[]> {
     cachedPosts = postsData as BlogPost[];
     return cachedPosts;
   } catch {
-    // Fallback to file system (development only)
-    if (process.env.NODE_ENV === 'production') {
-      return [];
-    }
-    
-    cachedPosts = await generateAllPosts();
-    return cachedPosts;
+    return [];
   }
 }

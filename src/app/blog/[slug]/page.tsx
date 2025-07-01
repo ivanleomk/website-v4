@@ -10,17 +10,27 @@ interface BlogPageProps {
 }
 
 async function getPost(slug: string) {
-  // Try to load from pre-generated static data first
+  // In development, always read fresh data to ensure hot reload works
+  if (process.env.NODE_ENV === 'development') {
+    try {
+      // Try to read from static JSON first (faster)
+      const { readFileSync } = await import('fs');
+      const { join } = await import('path');
+      const postPath = join(process.cwd(), 'src/data/posts', `${slug}.json`);
+      const postData = JSON.parse(readFileSync(postPath, 'utf8'));
+      return postData;
+    } catch {
+      // Fallback to file system generation
+      return await generatePost(slug);
+    }
+  }
+  
+  // Production: use dynamic imports with caching
   try {
     const postData = await import(`@/data/posts/${slug}.json`).then(m => m.default);
     return postData;
   } catch {
-    // Fallback to file system (development only)
-    if (process.env.NODE_ENV === 'production') {
-      return null;
-    }
-    
-    return await generatePost(slug);
+    return null;
   }
 }
 
