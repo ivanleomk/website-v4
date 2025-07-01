@@ -11,13 +11,13 @@ authors:
 
 # Building MCPs for Tiny Automations
 
+> If you're unfamiliar with MCPs, I wrote a longer [post](/blog/simple-mcps) about them.
+
 What if you could turn a 3-hour manual workflow into a 5-minute conversation with Claude? My [Korean learning MCP](https://github.com/ivanleomk/Jishik) did exactly that, automatically creating flashcards with AI-generated audio and importing them into Anki. The time investment to build this automation was roughly the same as doing the manual work once—but now it saves hours every week.
 
 MCPs are bridges between tools you already use. Instead of building entire applications to test integration ideas, you can prototype automations in a single afternoon and discover what actually works. The key insight is using MCPs for rapid discovery of valuable use cases, not perfect solutions.
 
 In this article, I'll talk briefly of how I scoped out my MCP framework with Claude and used Amp to build my Korean learning MCP. I'll try my best to link to the relevant sections of the Amp documentation.
-
-<!-- more -->
 
 ## MCPs as Discovery Tools
 
