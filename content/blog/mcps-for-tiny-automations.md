@@ -1,6 +1,6 @@
 ---
 title: MCPs for Tiny Automations
-date: 2025-07-07
+date: 2025-07-01
 description: If you're not working with MCPs, you're missing out on a powerful tool for rapid prototyping and automation.
 categories:
   - MCP
