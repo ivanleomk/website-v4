@@ -1,7 +1,7 @@
 ---
 title: "Building An Agent"
 date: 2025-07-16
-description: "Implementing a coding agent in under 300 lines of Javascript code"
+description: "Implementing a coding agent in around 200 lines of Javascript code"
 categories:
   - Agents
   - Applied AI
@@ -13,9 +13,9 @@ authors:
 
 After reading Thorsten Ball's breakdown of building a code-editing agent in Go, I implemented the same concept in TypeScript to see how the core ideas translate. Agents are just LLMs with the right tools in a conversation loop.
 
-In under 400 lines of TypeScript, we build a fully functional agent that can read, list, and edit files by giving Claude three simple tools with clear descriptions and letting it naturally combine them to solve complex tasks.
+In around 200 lines of TypeScript, we build a fully functional agent that can read, list, and edit files by giving Claude three simple tools with clear descriptions and letting it naturally combine them to solve complex tasks.
 
-The barrier to entry is remarkably low: 30 minutes, $0.20 in API credits, and you have an AI that can understand your codebase and make edits just by talking to it. This is the first article in a series of articles where we'll implement the more complex parts of an agent which has features such as agentic search, subagents, todos and more.
+The barrier to entry is remarkably low: 30 minutes and you have an AI that can understand your codebase and make edits just by talking to it. This is the first article in a series of articles where we'll implement the more complex parts of an agent which has features such as agentic search, subagents, todos and more.
 
 ## What You'll Need
 
