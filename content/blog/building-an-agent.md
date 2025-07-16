@@ -9,7 +9,7 @@ authors:
   - ivanleomk
 ---
 
-> Here's a link to the [original article](https://ampcode.com/how-to-build-an-agent) which implements it in Go.
+> Here's a link to the [original article](https://ampcode.com/how-to-build-an-agent) which implements it in Go. The full source code can be found [here](https://github.com/ivanleomk/building-an-agent)
 
 After reading Thorsten Ball's breakdown of building a code-editing agent in Go, I implemented the same concept in TypeScript to see how the core ideas translate. Agents are just LLMs with the right tools in a conversation loop.
 
