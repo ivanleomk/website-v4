@@ -26,8 +26,8 @@ export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
   useEffect(() => {
     if (cookieConsent === true) {
       // Initialize Google Analytics
-      window.gtag = window.gtag || function() {
-        (window.gtag.q = window.gtag.q || []).push(arguments);
+      window.gtag = window.gtag || function(...args) {
+        (window.gtag.q = window.gtag.q || []).push(args);
       };
       window.gtag('js', new Date());
       window.gtag('config', measurementId, {
@@ -99,6 +99,9 @@ export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
 
 declare global {
   interface Window {
-    gtag: (...args: any[]) => void;
+    gtag: {
+      (...args: unknown[]): void;
+      q?: unknown[];
+    };
   }
 }

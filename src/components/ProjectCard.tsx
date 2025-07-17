@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 interface ProjectCardProps {
   title: string;
   description: string;
@@ -47,9 +49,11 @@ export function ProjectCard({
         </div>
         {imageUrl && (
           <div className="flex-shrink-0 order-first md:order-last">
-            <img
+            <Image
               src={imageUrl}
               alt={title}
+              width={320}
+              height={240}
               className="w-64 h-48 md:w-80 md:h-60 object-contain mx-auto"
             />
           </div>
