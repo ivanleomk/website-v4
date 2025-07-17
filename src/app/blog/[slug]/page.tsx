@@ -1,6 +1,7 @@
 import { generatePost, generateStaticSlugs, generateAllPosts } from "@/lib/posts";
 import { BlogPostComponent } from "@/components/blog-post";
 import { Navigation } from "@/components/Navigation";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -42,28 +43,39 @@ async function getAllPosts() {
   }
 }
 
-function getSeriesDefinitions(): Record<string, string> {
+async function getSeriesDefinitions(): Promise<Record<string, string>> {
+  // Try to load from pre-generated static data first
   try {
-    const seriesPath = join(process.cwd(), 'content', 'series.json');
-    const seriesContent = readFileSync(seriesPath, 'utf8');
-    return JSON.parse(seriesContent);
+    const seriesData = await import(`@/data/series.json`).then(m => m.default);
+    return seriesData;
   } catch {
-    return {};
+    // Fallback to file system (development only)
+    if (process.env.NODE_ENV === 'production') {
+      return {};
+    }
+    
+    try {
+      const seriesPath = join(process.cwd(), 'content', 'series.json');
+      const seriesContent = readFileSync(seriesPath, 'utf8');
+      return JSON.parse(seriesContent);
+    } catch {
+      return {};
+    }
   }
 }
 
 export default async function BlogPage({ params }: BlogPageProps) {
   const { slug } = await params;
-  const [post, allPosts] = await Promise.all([
+  const [post, allPosts, seriesDefinitions] = await Promise.all([
     getPost(slug),
-    getAllPosts()
+    getAllPosts(),
+    getSeriesDefinitions()
   ]);
 
   if (!post) {
     notFound();
   }
 
-  const seriesDefinitions = getSeriesDefinitions();
   const seriesInfo = getSeriesInfo(allPosts, slug, seriesDefinitions);
 
   return (
@@ -91,6 +103,11 @@ export default async function BlogPage({ params }: BlogPageProps) {
         </Link>
       </div>
       <BlogPostComponent post={post} seriesInfo={seriesInfo} />
+      {!seriesInfo && (
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <NewsletterSignup />
+        </div>
+      )}
       <div className="h-32"></div>
     </div>
   );

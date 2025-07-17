@@ -94,6 +94,19 @@ async function main() {
     }
   }
   
+  // Copy series.json to data directory
+  try {
+    const seriesPath = join(process.cwd(), 'content', 'series.json');
+    const seriesContent = readFileSync(seriesPath, 'utf8');
+    writeFileSync(
+      join(outputDir, 'series.json'),
+      seriesContent
+    );
+    console.log('Copied series.json to data directory');
+  } catch (error) {
+    console.log('No series.json found or error copying it');
+  }
+  
   console.log(`Generated ${posts.length} posts`);
 }
 
