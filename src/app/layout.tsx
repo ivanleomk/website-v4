@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Lato, Crimson_Text } from "next/font/google";
 import "./globals.css";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
 const lato = Lato({
   variable: "--font-lato",
@@ -30,6 +31,7 @@ export default function RootLayout({
         className={`${lato.variable} ${crimsonText.variable} antialiased`}
       >
         {children}
+        <GoogleAnalytics measurementId="G-MM8QMY5JWN" />
       </body>
     </html>
   );
