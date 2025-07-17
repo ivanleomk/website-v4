@@ -6,9 +6,12 @@ import { useEffect, useState, useRef } from "react";
 import GithubSlugger from "github-slugger";
 import Link from "next/link";
 import { Markdown } from "./Markdown";
+import { SeriesNavigation } from "./SeriesNavigation";
+import { SeriesInfo } from "@/lib/series";
 
 interface BlogPostProps {
   post: BlogPost;
+  seriesInfo: SeriesInfo | null;
 }
 
 interface TocItem {
@@ -207,7 +210,7 @@ function TableOfContents({
   );
 }
 
-export function BlogPostComponent({ post }: BlogPostProps) {
+export function BlogPostComponent({ post, seriesInfo }: BlogPostProps) {
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const tocRef = useRef<HTMLDivElement>(null);
 
@@ -290,6 +293,10 @@ export function BlogPostComponent({ post }: BlogPostProps) {
             </div>
           </div>
         </header>
+        
+        {/* Series Navigation */}
+        {seriesInfo && <SeriesNavigation seriesInfo={seriesInfo} />}
+        
         <Markdown content={post.content} />
       </article>
     </div>

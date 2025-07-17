@@ -1,9 +1,12 @@
-import { generatePost, generateStaticSlugs } from "@/lib/posts";
+import { generatePost, generateStaticSlugs, generateAllPosts } from "@/lib/posts";
 import { BlogPostComponent } from "@/components/blog-post";
 import { Navigation } from "@/components/Navigation";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Metadata } from "next";
+import { getSeriesInfo } from "@/lib/series";
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 interface BlogPageProps {
   params: Promise<{ slug: string }>;
@@ -24,13 +27,44 @@ async function getPost(slug: string) {
   }
 }
 
+async function getAllPosts() {
+  // Try to load from pre-generated static data first
+  try {
+    const postsData = await import(`@/data/posts.json`).then(m => m.default);
+    return postsData;
+  } catch {
+    // Fallback to file system (development only)
+    if (process.env.NODE_ENV === 'production') {
+      return [];
+    }
+    
+    return await generateAllPosts();
+  }
+}
+
+function getSeriesDefinitions(): Record<string, string> {
+  try {
+    const seriesPath = join(process.cwd(), 'content', 'series.json');
+    const seriesContent = readFileSync(seriesPath, 'utf8');
+    return JSON.parse(seriesContent);
+  } catch {
+    return {};
+  }
+}
+
 export default async function BlogPage({ params }: BlogPageProps) {
   const { slug } = await params;
-  const post = await getPost(slug);
+  const [post, allPosts] = await Promise.all([
+    getPost(slug),
+    getAllPosts()
+  ]);
 
   if (!post) {
     notFound();
   }
+
+  const seriesDefinitions = getSeriesDefinitions();
+  const seriesInfo = getSeriesInfo(allPosts, slug, seriesDefinitions);
 
   return (
     <div className="bg-gray-50">
@@ -56,7 +90,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
           Back to articles
         </Link>
       </div>
-      <BlogPostComponent post={post} />
+      <BlogPostComponent post={post} seriesInfo={seriesInfo} />
       <div className="h-32"></div>
     </div>
   );

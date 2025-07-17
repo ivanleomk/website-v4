@@ -15,6 +15,7 @@ async function parseMarkdown(content, slug) {
     content: markdownContent,
     slug,
     image: data.image,
+    series: data.series || [],
   };
 }
 

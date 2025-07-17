@@ -9,6 +9,7 @@ export interface BlogPost {
   content: string;
   slug: string;
   image?: string;
+  series?: string[];
 }
 
 export async function parseMarkdown(markdownContent: string, slug: string): Promise<BlogPost> {
@@ -23,6 +24,7 @@ export async function parseMarkdown(markdownContent: string, slug: string): Prom
     content: content, // Raw markdown content for react-markdown
     slug,
     image: data.image,
+    series: data.series || [],
   };
 }
 

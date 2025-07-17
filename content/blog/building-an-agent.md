@@ -7,6 +7,8 @@ categories:
   - Applied AI
 authors:
   - ivanleomk
+series:
+  - Building an Agent
 ---
 
 > Here's a link to the [original article](https://ampcode.com/how-to-build-an-agent) which implements it in Go. The full source code can be found [here](https://github.com/ivanleomk/building-an-agent)
