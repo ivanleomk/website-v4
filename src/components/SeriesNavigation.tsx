@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { SeriesInfo } from '@/lib/series';
 import { formatDate } from '@/lib/markdown';
+import { NewsletterSignup } from './NewsletterSignup';
 
 interface SeriesNavigationProps {
   seriesInfo: SeriesInfo;
@@ -83,6 +84,10 @@ export function SeriesNavigation({ seriesInfo }: SeriesNavigationProps) {
           </Link>
         </div>
       )}
+      
+      <div className="mt-4 pt-4 border-t border-gray-200">
+        <NewsletterSignup />
+      </div>
     </div>
   );
 }
