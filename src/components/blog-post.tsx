@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Markdown } from "./Markdown";
 import { SeriesNavigation } from "./SeriesNavigation";
 import { SeriesInfo } from "@/lib/series";
+import { NewsletterSignup } from "./NewsletterSignup";
 
 interface BlogPostProps {
   post: BlogPost;
@@ -296,6 +297,13 @@ export function BlogPostComponent({ post, seriesInfo }: BlogPostProps) {
         
         {/* Series Navigation */}
         {seriesInfo && <SeriesNavigation seriesInfo={seriesInfo} />}
+        
+        {/* Newsletter Signup when no series */}
+        {!seriesInfo && (
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-8">
+            <NewsletterSignup variant="embedded" />
+          </div>
+        )}
         
         <Markdown content={post.content} />
       </article>

@@ -4,9 +4,10 @@ import { useState } from 'react';
 
 interface NewsletterSignupProps {
   className?: string;
+  variant?: 'default' | 'embedded';
 }
 
-export function NewsletterSignup({ className = '' }: NewsletterSignupProps) {
+export function NewsletterSignup({ className = '', variant = 'default' }: NewsletterSignupProps) {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -43,7 +44,7 @@ export function NewsletterSignup({ className = '' }: NewsletterSignupProps) {
 
   if (status === 'success') {
     return (
-      <div className={`border border-gray-200 rounded-lg p-4 bg-green-50 ${className}`}>
+      <div className={`${variant === 'default' ? 'border border-gray-200 rounded-lg p-4 bg-green-50' : 'p-4 bg-green-50 rounded-lg'} ${className}`}>
         <div className="flex items-center gap-2 text-green-800">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -55,7 +56,7 @@ export function NewsletterSignup({ className = '' }: NewsletterSignupProps) {
   }
 
   return (
-    <div className={`border border-gray-200 rounded-lg p-4 bg-gray-50 ${className}`}>
+    <div className={`${variant === 'default' ? 'border border-gray-200 rounded-lg p-4 bg-gray-50' : ''} ${className}`}>
       <div className="mb-3">
         <h4 className="text-sm font-medium text-black mb-1">Stay Updated</h4>
         <p className="text-xs text-gray-600">

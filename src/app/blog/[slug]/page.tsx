@@ -1,7 +1,6 @@
 import { generatePost, generateStaticSlugs, generateAllPosts } from "@/lib/posts";
 import { BlogPostComponent } from "@/components/blog-post";
 import { Navigation } from "@/components/Navigation";
-import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -103,11 +102,6 @@ export default async function BlogPage({ params }: BlogPageProps) {
         </Link>
       </div>
       <BlogPostComponent post={post} seriesInfo={seriesInfo} />
-      {!seriesInfo && (
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <NewsletterSignup />
-        </div>
-      )}
       <div className="h-32"></div>
     </div>
   );
