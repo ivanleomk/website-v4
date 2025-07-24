@@ -142,9 +142,18 @@ const markdownComponents = {
       {children}
     </h3>
   ),
-  p: ({ children }: any) => (
-    <p className="text-gray-800 leading-relaxed mb-4">{children}</p>
-  ),
+  p: ({ children }: any) => {
+    // Check if paragraph only contains an image
+    const isImageOnly = Array.isArray(children) 
+      ? children.length === 1 && children[0]?.type?.name === 'img'
+      : children?.type?.name === 'img';
+    
+    if (isImageOnly) {
+      return <div className="flex justify-center mb-4">{children}</div>;
+    }
+    
+    return <p className="text-gray-800 leading-relaxed mb-4">{children}</p>;
+  },
   a: ({ href, children }: any) => (
     <Link
       href={href || "#"}
@@ -191,30 +200,26 @@ const markdownComponents = {
       imageSrc.endsWith(".mov")
     ) {
       return (
-        <div className="mb-4">
-          <video
-            src={imageSrc}
-            controls
-            width={800}
-            height={400}
-            className="rounded-lg w-full max-w-3xl"
-          >
-            Your browser does not support the video tag.
-          </video>
-        </div>
+        <video
+          src={imageSrc}
+          controls
+          width={800}
+          height={400}
+          className="rounded-lg w-full max-w-3xl"
+        >
+          Your browser does not support the video tag.
+        </video>
       );
     }
 
     return (
-      <div className="mb-4">
-        <Image
-          src={imageSrc}
-          alt={alt || ""}
-          width={800}
-          height={400}
-          className="rounded-lg"
-        />
-      </div>
+      <Image
+        src={imageSrc}
+        alt={alt || ""}
+        width={800}
+        height={400}
+        className="rounded-lg"
+      />
     );
   },
   table: ({ children }: any) => (
