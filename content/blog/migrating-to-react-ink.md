@@ -150,8 +150,6 @@ export function useMessages() {
 }
 ```
 
-We'll then define a loading component called BlinkingDot to show a loading state before we get a response from the API.
-
 We'll also define a new component called `Message.tsx` which will be responsible for rendering these messages and a loading state.
 
 ```ts
