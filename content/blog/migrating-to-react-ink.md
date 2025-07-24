@@ -11,7 +11,11 @@ series:
   - Building an Agent
 ---
 
-If you've ever used readlines, you'll know that it's a great way to get user input but it's not very flexible. In this article, we'll solve that problem by migrating to React Ink.
+> If you'd like to see the final result of this article, you can check out the [code](https://github.com/ivanleomk/building-an-agent/tree/4e9f0acc5d3846534f73f0123b043fb274a1dc1f) on GitHub.
+
+If you've ever used readlines, you'll know that it's a great way to get user input but it's not very flexible. In this article, we'll solve that problem by migrating to React Ink. Here's a glimpse at what the final result looks like
+
+![](https://r2-workers.ivanleomk9297.workers.dev/agent.mp4)
 
 With this, we'll have a CLI that has a much richer set of features than readlines, better UI, and a more natural way to interact with the user. We'll also show how we can implement streaming in our UI for a much more interactive experience for the user.
 
