@@ -56,17 +56,6 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Work With Me Button */}
-              <div className="mt-8 text-center lg:text-left">
-                <a
-                  href="https://cal.com/ivanleomk/30min"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block border border-gray-900 text-gray-900 px-6 py-2 font-[family-name:var(--font-lato)] text-sm tracking-wide hover:bg-gray-900 hover:text-white transition-all duration-200"
-                >
-                  Work With Me
-                </a>
-              </div>
             </div>
           </div>
         </div>
