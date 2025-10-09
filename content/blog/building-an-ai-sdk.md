@@ -11,6 +11,8 @@ series:
   - Building an Agent
 ---
 
+> If you'd like to see the final result of this article, you can check out the [code](https://github.com/ivanleomk/building-an-agent/commit/5446951bf9cea2139fddf58557cb44fa46853127) on Github.
+
 In our previous article, we used React Ink to implement a coding CLI agent using Anthropic's `claude-sonnet-4` model. Since then, much has changed and I've got a new favourite model - [`grok-code-fast-1`](https://x.ai/news/grok-code-fast-1) by XAI. It's approximately 10-15x cheaper than Anthropic's sonnet 4 model, more when you consider cached tokens.
 
 In this article, we'll refactor our agent to be provider-agnostic, building a clean, event-driven architecture that can easily support Anthropic, XAI, OpenAI, or any other provider.
