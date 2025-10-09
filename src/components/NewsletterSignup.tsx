@@ -58,21 +58,21 @@ export function NewsletterSignup({ className = '', variant = 'default' }: Newsle
   return (
     <div className={`${variant === 'default' ? 'border border-gray-200 rounded-lg p-4 bg-gray-50' : ''} ${className}`}>
       <div className="mb-3">
-        <h4 className="text-sm font-medium text-black mb-1">Stay Updated</h4>
-        <p className="text-xs text-gray-600">
+        <h4 className="text-xs sm:text-sm font-medium text-black mb-1">Stay Updated</h4>
+        <p className="text-[10px] sm:text-xs text-gray-600">
           Get notified about future updates to this series and other articles
         </p>
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Name"
             required
-            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+            className="flex-1 px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
           />
           <input
             type="email"
@@ -80,20 +80,20 @@ export function NewsletterSignup({ className = '', variant = 'default' }: Newsle
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             required
-            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+            className="flex-1 px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
           />
         </div>
         
         <button
           type="submit"
           disabled={status === 'loading'}
-          className="w-full px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-full px-4 py-2 text-xs sm:text-sm font-medium text-white bg-black rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
         </button>
         
         {status === 'error' && (
-          <p className="text-xs text-red-600">{message}</p>
+          <p className="text-[10px] sm:text-xs text-red-600">{message}</p>
         )}
       </form>
     </div>
