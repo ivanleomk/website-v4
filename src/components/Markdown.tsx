@@ -41,7 +41,9 @@ function CodeElement({
 
   useEffect(() => {
     if (className && children) {
-      const language = className.replace("language-", "");
+      const fullLanguage = className.replace("language-", "");
+      // Support both "ts-collapsible" and "ts collapsible" formats
+      const language = fullLanguage.split(/[-\s]/)[0];
       const codeText = extractTextFromElement(children);
 
       codeToHtml(codeText, {
@@ -88,6 +90,11 @@ function CodeElement({
 // Separate component for code blocks with copy functionality
 function CodeBlock({ children }: { children: any }) {
   const [copied, setCopied] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  // Check if the code block should be collapsible (supports both "ts-collapsible" and "ts collapsible")
+  const className = children?.props?.className || "";
+  const isCollapsible = className.includes("collapsible") || className.match(/language-\w+[-\s]collapsible/);
 
   const handleCopy = () => {
     // Extract text content from the entire children structure
@@ -106,18 +113,36 @@ function CodeBlock({ children }: { children: any }) {
 
   return (
     <div className="relative group mb-4">
-      <button
-        onClick={handleCopy}
-        className="absolute top-2 right-2 z-10 px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white text-xs rounded transition-all duration-200 "
-      >
-        {copied ? "Copied!" : "Copy"}
-      </button>
+      <div className="absolute top-3 right-3 z-50 flex gap-2">
+        {isCollapsible && (
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white text-sm rounded transition-all duration-200"
+          >
+            {isCollapsed ? "Expand" : "Collapse"}
+          </button>
+        )}
+        <button
+          onClick={handleCopy}
+          className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white text-sm rounded transition-all duration-200"
+        >
+          {copied ? "Copied!" : "Copy"}
+        </button>
+      </div>
       {isHighlightedHtml ? (
-        <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto [&>pre]:!bg-transparent [&>pre]:!p-0 [&>pre]:!m-0 [&>pre]:!rounded-none [&>pre]:!overflow-visible [&>pre]:text-sm">
+        <div
+          className={`bg-gray-900 rounded-lg p-6 overflow-x-auto [&>pre]:!bg-transparent [&>pre]:!p-0 [&>pre]:!m-0 [&>pre]:!rounded-none [&>pre]:!overflow-visible [&>pre]:text-base [&>pre]:leading-relaxed transition-all duration-300 ${
+            isCollapsible && isCollapsed ? "max-h-32 overflow-hidden" : ""
+          }`}
+        >
           {children}
         </div>
       ) : (
-        <pre className=" text-gray-100 p-4 rounded-lg overflow-x-auto text-sm">
+        <pre
+          className={`text-gray-100 p-6 rounded-lg overflow-x-auto text-base leading-relaxed transition-all duration-300 ${
+            isCollapsible && isCollapsed ? "max-h-32 overflow-hidden" : ""
+          }`}
+        >
           {children}
         </pre>
       )}
@@ -133,12 +158,12 @@ const markdownComponents = {
     </h1>
   ),
   h2: ({ children, id }: any) => (
-    <h2 id={id} className="text-2xl font-bold text-black mb-4 mt-6">
+    <h2 id={id} className="text-2xl font-bold text-black mb-4 mt-12">
       {children}
     </h2>
   ),
   h3: ({ children, id }: any) => (
-    <h3 id={id} className="text-xl font-semibold text-black mb-3 mt-5">
+    <h3 id={id} className="text-xl font-semibold text-black mb-3 mt-8">
       {children}
     </h3>
   ),
@@ -149,10 +174,10 @@ const markdownComponents = {
       : children?.type?.name === 'img';
     
     if (isImageOnly) {
-      return <div className="flex justify-center mb-4">{children}</div>;
+      return <div className="flex justify-center mb-6">{children}</div>;
     }
     
-    return <p className="text-gray-800 leading-relaxed mb-4">{children}</p>;
+    return <p className="text-gray-700 text-xl leading-9 mb-6 font-serif">{children}</p>;
   },
   a: ({ href, children }: any) => (
     <Link
@@ -163,20 +188,20 @@ const markdownComponents = {
     </Link>
   ),
   ul: ({ children }: any) => (
-    <ul className="list-disc list-outside mb-4 space-y-2 text-gray-800 ml-6">
+    <ul className="list-disc list-outside mb-6 space-y-2 text-gray-700 text-xl ml-6 font-serif">
       {children}
     </ul>
   ),
   ol: ({ children }: any) => (
-    <ol className="list-decimal list-outside mb-4 space-y-3 text-gray-800 ml-6">
+    <ol className="list-decimal list-outside mb-6 space-y-2 text-gray-700 text-xl ml-6 font-serif">
       {children}
     </ol>
   ),
   li: ({ children }: any) => (
-    <li className="leading-relaxed pl-2">{children}</li>
+    <li className="leading-9 pl-2">{children}</li>
   ),
   blockquote: ({ children }: any) => (
-    <blockquote className="border-l-4 border-gray-400 pl-4 italic text-gray-700 mb-4">
+    <blockquote className="border-l-4 border-gray-400 pl-6 italic text-gray-700 text-xl mb-6 font-serif leading-9">
       {children}
     </blockquote>
   ),

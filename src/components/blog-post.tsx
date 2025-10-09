@@ -9,6 +9,7 @@ import { Markdown } from "./Markdown";
 import { SeriesNavigation } from "./SeriesNavigation";
 import { SeriesInfo } from "@/lib/series";
 import { NewsletterSignup } from "./NewsletterSignup";
+import { ArticleTOC } from "./ArticleTOC";
 
 interface BlogPostProps {
   post: BlogPost;
@@ -233,8 +234,16 @@ export function BlogPostComponent({ post, seriesInfo }: BlogPostProps) {
 
   return (
     <div className="relative">
-      <TableOfContents items={tocItems} tocRef={tocRef} />
-      <article className="max-w-5xl mx-auto px-4 pb-8">
+      {/* <TableOfContents items={tocItems} tocRef={tocRef} /> */}
+      <div className="max-w-7xl mx-auto px-4 lg:px-8">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-12">
+          <aside className="lg:col-span-3 lg:sticky lg:top-24 lg:self-start hidden lg:block">
+            <ArticleTOC items={tocItems} />
+          </aside>
+          <article className="lg:col-span-9 pb-8 max-w-5xl mx-auto lg:mx-0 lg:px-0 px-4">
+            <div className="lg:hidden">
+              <ArticleTOC items={tocItems} />
+            </div>
         <header className="mb-8">
           {/* Title */}
           <h1 className="text-6xl font-bold mb-8 text-black leading-tight">
@@ -306,7 +315,9 @@ export function BlogPostComponent({ post, seriesInfo }: BlogPostProps) {
         )}
         
         <Markdown content={post.content} />
-      </article>
+          </article>
+        </div>
+      </div>
     </div>
   );
 }

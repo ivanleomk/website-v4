@@ -224,14 +224,14 @@ export function Posts({ posts }: PostsProps) {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="space-y-8">
           {filteredPosts.map((post) => (
             <Link
               key={post.title}
               href={`/blog/${post.slug}`}
-              className="group block bg-white p-6 transition-all duration-200  h-80 flex flex-col"
+              className="group block py-6  hover:border-black transition-colors"
             >
-              <div className="mb-4 flex gap-2 flex-wrap h-16 overflow-hidden">
+              <div className="mb-3 flex gap-2 flex-wrap">
                 {post.categories?.map((category) => (
                   <button
                     key={category}
@@ -239,44 +239,20 @@ export function Posts({ posts }: PostsProps) {
                       e.preventDefault();
                       handleTagClick(category);
                     }}
-                    className={`inline-block px-3 py-1 text-xs border transition-colors duration-200 uppercase tracking-wide font-medium rounded-full h-fit ${
+                    className={`text-xs uppercase tracking-wide ${
                       selectedTags.includes(category)
-                        ? "bg-gray-900 text-white border-gray-900"
-                        : "text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                        ? "text-black font-medium"
+                        : "text-gray-500"
                     }`}
                   >
                     {category}
                   </button>
                 ))}
               </div>
-              <div className="mb-4 h-16 flex items-start">
-                <h3 className="text-xl font-bold text-black leading-tight group-hover:text-gray-800 transition-colors line-clamp-2">
-                  {post.title}
-                </h3>
-              </div>
-              <div className="mb-6 flex-1">
-                <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
-                  {post.description.length > 120
-                    ? post.description.slice(0, 120) + "..."
-                    : post.description || ""}
-                </p>
-              </div>
-              <div className="flex items-center text-black text-sm font-medium mt-auto">
-                <span className="mr-2">Read article</span>
-                <svg
-                  className="h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-200"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </div>
+              <h3 className="text-2xl font-bold text-black mb-2 group-hover:underline">
+                {post.title}
+              </h3>
+              <p className="text-gray-600 text-sm">{post.description}</p>
             </Link>
           ))}
         </div>

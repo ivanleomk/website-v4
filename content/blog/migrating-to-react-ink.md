@@ -25,7 +25,7 @@ We'll do so in three main steps
 2. Then, we'll use streaming without any tool calls so that we can show the user the output of the agent as it's being generated
 3. Finally, we'll migrate our tool calls to use streaming as well
 
-Once we've done so, we'll be able to be in a good position when we implement agentic search in the next article in our series.
+Once we've done so, we'll have a CLI that's more responsive and interactive, with a better user experience.
 
 ## Starting Our Migration
 
@@ -909,8 +909,4 @@ export const tool_defs = [
 
 Now with this, we've reimplemented the entire agent that we previously created in [Building an Agent](./building-an-agent.md) but with `react-ink` and streaming support.
 
-This is a huge step! Now we've got an agent which can read, write edit files with full streaming capabilities.
-
-In the next article, we'll implement agentic search, using libraries like `fast-glob` to implement support for glob and grep patterns that we can use to search for files in the local file system.
-
-We'll also upgrade our other tools so they work better and give more visibility into the file system for our agent.
+This is a huge step! Now we've got an agent which can read, write edit files with full streaming capabilities. In the next article, we'll implement a provider agnostic CLI that can switch between different model providers and improve upon the current user interface that users have.
