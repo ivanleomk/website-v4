@@ -48,16 +48,11 @@ function CodeElement({
 
       codeToHtml(codeText, {
         lang: language,
-        theme: "github-dark",
+        theme: "github-light",
         transformers: [
           {
             pre(node) {
-              // Remove the background color from the pre element
-              if (node.properties.style) {
-                node.properties.style = (
-                  node.properties.style as string
-                ).replace(/background-color:[^;]+;?/, "");
-              }
+              node.properties.style = "background-color: white; margin: 0;";
             },
           },
         ],
@@ -87,65 +82,171 @@ function CodeElement({
   return <code className={className}>{children}</code>;
 }
 
-// Separate component for code blocks with copy functionality
-function CodeBlock({ children }: { children: any }) {
-  const [copied, setCopied] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(true);
+// Language icon mapping
+const getLanguageIcon = (lang?: string): string => {
+  const icons: Record<string, string> = {
+    javascript: "JS",
+    js: "JS",
+    typescript: "TS",
+    ts: "TS",
+    tsx: "TSX",
+    jsx: "JSX",
+    python: "PY",
+    py: "PY",
+    go: "GO",
+    rust: "RS",
+    rs: "RS",
+    java: "JAVA",
+    c: "C",
+    cpp: "C++",
+    csharp: "C#",
+    cs: "C#",
+    ruby: "RB",
+    rb: "RB",
+    php: "PHP",
+    swift: "SWIFT",
+    kotlin: "KT",
+    kt: "KT",
+    html: "HTML",
+    css: "CSS",
+    scss: "SCSS",
+    json: "JSON",
+    yaml: "YAML",
+    yml: "YAML",
+    markdown: "MD",
+    md: "MD",
+    sql: "SQL",
+  };
+  return icons[lang?.toLowerCase() || ""] || lang?.toUpperCase() || "";
+};
 
-  // Check if the code block should be collapsible (supports both "ts-collapsible" and "ts collapsible")
-  const className = children?.props?.className || "";
-  const isCollapsible = className.includes("collapsible") || className.match(/language-\w+[-\s]collapsible/);
+// Separate component for code blocks with copy functionality
+function CodeBlock({
+  children,
+  title,
+  language,
+}: {
+  children: any;
+  title?: string;
+  language?: string;
+}) {
+  const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    // Extract text content from the entire children structure
     const textContent = extractTextFromElement(children);
-
     navigator.clipboard.writeText(textContent).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
   };
 
-  // Check if children is already highlighted HTML (from Shiki)
   const isHighlightedHtml =
     typeof children === "string" ||
     (children?.type === "div" && children?.props?.dangerouslySetInnerHTML);
 
+  const CodeContent = isHighlightedHtml ? "div" : "pre";
+
+  // Check if it's a terminal/bash type
+  const isTerminal =
+    language === "bash" ||
+    language === "sh" ||
+    language === "shell" ||
+    language === "zsh";
+
+  const languageIcon =
+    !isTerminal && language ? getLanguageIcon(language) : null;
+
+  // For terminal, render with $ prompt
+  const renderTerminalContent = () => {
+    const textContent = extractTextFromElement(children);
+    const lines = textContent.split("\n");
+
+    return (
+      <pre className="px-4 py-2 text-sm font-mono leading-6 w-full bg-black text-gray-100 max-h-96 overflow-y-auto m-0 overflow-x-auto rounded-none">
+        {lines.map((line, index) => (
+          <div key={index}>
+            {index === 0 && line.trim() && (
+              <span className="text-green-400 mr-2">$ </span>
+            )}
+            <span className={index === 0 ? "text-white" : "text-gray-300"}>
+              {line}
+            </span>
+          </div>
+        ))}
+      </pre>
+    );
+  };
+
+  const baseClasses =
+    "px-6 py-0 text-base leading-relaxed w-full max-h-96 overflow-y-auto m-0 overflow-x-auto whitespace-pre-wrap break-words";
+  const highlightClasses = isHighlightedHtml
+    ? "text-gray-900"
+    : "text-gray-800";
+
   return (
-    <div className="relative group mb-4">
-      <div className="absolute top-3 right-3 z-50 flex gap-2">
-        {isCollapsible && (
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white text-sm rounded transition-all duration-200"
-          >
-            {isCollapsed ? "Expand" : "Collapse"}
-          </button>
-        )}
-        <button
-          onClick={handleCopy}
-          className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white text-sm rounded transition-all duration-200"
-        >
-          {copied ? "Copied!" : "Copy"}
-        </button>
-      </div>
-      {isHighlightedHtml ? (
+    <div className="mb-4 max-w-3xl mx-auto">
+      <div className="rounded-lg overflow-hidden">
         <div
-          className={`bg-gray-900 rounded-lg p-6 overflow-x-auto [&>pre]:!bg-transparent [&>pre]:!p-0 [&>pre]:!m-0 [&>pre]:!rounded-none [&>pre]:!overflow-visible [&>pre]:text-base [&>pre]:leading-relaxed transition-all duration-300 ${
-            isCollapsible && isCollapsed ? "max-h-32 overflow-hidden" : ""
+          className={`px-4 py-2 flex items-center justify-between ${
+            isTerminal ? "bg-gray-800" : "bg-gray-100"
           }`}
         >
-          {children}
+          <div className="flex items-center gap-2">
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-500 flex items-center justify-center group cursor-pointer">
+                <span className="text-red-950 text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity leading-none">
+                  ×
+                </span>
+              </div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500 flex items-center justify-center group cursor-pointer">
+                <span className="text-yellow-950 text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity leading-none">
+                  −
+                </span>
+              </div>
+              <div className="w-3 h-3 rounded-full bg-green-500 flex items-center justify-center group cursor-pointer">
+                <span className="text-green-950 text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity leading-none">
+                  ⤢
+                </span>
+              </div>
+            </div>
+            {!isTerminal && languageIcon && (
+              <span className="text-xs font-mono ml-2 px-2 py-0.5 bg-gray-200 text-gray-700 rounded">
+                {languageIcon}
+              </span>
+            )}
+            {title && (
+              <span
+                className={`text-sm font-mono ml-2 ${
+                  isTerminal ? "text-gray-300" : "text-gray-700"
+                }`}
+              >
+                {title}
+              </span>
+            )}
+          </div>
+          <button
+            onClick={handleCopy}
+            className={`px-2 py-1 text-xs transition-colors ${
+              isTerminal
+                ? "text-gray-300 hover:text-white"
+                : "text-gray-600 hover:text-black"
+            }`}
+          >
+            {copied ? "Copied!" : "Copy"}
+          </button>
         </div>
-      ) : (
-        <pre
-          className={`text-gray-100 p-6 rounded-lg overflow-x-auto text-base leading-relaxed transition-all duration-300 ${
-            isCollapsible && isCollapsed ? "max-h-32 overflow-hidden" : ""
-          }`}
-        >
-          {children}
-        </pre>
-      )}
+        {isTerminal ? (
+          renderTerminalContent()
+        ) : (
+          <CodeContent
+            className={`
+              ${baseClasses} bg-white ${highlightClasses}
+            `}
+          >
+            {children}
+          </CodeContent>
+        )}
+      </div>
     </div>
   );
 }
@@ -169,15 +270,19 @@ const markdownComponents = {
   ),
   p: ({ children }: any) => {
     // Check if paragraph only contains an image
-    const isImageOnly = Array.isArray(children) 
-      ? children.length === 1 && children[0]?.type?.name === 'img'
-      : children?.type?.name === 'img';
-    
+    const isImageOnly = Array.isArray(children)
+      ? children.length === 1 && children[0]?.type?.name === "img"
+      : children?.type?.name === "img";
+
     if (isImageOnly) {
       return <div className="flex justify-center mb-6">{children}</div>;
     }
-    
-    return <p className="text-gray-700 text-xl leading-9 mb-6 font-serif">{children}</p>;
+
+    return (
+      <p className="text-gray-700 text-xl leading-9 mb-6 font-serif">
+        {children}
+      </p>
+    );
   },
   a: ({ href, children }: any) => (
     <Link
@@ -197,9 +302,7 @@ const markdownComponents = {
       {children}
     </ol>
   ),
-  li: ({ children }: any) => (
-    <li className="leading-9 pl-2">{children}</li>
-  ),
+  li: ({ children }: any) => <li className="leading-9 pl-2">{children}</li>,
   blockquote: ({ children }: any) => (
     <blockquote className="border-l-4 border-gray-400 pl-6 italic text-gray-700 text-xl mb-6 font-serif leading-9">
       {children}
@@ -208,7 +311,23 @@ const markdownComponents = {
   code: ({ children, className }: any) => (
     <CodeElement className={className}>{children}</CodeElement>
   ),
-  pre: ({ children }: any) => <CodeBlock>{children}</CodeBlock>,
+  pre: ({ children, node }: any) => {
+    // Extract title from meta string
+    const meta =
+      children?.props?.node?.data?.meta || children?.props?.node?.meta || "";
+    const titleMatch = meta.match(/title="([^"]+)"/);
+    const title = titleMatch ? titleMatch[1] : undefined;
+
+    // Extract language from className
+    const className = children?.props?.className || "";
+    const language = className.replace("language-", "").split(/[-\s]/)[0];
+
+    return (
+      <CodeBlock title={title} language={language}>
+        {children}
+      </CodeBlock>
+    );
+  },
   img: ({ src, alt }: any) => {
     if (!src) return null;
 

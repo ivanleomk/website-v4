@@ -25,7 +25,7 @@ export function BlogPostComponent({ post, seriesInfo }: BlogPostProps) {
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
 
   useEffect(() => {
-    const headings = document.querySelectorAll("h2, h3");
+    const headings = document.querySelectorAll("h2, h3, h4");
     const items: TocItem[] = [];
     const slugger = new GithubSlugger();
 
@@ -43,9 +43,9 @@ export function BlogPostComponent({ post, seriesInfo }: BlogPostProps) {
   return (
     <div className="relative">
       {/* <TableOfContents items={tocItems} tocRef={tocRef} /> */}
-      <div className="max-w-7xl mx-auto px-4 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-8">
         <div className="lg:grid lg:grid-cols-12 lg:gap-12">
-          <aside className="lg:col-span-3 lg:sticky lg:top-24 lg:self-start hidden lg:block">
+          <aside className="lg:col-span-3 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-6rem)] hidden lg:block">
             <ArticleTOC items={tocItems} />
           </aside>
           <article className="lg:col-span-9 pb-8 max-w-5xl mx-auto lg:mx-0 lg:px-0 px-4">
