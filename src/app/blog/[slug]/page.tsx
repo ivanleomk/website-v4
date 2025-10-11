@@ -2,7 +2,6 @@ import { generatePost, generateStaticSlugs, generateAllPosts } from "@/lib/posts
 import { BlogPostComponent } from "@/components/blog-post";
 import { Navigation } from "@/components/Navigation";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { Metadata } from "next";
 import { getSeriesInfo } from "@/lib/series";
 import { readFileSync } from 'fs';

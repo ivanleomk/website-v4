@@ -311,7 +311,7 @@ const markdownComponents = {
   code: ({ children, className }: any) => (
     <CodeElement className={className}>{children}</CodeElement>
   ),
-  pre: ({ children, node }: any) => {
+  pre: ({ children }: any) => {
     // Extract title from meta string
     const meta =
       children?.props?.node?.data?.meta || children?.props?.node?.meta || "";
