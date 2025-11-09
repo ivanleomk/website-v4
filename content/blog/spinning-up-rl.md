@@ -12,6 +12,8 @@ series:
 
 ## Spinning Up RL
 
+> I've been working through [Will Brown](https://x.com/willccbb) and [Kyle Corbitt](https://x.com/corbtt)'s [Production Ready Agent Engineering Course](https://maven.com/will-brown-kyle-corbitt/agents-mcp-rl) and I'm really enjoying it so far. I was inspired by one of the notebooks that had a simple walkthrough on the basic RL loop and thought I'd tinker a bit with it to see how each parameter affects the final policy.
+
 Reinforcement learning is simple - by teaching a model what's good and bad, it figures out how to make better decisions through trial and error. This is done by giving points for good actions and penalties for bad ones.
 
 In this article, we'll explore this by building a simple reinforcement learning environment from scratch - a simple number guesser. This will help us to understand the core RL loop and the different ways that we can design rewards to guide learning.
