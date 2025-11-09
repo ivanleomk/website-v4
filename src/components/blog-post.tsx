@@ -43,30 +43,30 @@ export function BlogPostComponent({ post, seriesInfo }: BlogPostProps) {
   return (
     <div className="relative">
       {/* <TableOfContents items={tocItems} tocRef={tocRef} /> */}
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-8">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-12">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-12">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-16">
           <aside className="lg:col-span-3 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-6rem)] hidden lg:block">
             <ArticleTOC items={tocItems} />
           </aside>
-          <article className="lg:col-span-9 pb-8 max-w-5xl mx-auto lg:mx-0 lg:px-0 px-4">
-            <div className="lg:hidden">
+          <article className="lg:col-span-9 pb-12 max-w-4xl mx-auto lg:mx-0 lg:px-0 px-6">
+            <div className="lg:hidden mb-12">
               <ArticleTOC items={tocItems} />
             </div>
-        <header className="mb-8">
+        <header className="mb-12">
           {/* Title */}
-          <h1 className="text-6xl font-bold mb-8 text-black leading-tight">
+          <h1 className="text-6xl font-bold mb-10 text-black leading-tight">
             {post.title}
           </h1>
 
           {/* Description */}
           {post.description && (
-            <p className="text-2xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-2xl text-gray-600 mb-10 leading-relaxed">
               {post.description}
             </p>
           )}
 
           {/* Horizontal Rule */}
-          <hr className="border-gray-200 mb-8" />
+          <hr className="border-gray-200 mb-10" />
 
           {/* Categories and Date */}
           <div className="flex flex-wrap justify-between items-start gap-4">
@@ -117,7 +117,7 @@ export function BlogPostComponent({ post, seriesInfo }: BlogPostProps) {
         
         {/* Newsletter Signup when no series */}
         {!seriesInfo && (
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-8">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-12">
             <NewsletterSignup variant="embedded" />
           </div>
         )}
