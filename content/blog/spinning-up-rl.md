@@ -18,6 +18,8 @@ Reinforcement learning is simple - by teaching a model what's good and bad, it f
 
 In this article, we'll explore this by building a simple reinforcement learning environment from scratch - a simple number guesser. This will help us to understand the core RL loop and the different ways that we can design rewards to guide learning.
 
+I've uploaded the [code here](https://github.com/ivanleomk/spinning-up-rl.git) for you to play around with.
+
 ### Basic Terms
 
 The process works like this: the model takes actions in an environment until it reaches the end of a game. At the end, it receives a reward that tells it how well it performed. We then look back at each choice made during this run—called a rollout—and update the policy to make better decisions next time.
@@ -28,7 +30,7 @@ Here are the key concepts we'll be working with:
 2. **State**: A snapshot of the environment. For our number guesser, there's effectively just one state since the agent always starts from the same position.
 3. **Action**: A choice the agent can make. Here, it's guessing a specific number, like 42.
 4. **Reward Function**: The scoring system that tells the agent how good its action was. It takes a guess and returns a value we use to update the policy.
-5. **Policy**: The agent's strategy for choosing actions. In our case, it's the rule the agent uses to decide which number to guess next. We update this policy to make actions that lead to better rewards more likely.
+5. **Policy**: The agent's strategy for choosing actions. In our case, it's the weights of the model that causes the agent to decide which number to guess next.
 
 How we decide on the reward and how we update the policy is the core of reinforcement learning. Let's explore these concepts in greater detail
 
@@ -461,7 +463,7 @@ In stark contrast, the linear reward function fails because its signal is too di
 
 ## Conclusion
 
-Our number-guessing agent operated in a simple world with only one state. Binary rewards are simple and effective in this case because they drastically overfit to the single target number quickly, but this is a liability in more complex and long horizon tasks.
+Our number-guessing agent operated in a simple world with only one state. Binary rewards are simple and effective in this case because they drastically overfit to the single target number quickly, but this is a liability in more complex and long horizon tasks. Remember, this is because in this task, there is only one correct answer - the target number, making binary rewards exceptionally well suited for this task
 
 what happens, for instance, when an agent must choose between multiple actions, each with its own unknown probability of success? This is the classic multi-armed bandit problem, where you have to decide which slot machine (or "bandit") to play to maximize your winnings over time. It introduces a critical trade-off: should you exploit the action that has given the best rewards so far, or should you explore other actions that might be even better?
 
