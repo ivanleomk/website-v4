@@ -1,116 +1,181 @@
-import { BlogCard } from "@/components/BlogCard";
-import { Hero } from "@/components/Hero";
-import Image from "next/image";
+import { getAllPosts } from "@/lib/blog";
+import { Navigation } from "@/components/Navigation";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import seriesDefinitions from "@/data/series.json";
 
-export default function Home() {
+export default async function Home() {
+  const posts = await getAllPosts();
+
+  const sortedPosts = [...posts].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
+  const seriesList = Object.entries(seriesDefinitions).map(
+    ([name, description]) => {
+      const seriesPosts = posts
+        .filter((post) => post.series?.includes(name))
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      return {
+        id: name.toLowerCase().replace(/\s+/g, "-"),
+        title: name,
+        description,
+        totalParts: seriesPosts.length,
+        status: "In Progress" as const,
+        posts: seriesPosts,
+      };
+    }
+  );
+
   return (
-    <div>
-      {/* Hero Section */}
-      <Hero />
+    <div className="min-h-screen bg-white">
+      <Navigation />
 
-      {/* About Section */}
-      <section id="about" className="bg-gray-50 px-8 sm:px-20 py-20 pb-32">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 items-center">
-            {/* Profile Image */}
-            <div className="lg:col-span-2 flex justify-center">
-              <div className="w-64 h-80">
-                <Image
-                  src="/profile.png"
-                  alt="Profile photo"
-                  width={256}
-                  height={320}
-                  className="rounded-2xl shadow-lg object-cover w-full h-full"
-                />
-              </div>
-            </div>
-
-            {/* Text Content */}
-            <div className="lg:col-span-3">
-              <div className="text-center lg:text-left mb-8">
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2 font-[family-name:var(--font-lato)]">
-                  ABOUT ME
-                </p>
-                <h2 className="text-3xl sm:text-4xl font-normal text-gray-900 font-[family-name:var(--font-crimson)]">
-                  Ivan Leo
-                </h2>
-              </div>
-              <div className="space-y-5 text-base text-gray-700 font-[family-name:var(--font-lato)] leading-relaxed">
-                <p>
-                  Hailing from the sunny island of Singapore, I&apos;m a
-                  Research Engineer passionate about Language Models. I maintain
-                  open source libraries like Instructor (3M+ downloads) and
-                  actively contribute to projects like Kura.
-                </p>
-                <p>
-                  I&apos;ve had the privilege of working with clients like
-                  Hubspot and Raycast, and recently worked on a RAG course taken
-                  by engineers from OpenAI, Anthropic, DeepMind, and Bain.
-                </p>
-                <p>
-                  I&apos;m also a big fan of the outdoors, and love to go
-                  hiking, biking, and swimming. When I&apos;m not working, you
-                  can find me exploring the great outdoors or Singapore&apos;s
-                  fantastic food scene.
-                </p>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Blog Cards Section */}
-      <section id="blog" className="bg-gray-50 px-8 sm:px-20 py-16">
-        <div className="max-w-6xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-8">
-            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2 font-[family-name:var(--font-lato)]">
-              RECENT THOUGHTS
-            </p>
-            <h2 className="text-4xl sm:text-5xl font-normal text-gray-900 font-[family-name:var(--font-crimson)]">
-              Ideas worth sharing,
-              <br />
-              all in one place
-            </h2>
-          </div>
-
-          {/* View All Articles Link */}
-          <div className="text-center mb-12">
-            <Link
-              href="/blog"
-              className="text-gray-600 hover:text-gray-900 transition-colors duration-200 font-[family-name:var(--font-lato)] text-sm tracking-wide"
+      <main className="max-w-4xl mx-auto px-6 py-12 md:py-16">
+        {/* Hero Section */}
+        <section className="mb-20 max-w-2xl">
+          <h1 className="text-4xl md:text-5xl font-serif font-medium tracking-tight mb-6 leading-tight text-black">
+            Exploring the frontiers of{" "}
+            <span className="italic">language models</span>,{" "}
+            <span className="italic">agents</span>, and{" "}
+            <span className="italic">software design</span>.
+          </h1>
+          <p className="text-xl text-gray-500 font-serif leading-relaxed mb-4">
+            A collection of notes, essays, and technical deep dives by Ivan Leo.
+          </p>
+          <p className="text-base text-gray-500 font-sans">
+            Currently building general agents for knowledge work at{" "}
+            <a
+              href="https://manus.im"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-black font-medium hover:underline"
             >
-              View all articles →
+              Manus
+            </a>
+            .
+          </p>
+        </section>
+
+        {/* Featured Series Section */}
+        <section className="mb-24">
+          <div className="flex items-baseline justify-between mb-8 border-b border-gray-200 pb-4">
+            <h2 className="text-sm font-sans font-bold uppercase tracking-widest text-gray-500">
+              Featured Series
+            </h2>
+            <Link
+              href="/series"
+              className="text-sm font-sans font-medium hover:text-black flex items-center gap-1 group text-gray-600"
+            >
+              View all series
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <BlogCard
-              slug="write-stupid-evals"
-              imageUrl="/article_1.png"
-              title="Write Stupid Evals"
-              description="Start simple with evals and build up complexity gradually. The best evaluation isn't the most sophisticated one - it's the one you'll actually use consistently."
-            />
-            <BlogCard
-              slug="synthetic-data-is-not-a-free-lunch"
-              imageUrl="/article_2.png"
-              title="Synthetic Data is not a Free Lunch"
-              description="Hard-earned lessons from generating millions of synthetic data points and why validation matters more than volume. Success requires careful thought and systematic validation."
-            />
-            <BlogCard
-              slug="youre-probably-not-doing-experiments-right"
-              imageUrl="/article_3.png"
-              title="You're probably not doing experiments right"
-              description="Three key factors that make the biggest difference in LLM experiments: being clear about what you're varying, investing in infrastructure, and doing sensitivity analysis."
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
+            {seriesList.slice(0, 2).map((s) => (
+              <Link
+                key={s.id}
+                href={`/series#${s.id}`}
+                className="group block h-full"
+              >
+                <div className="h-full flex flex-col">
+                  <div className="mb-4 flex items-center gap-3">
+                    <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-sans font-medium bg-gray-100 text-gray-700">
+                      {s.totalParts} Parts
+                    </span>
+                    <span className="text-xs font-sans font-medium text-amber-600">
+                      {s.status}
+                    </span>
+                  </div>
+                  <h3 className="text-2xl font-serif font-medium mb-3 group-hover:text-gray-600 transition-colors leading-tight text-black">
+                    {s.title}
+                  </h3>
+                  <p className="text-gray-500 font-serif leading-relaxed mb-6 flex-grow">
+                    {s.description}
+                  </p>
+                  <div className="mt-auto text-sm font-sans font-medium text-black flex items-center gap-1 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                    Start Reading <ArrowRight className="w-3 h-3" />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Latest Articles Section */}
+        <section>
+          <div className="flex items-baseline justify-between mb-8 border-b border-gray-200 pb-4">
+            <h2 className="text-sm font-sans font-bold uppercase tracking-widest text-gray-500">
+              Latest Articles
+            </h2>
+            <Link
+              href="/blog"
+              className="text-sm font-sans font-medium hover:text-black flex items-center gap-1 group text-gray-600"
+            >
+              Archive
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
+
+          <div className="space-y-8 md:space-y-12">
+            {sortedPosts.slice(0, 8).map((post) => (
+              <article key={post.slug} className="group">
+                <Link href={`/blog/${post.slug}`} className="block">
+                  <h3 className="text-xl md:text-2xl font-serif font-medium mb-2 group-hover:text-gray-600 transition-colors text-black">
+                    {post.title}
+                  </h3>
+                  <p className="text-gray-500 font-serif leading-relaxed mb-3 text-sm md:text-base">
+                    {post.description}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-sans text-gray-500">
+                    <span>
+                      {new Date(post.date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </span>
+                    {post.series && post.series.length > 0 && (
+                      <>
+                        <span className="text-gray-300">·</span>
+                        <span className="text-black font-medium">
+                          {post.series[0]}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </Link>
+              </article>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 py-8 mt-16">
+        <div className="max-w-4xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-sans text-gray-500">
+          <p>© {new Date().getFullYear()} Ivan Leo. All rights reserved.</p>
+          <div className="flex gap-6">
+            <a
+              href="https://twitter.com/ivanleomk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-black transition-colors"
+            >
+              Twitter
+            </a>
+            <a
+              href="https://github.com/ivanleomk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-black transition-colors"
+            >
+              GitHub
+            </a>
           </div>
         </div>
-      </section>
-
-      {/* Bottom margin for scrolling */}
-      <div className="h-32 bg-gray-50"></div>
+      </footer>
     </div>
   );
 }

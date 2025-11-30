@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 
 interface TocItem {
   id: string;
@@ -11,6 +11,7 @@ interface TocItem {
 
 export function ArticleTOC({ items }: { items: TocItem[] }) {
   const [activeId, setActiveId] = useState<string>("");
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const updateActiveHeading = () => {
@@ -42,69 +43,74 @@ export function ArticleTOC({ items }: { items: TocItem[] }) {
     return () => window.removeEventListener("scroll", updateActiveHeading);
   }, [items]);
 
-  const filteredItems = items.filter(item => 
-    !item.text.startsWith("Series:") && item.text !== "Stay Updated"
+  const filteredItems = items.filter(
+    (item) => !item.text.startsWith("Series:") && item.text !== "Stay Updated"
   );
 
   if (filteredItems.length === 0) return null;
 
-  return (
-    <div className="space-y-6">
-      <Link
-        href="/blog"
-        className="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors duration-200 group sticky top-24 bg-gray-50 pb-4 z-10"
-      >
-        <svg
-          className="h-4 w-4 transform group-hover:-translate-x-1 transition-transform duration-200"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-        Back to articles
-      </Link>
-      <nav>
-        <h2 className="text-2xl font-bold mb-6 text-black">Table of Contents</h2>
-        <ul className="space-y-4 lg:space-y-3">
-          {filteredItems.map(({ id, text, level }) => {
-            const isActive = activeId === id;
-            const paddingLeft = level === 2 ? "pl-0" : level === 3 ? "pl-6" : "pl-12";
+  const TocContent = () => (
+    <ul className="space-y-2">
+      {filteredItems.map(({ id, text, level }) => {
+        const isActive = activeId === id;
+        const paddingLeft =
+          level === 2 ? "pl-0" : level === 3 ? "pl-4" : "pl-8";
 
-            return (
-              <li key={id} className={paddingLeft}>
-                <a
-                  href={`#${id}`}
-                  className={`inline-block text-base transition-colors duration-200 hover:text-black ${
-                    isActive ? "text-black font-medium" : "text-gray-600"
-                  }`}
-                  style={{
-                    textDecorationLine: "underline",
-                    textDecorationStyle: "dotted",
-                    textDecorationColor: "rgb(156, 163, 175)",
-                    textDecorationThickness: "2px",
-                    textUnderlineOffset: "4px",
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById(id)?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                  }}
-                >
-                  {text}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
+        return (
+          <li key={id} className={paddingLeft}>
+            <a
+              href={`#${id}`}
+              className={`block text-sm font-sans leading-relaxed transition-colors duration-200 hover:text-black ${
+                isActive ? "text-black font-medium" : "text-gray-500"
+              }`}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsOpen(false);
+                document.getElementById(id)?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }}
+            >
+              {text}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  );
+
+  return (
+    <>
+      {/* Mobile: Collapsible */}
+      <nav className="lg:hidden border border-gray-200 rounded-lg overflow-hidden">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full flex items-center justify-between p-4 bg-gray-50 text-left"
+        >
+          <span className="text-xs font-sans font-bold uppercase tracking-widest text-gray-500">
+            On this page
+          </span>
+          <ChevronDown
+            className={`w-4 h-4 text-gray-500 transition-transform ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+        {isOpen && (
+          <div className="p-4 pt-0 bg-gray-50 max-h-64 overflow-y-auto">
+            <TocContent />
+          </div>
+        )}
       </nav>
-    </div>
+
+      {/* Desktop: Always visible */}
+      <nav className="hidden lg:block">
+        <h2 className="text-xs font-sans font-bold uppercase tracking-widest text-gray-500 mb-4">
+          On this page
+        </h2>
+        <TocContent />
+      </nav>
+    </>
   );
 }

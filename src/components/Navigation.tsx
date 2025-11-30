@@ -1,49 +1,43 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export function Navigation() {
   const pathname = usePathname();
-  const isHomePage = pathname === "/";
 
-  const handleAboutClick = (e: React.MouseEvent) => {
-    if (isHomePage) {
-      e.preventDefault();
-      document.getElementById("about")?.scrollIntoView({
-        behavior: "smooth",
-      });
-    }
-  };
+  const navItems = [
+    { href: "/", label: "Index" },
+    { href: "/series", label: "Series" },
+    { href: "/blog", label: "Articles" },
+  ];
 
   return (
-    <nav className="relative z-10 flex justify-between items-center px-8 py-6 sm:px-20">
-      <Link
-        href="/"
-        className="text-2xl font-bold text-gray-900 hover:text-gray-700"
-      >
-        IL
-      </Link>
-      <div className="flex gap-8 text-gray-700 font-[family-name:var(--font-lato)]">
-        {isHomePage ? (
-          <a
-            href="#about"
-            className="hover:text-gray-900 cursor-pointer"
-            onClick={handleAboutClick}
-          >
-            About
-          </a>
-        ) : (
-          <Link href="/#about" className="hover:text-gray-900">
-            About
-          </Link>
-        )}
-        <Link href="/blog" className="hover:text-gray-900">
-          Blog
+    <header className="border-b border-gray-200 sticky top-0 z-50 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+      <div className="max-w-4xl mx-auto px-6 flex h-16 items-center justify-between">
+        <Link
+          href="/"
+          className="text-xl font-serif font-medium tracking-tight hover:text-gray-600 transition-colors text-black"
+        >
+          Ivan Leo
         </Link>
-        <a href="/projects" className="hover:text-gray-900">
-          Projects
-        </a>
+
+        <nav className="flex items-center gap-6 text-sm font-sans font-medium text-gray-500">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "transition-colors hover:text-black",
+                pathname === item.href &&
+                  "text-black underline decoration-black decoration-2 underline-offset-4"
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
       </div>
-    </nav>
+    </header>
   );
 }

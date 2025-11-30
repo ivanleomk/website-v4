@@ -11,7 +11,6 @@ interface MarkdownProps {
   content: string;
 }
 
-// Helper function to recursively extract text from React elements
 function extractTextFromElement(element: any): string {
   if (typeof element === "string") {
     return element;
@@ -28,7 +27,6 @@ function extractTextFromElement(element: any): string {
   return "";
 }
 
-// Separate component for inline/block code with Shiki highlighting
 function CodeElement({
   children,
   className,
@@ -42,7 +40,6 @@ function CodeElement({
   useEffect(() => {
     if (className && children) {
       const fullLanguage = className.replace("language-", "");
-      // Support both "ts-collapsible" and "ts collapsible" formats
       const language = fullLanguage.split(/[-\s]/)[0];
       const codeText = extractTextFromElement(children);
 
@@ -61,7 +58,6 @@ function CodeElement({
           setHighlightedCode(html);
         })
         .catch(() => {
-          // Fallback if language not supported
           setHighlightedCode(`<pre><code>${codeText}</code></pre>`);
         });
     }
@@ -69,7 +65,7 @@ function CodeElement({
 
   if (isInline) {
     return (
-      <code className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono text-gray-800">
+      <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800">
         {children}
       </code>
     );
@@ -82,7 +78,6 @@ function CodeElement({
   return <code className={className}>{children}</code>;
 }
 
-// Language icon mapping
 const getLanguageIcon = (lang?: string): string => {
   const icons: Record<string, string> = {
     javascript: "JS",
@@ -120,7 +115,6 @@ const getLanguageIcon = (lang?: string): string => {
   return icons[lang?.toLowerCase() || ""] || lang?.toUpperCase() || "";
 };
 
-// Separate component for code blocks with copy functionality
 function CodeBlock({
   children,
   title,
@@ -146,7 +140,6 @@ function CodeBlock({
 
   const CodeContent = isHighlightedHtml ? "div" : "pre";
 
-  // Check if it's a terminal/bash type
   const isTerminal =
     language === "bash" ||
     language === "sh" ||
@@ -156,13 +149,12 @@ function CodeBlock({
   const languageIcon =
     !isTerminal && language ? getLanguageIcon(language) : null;
 
-  // For terminal, render with $ prompt
   const renderTerminalContent = () => {
     const textContent = extractTextFromElement(children);
     const lines = textContent.split("\n");
 
     return (
-      <pre className="px-4 py-2 text-sm font-mono leading-6 w-full bg-black text-gray-100 max-h-96 overflow-y-auto m-0 overflow-x-auto rounded-none">
+      <pre className="px-4 py-3 text-sm font-mono leading-relaxed w-full bg-gray-900 text-gray-100 max-h-96 overflow-y-auto m-0 overflow-x-auto">
         {lines.map((line, index) => (
           <div key={index}>
             {index === 0 && line.trim() && (
@@ -178,46 +170,34 @@ function CodeBlock({
   };
 
   const baseClasses =
-    "px-6 py-0 text-base leading-relaxed w-full max-h-96 overflow-y-auto m-0 overflow-x-auto whitespace-pre-wrap break-words";
+    "px-4 py-3 text-sm leading-relaxed w-full max-h-96 overflow-y-auto m-0 overflow-x-auto whitespace-pre-wrap break-words";
   const highlightClasses = isHighlightedHtml
     ? "text-gray-900"
     : "text-gray-800";
 
   return (
-    <div className="mb-4 max-w-3xl mx-auto">
-      <div className="rounded-lg overflow-hidden">
+    <div className="mb-6">
+      <div className="rounded-lg overflow-hidden border border-gray-200">
         <div
           className={`px-4 py-2 flex items-center justify-between ${
-            isTerminal ? "bg-gray-800" : "bg-gray-100"
+            isTerminal ? "bg-gray-800" : "bg-gray-50"
           }`}
         >
           <div className="flex items-center gap-2">
             <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-red-500 flex items-center justify-center group cursor-pointer">
-                <span className="text-red-950 text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity leading-none">
-                  ×
-                </span>
-              </div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500 flex items-center justify-center group cursor-pointer">
-                <span className="text-yellow-950 text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity leading-none">
-                  −
-                </span>
-              </div>
-              <div className="w-3 h-3 rounded-full bg-green-500 flex items-center justify-center group cursor-pointer">
-                <span className="text-green-950 text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity leading-none">
-                  ⤢
-                </span>
-              </div>
+              <div className="w-2.5 h-2.5 rounded-full bg-gray-300" />
+              <div className="w-2.5 h-2.5 rounded-full bg-gray-300" />
+              <div className="w-2.5 h-2.5 rounded-full bg-gray-300" />
             </div>
             {!isTerminal && languageIcon && (
-              <span className="text-xs font-mono ml-2 px-2 py-0.5 bg-gray-200 text-gray-700 rounded">
+              <span className="text-xs font-mono ml-2 text-gray-500">
                 {languageIcon}
               </span>
             )}
             {title && (
               <span
-                className={`text-sm font-mono ml-2 ${
-                  isTerminal ? "text-gray-300" : "text-gray-700"
+                className={`text-xs font-mono ml-2 ${
+                  isTerminal ? "text-gray-300" : "text-gray-500"
                 }`}
               >
                 {title}
@@ -229,7 +209,7 @@ function CodeBlock({
             className={`px-2 py-1 text-xs transition-colors ${
               isTerminal
                 ? "text-gray-300 hover:text-white"
-                : "text-gray-600 hover:text-black"
+                : "text-gray-500 hover:text-black"
             }`}
           >
             {copied ? "Copied!" : "Copy"}
@@ -238,11 +218,7 @@ function CodeBlock({
         {isTerminal ? (
           renderTerminalContent()
         ) : (
-          <CodeContent
-            className={`
-              ${baseClasses} bg-white ${highlightClasses}
-            `}
-          >
+          <CodeContent className={`${baseClasses} bg-white ${highlightClasses}`}>
             {children}
           </CodeContent>
         )}
@@ -251,25 +227,32 @@ function CodeBlock({
   );
 }
 
-// Custom components for react-markdown
 const markdownComponents = {
   h1: ({ children, id }: any) => (
-    <h1 id={id} className="text-3xl font-bold text-black mb-6 mt-8">
+    <h1
+      id={id}
+      className="text-3xl font-serif font-medium text-black mb-6 mt-12"
+    >
       {children}
     </h1>
   ),
   h2: ({ children, id }: any) => (
-    <h2 id={id} className="text-2xl font-bold text-black mb-4 mt-12">
+    <h2
+      id={id}
+      className="text-2xl font-serif font-medium text-black mb-4 mt-12"
+    >
       {children}
     </h2>
   ),
   h3: ({ children, id }: any) => (
-    <h3 id={id} className="text-xl font-semibold text-black mb-3 mt-8">
+    <h3
+      id={id}
+      className="text-xl font-serif font-medium text-black mb-3 mt-8"
+    >
       {children}
     </h3>
   ),
   p: ({ children }: any) => {
-    // Check if paragraph only contains an image
     const isImageOnly = Array.isArray(children)
       ? children.length === 1 && children[0]?.type?.name === "img"
       : children?.type?.name === "img";
@@ -279,7 +262,7 @@ const markdownComponents = {
     }
 
     return (
-      <p className="text-gray-700 text-xl leading-9 mb-6 font-serif">
+      <p className="text-gray-700 text-base leading-7 mb-6 font-serif">
         {children}
       </p>
     );
@@ -287,24 +270,24 @@ const markdownComponents = {
   a: ({ href, children }: any) => (
     <Link
       href={href || "#"}
-      className="text-black underline hover:no-underline transition-all duration-200"
+      className="text-black underline underline-offset-2 hover:text-gray-600 transition-colors"
     >
       {children}
     </Link>
   ),
   ul: ({ children }: any) => (
-    <ul className="list-disc list-outside mb-6 space-y-2 text-gray-700 text-xl ml-6 font-serif">
+    <ul className="list-disc list-outside mb-6 space-y-1.5 text-gray-700 text-base ml-6 font-serif">
       {children}
     </ul>
   ),
   ol: ({ children }: any) => (
-    <ol className="list-decimal list-outside mb-6 space-y-2 text-gray-700 text-xl ml-6 font-serif">
+    <ol className="list-decimal list-outside mb-6 space-y-1.5 text-gray-700 text-base ml-6 font-serif">
       {children}
     </ol>
   ),
-  li: ({ children }: any) => <li className="leading-9 pl-2">{children}</li>,
+  li: ({ children }: any) => <li className="leading-7 pl-1">{children}</li>,
   blockquote: ({ children }: any) => (
-    <blockquote className="border-l-4 border-gray-400 pl-6 italic text-gray-700 text-xl mb-6 font-serif leading-9">
+    <blockquote className="border-l-2 border-gray-300 pl-6 italic text-gray-600 text-base mb-6 font-serif leading-7">
       {children}
     </blockquote>
   ),
@@ -312,13 +295,11 @@ const markdownComponents = {
     <CodeElement className={className}>{children}</CodeElement>
   ),
   pre: ({ children }: any) => {
-    // Extract title from meta string
     const meta =
       children?.props?.node?.data?.meta || children?.props?.node?.meta || "";
     const titleMatch = meta.match(/title="([^"]+)"/);
     const title = titleMatch ? titleMatch[1] : undefined;
 
-    // Extract language from className
     const className = children?.props?.className || "";
     const language = className.replace("language-", "").split(/[-\s]/)[0];
 
@@ -331,13 +312,11 @@ const markdownComponents = {
   img: ({ src, alt }: any) => {
     if (!src) return null;
 
-    // Handle local image paths - convert ./images/ to /images/
     let imageSrc = src;
     if (src.startsWith("./images/")) {
       imageSrc = src.replace("./", "/");
     }
 
-    // For video files, render as video element instead of Image
     if (
       imageSrc.endsWith(".mp4") ||
       imageSrc.endsWith(".webm") ||
@@ -349,7 +328,7 @@ const markdownComponents = {
           controls
           width={800}
           height={400}
-          className="rounded-lg w-full max-w-3xl"
+          className="rounded-lg w-full"
         >
           Your browser does not support the video tag.
         </video>
@@ -367,23 +346,25 @@ const markdownComponents = {
     );
   },
   table: ({ children }: any) => (
-    <div className="overflow-x-auto mb-4">
-      <table className="min-w-full border-collapse border border-gray-300">
+    <div className="overflow-x-auto mb-6">
+      <table className="min-w-full border-collapse border border-gray-200 text-sm">
         {children}
       </table>
     </div>
   ),
   th: ({ children }: any) => (
-    <th className="border border-gray-300 px-4 py-2 bg-gray-100 text-left font-semibold">
+    <th className="border border-gray-200 px-4 py-2 bg-gray-50 text-left font-medium text-black">
       {children}
     </th>
   ),
   td: ({ children }: any) => (
-    <td className="border border-gray-300 px-4 py-2">{children}</td>
+    <td className="border border-gray-200 px-4 py-2 text-gray-700">
+      {children}
+    </td>
   ),
-  hr: () => <hr className="border-t border-gray-300 my-8" />,
+  hr: () => <hr className="border-t border-gray-200 my-8" />,
   strong: ({ children }: any) => (
-    <strong className="font-semibold text-black">{children}</strong>
+    <strong className="font-medium text-black">{children}</strong>
   ),
   em: ({ children }: any) => <em className="italic">{children}</em>,
 };

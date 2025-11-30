@@ -9,6 +9,7 @@ import { SeriesNavigation } from "./SeriesNavigation";
 import { SeriesInfo } from "@/lib/series";
 import { NewsletterSignup } from "./NewsletterSignup";
 import { ArticleTOC } from "./ArticleTOC";
+import { ArrowLeft } from "lucide-react";
 
 interface BlogPostProps {
   post: BlogPost;
@@ -19,6 +20,13 @@ interface TocItem {
   id: string;
   text: string;
   level: number;
+}
+
+function estimateReadTime(content: string): string {
+  const wordsPerMinute = 200;
+  const words = content.split(/\s+/).length;
+  const minutes = Math.ceil(words / wordsPerMinute);
+  return `${minutes} min read`;
 }
 
 export function BlogPostComponent({ post, seriesInfo }: BlogPostProps) {
@@ -41,91 +49,84 @@ export function BlogPostComponent({ post, seriesInfo }: BlogPostProps) {
   }, [post.content]);
 
   return (
-    <div className="relative">
-      {/* <TableOfContents items={tocItems} tocRef={tocRef} /> */}
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-12">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-16">
-          <aside className="lg:col-span-3 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-6rem)] hidden lg:block">
-            <ArticleTOC items={tocItems} />
-          </aside>
-          <article className="lg:col-span-9 pb-12 max-w-4xl mx-auto lg:mx-0 lg:px-0 px-6">
-            <div className="lg:hidden mb-12">
-              <ArticleTOC items={tocItems} />
-            </div>
-        <header className="mb-12">
+    <main className="max-w-4xl mx-auto px-6 py-12 md:py-16">
+      {/* Back link */}
+      <Link
+        href="/blog"
+        className="inline-flex items-center gap-2 text-xs md:text-sm font-sans text-gray-500 hover:text-black transition-colors mb-6 md:mb-12 group"
+      >
+        <ArrowLeft className="w-3 h-3 md:w-4 md:h-4 transition-transform group-hover:-translate-x-1" />
+        Back to articles
+      </Link>
+
+      <article>
+        {/* Header */}
+        <header className="mb-8 md:mb-12 border-b border-gray-200 pb-8 md:pb-12">
           {/* Title */}
-          <h1 className="text-6xl font-bold mb-10 text-black leading-tight">
+          <h1 className="text-3xl md:text-5xl font-serif font-medium tracking-tight mb-3 md:mb-4 leading-tight text-black">
             {post.title}
           </h1>
 
           {/* Description */}
           {post.description && (
-            <p className="text-2xl text-gray-600 mb-10 leading-relaxed">
+            <p className="text-base md:text-xl text-gray-500 font-serif leading-relaxed mb-4 md:mb-6">
               {post.description}
             </p>
           )}
 
-          {/* Horizontal Rule */}
-          <hr className="border-gray-200 mb-10" />
-
-          {/* Categories and Date */}
-          <div className="flex flex-wrap justify-between items-start gap-4">
-            {post.categories.length > 0 && (
-              <div className="flex flex-wrap gap-3">
-                {post.categories.map((category) => (
-                  <Link
-                    key={category}
-                    href={`/blog?tags=${encodeURIComponent(category)}#posts`}
-                    className="text-gray-800 font-normal text-sm cursor-pointer relative inline-block group hover:-translate-y-0.5 transition-transform duration-300 ease-out"
-                  >
-                    {category}
-                    <div className="absolute -bottom-1 left-0 h-0.5 bg-gray-800 rounded-full w-0 group-hover:w-1/2 transition-all duration-300 ease-out"></div>
-                    <div className="absolute -bottom-1 right-0 h-0.5 bg-gray-800 rounded-full w-0 group-hover:w-1/2 transition-all duration-300 ease-out"></div>
-                  </Link>
-                ))}
-              </div>
+          {/* Meta */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs md:text-sm font-sans text-gray-500">
+            <time dateTime={post.date}>
+              {new Date(post.date).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </time>
+            <span className="text-gray-300">·</span>
+            <span>{estimateReadTime(post.content)}</span>
+            {post.series && post.series.length > 0 && (
+              <>
+                <span className="text-gray-300">·</span>
+                <Link
+                  href={`/series#${post.series[0].toLowerCase().replace(/\s+/g, "-")}`}
+                  className="text-black font-medium hover:underline"
+                >
+                  {post.series[0]}
+                </Link>
+              </>
             )}
-            <div className="text-gray-500 text-sm">
-              <time dateTime={post.date}>
-                {(() => {
-                  const date = new Date(post.date);
-                  const now = new Date();
-                  const diffTime = Math.abs(now.getTime() - date.getTime());
-                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                  if (diffDays < 30) {
-                    return `Written ${diffDays} day${
-                      diffDays === 1 ? "" : "s"
-                    } ago`;
-                  } else if (diffDays < 365) {
-                    const months = Math.floor(diffDays / 30);
-                    return `Written ${months} month${
-                      months === 1 ? "" : "s"
-                    } ago`;
-                  } else {
-                    const years = Math.floor(diffDays / 365);
-                    return `Written ${years} year${years === 1 ? "" : "s"} ago`;
-                  }
-                })()}
-              </time>
-            </div>
           </div>
         </header>
-        
-        {/* Series Navigation */}
-        {seriesInfo && <SeriesNavigation seriesInfo={seriesInfo} />}
-        
-        {/* Newsletter Signup when no series */}
-        {!seriesInfo && (
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-12">
-            <NewsletterSignup variant="embedded" />
-          </div>
-        )}
-        
-        <Markdown content={post.content} />
-          </article>
+
+        {/* Table of Contents - Mobile */}
+        <div className="lg:hidden mb-12">
+          <ArticleTOC items={tocItems} />
         </div>
-      </div>
-    </div>
+
+        {/* Content Layout */}
+        <div className="lg:grid lg:grid-cols-12 lg:gap-12">
+          {/* Sidebar TOC - Desktop */}
+          <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24 lg:self-start">
+            <ArticleTOC items={tocItems} />
+          </aside>
+
+          {/* Main Content */}
+          <div className="lg:col-span-9">
+            {/* Series Navigation */}
+            {seriesInfo && <SeriesNavigation seriesInfo={seriesInfo} />}
+
+            {/* Newsletter Signup when no series */}
+            {!seriesInfo && (
+              <div className="border border-gray-200 rounded-lg p-6 mb-12 bg-gray-50">
+                <NewsletterSignup variant="embedded" />
+              </div>
+            )}
+
+            <Markdown content={post.content} />
+          </div>
+        </div>
+      </article>
+    </main>
   );
 }
