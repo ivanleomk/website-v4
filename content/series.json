@@ -1,5 +1,5 @@
 {
   "Building an Agent": "A comprehensive series on building AI coding agents from scratch, covering everything from basic tool integration to advanced features like agentic search and subagents.",
-  "Reinforcement Learning From Scratch": "A series on building reinforcement learning agents from scratch, covering everything from basic concepts to advanced techniques.",
-  "LLMs From Scratch": "Working through Stanford's CS336 and documenting what I learn at each step — from tokenization to training."
+  "LLMs From Scratch": "Working through Stanford's CS336 and documenting what I learn at each step — from tokenization to training.",
+  "Reinforcement Learning From Scratch": "A series on building reinforcement learning agents from scratch, covering everything from basic concepts to advanced techniques."
 }
