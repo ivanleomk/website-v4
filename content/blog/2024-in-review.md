@@ -3,7 +3,6 @@ title: What Happened in 2024
 date: 2024-12-26
 description: A year of personal and professional growth
 categories:
-  - Career
   - Personal Development
 authors:
   - ivanleomk

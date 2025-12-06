@@ -4,7 +4,7 @@ date: 2025-03-08
 description: "How the Model Context Protocol is really just a precursor to LLM applications as microservices"
 categories:
   - MCP
-  - LLM
+  - LLMs
 authors:
   - ivanleomk
 ---

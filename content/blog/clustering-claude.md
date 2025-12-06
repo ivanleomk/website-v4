@@ -3,8 +3,8 @@ title: How I Use Claude
 date: 2025-01-04
 description: How do I use Claude on a day to day basis?
 categories:
-  - AI
-  - Personal
+  - Applied AI
+  - Personal Development
 authors:
   - ivanleomk
 ---

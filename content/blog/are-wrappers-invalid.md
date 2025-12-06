@@ -3,7 +3,7 @@ title: Is there value in a wrapper
 date: 2024-12-14
 description: Why infrastructure, user experience, and data create lasting competitive advantages in AI applications
 categories:
-  - AI Engineering
+  - Applied AI
   - LLMs
 authors:
   - ivanleomk

@@ -3,7 +3,7 @@ title: "How does Instructor work?"
 date: 2024-09-08
 description: "How your request goes from chat completion to validated Pydantic model"
 categories:
-  - instructor
+  - Instructor
 authors:
   - ivanleomk
 ---

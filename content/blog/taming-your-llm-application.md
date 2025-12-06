@@ -5,7 +5,7 @@ description: How to start shipping more reliable LLM applications to prod
 categories:
   - LLMs
   - Testing
-  - Evaluation
+  - Evals
 authors:
   - ivanleomk
 ---

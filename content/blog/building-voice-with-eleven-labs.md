@@ -4,7 +4,7 @@ date: 2025-04-22
 description: Lessons from building a voice-based chatbot for customer service training
 categories:
   - Voice
-  - LLM
+  - LLMs
   - Deployment
 authors:
   - ivanleomk

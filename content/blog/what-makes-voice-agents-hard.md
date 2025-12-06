@@ -4,7 +4,7 @@ date: 2025-04-20
 description: Three key things making it tough to build reliable voice agents
 categories:
   - Voice
-  - LLM
+  - LLMs
   - Deployment
 authors:
   - ivanleomk

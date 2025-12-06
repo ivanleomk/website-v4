@@ -146,23 +146,24 @@ function CodeBlock({
     language === "shell" ||
     language === "zsh";
 
+  const isPlainText = language === "text" || language === "txt";
+
   const languageIcon =
-    !isTerminal && language ? getLanguageIcon(language) : null;
+    !isTerminal && !isPlainText && language ? getLanguageIcon(language) : null;
 
   const renderTerminalContent = () => {
     const textContent = extractTextFromElement(children);
-    const lines = textContent.split("\n");
+    const lines = textContent.split("\n").filter((line, index, arr) => {
+      if (index === 0 && line === "") return false;
+      if (index === arr.length - 1 && line === "") return false;
+      return true;
+    });
 
     return (
-      <pre className="px-4 py-3 text-sm font-mono leading-relaxed w-full bg-gray-900 text-gray-100 max-h-96 overflow-y-auto m-0 overflow-x-auto">
+      <pre className="px-3 py-2 text-[11px] leading-4 bg-[#1a1a1a] text-gray-100 max-h-80 overflow-y-auto m-0 overflow-x-auto" style={{ fontFamily: "'SF Mono', 'Fira Code', 'JetBrains Mono', Menlo, monospace" }}>
         {lines.map((line, index) => (
           <div key={index}>
-            {index === 0 && line.trim() && (
-              <span className="text-green-400 mr-2">$ </span>
-            )}
-            <span className={index === 0 ? "text-white" : "text-gray-300"}>
-              {line}
-            </span>
+            <span className="text-gray-100">{line}</span>
           </div>
         ))}
       </pre>
@@ -177,17 +178,33 @@ function CodeBlock({
 
   return (
     <div className="mb-6">
-      <div className="rounded-lg overflow-hidden border border-gray-200">
+      <div
+          className={`rounded-lg overflow-hidden ${
+            isTerminal ? "border border-[#3a3a3a] w-3/4 mx-auto" : "border border-gray-200"
+          }`}
+        >
         <div
-          className={`px-4 py-2 flex items-center justify-between ${
-            isTerminal ? "bg-gray-800" : "bg-gray-50"
+          className={`px-3 py-1.5 flex items-center justify-between ${
+            isTerminal ? "bg-[#2a2a2a]" : "bg-gray-50"
           }`}
         >
           <div className="flex items-center gap-2">
             <div className="flex gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-gray-300" />
-              <div className="w-2.5 h-2.5 rounded-full bg-gray-300" />
-              <div className="w-2.5 h-2.5 rounded-full bg-gray-300" />
+              <div
+                className={`w-2.5 h-2.5 rounded-full ${
+                  isTerminal ? "bg-[#ff5f56]" : "bg-gray-300"
+                }`}
+              />
+              <div
+                className={`w-2.5 h-2.5 rounded-full ${
+                  isTerminal ? "bg-[#ffbd2e]" : "bg-gray-300"
+                }`}
+              />
+              <div
+                className={`w-2.5 h-2.5 rounded-full ${
+                  isTerminal ? "bg-[#27c93f]" : "bg-gray-300"
+                }`}
+              />
             </div>
             {!isTerminal && languageIcon && (
               <span className="text-xs font-mono ml-2 text-gray-500">
@@ -217,8 +234,14 @@ function CodeBlock({
         </div>
         {isTerminal ? (
           renderTerminalContent()
+        ) : isPlainText ? (
+          <pre className={`${baseClasses} bg-white text-black font-mono`}>
+            {extractTextFromElement(children)}
+          </pre>
         ) : (
-          <CodeContent className={`${baseClasses} bg-white ${highlightClasses}`}>
+          <CodeContent
+            className={`${baseClasses} bg-white ${highlightClasses}`}
+          >
             {children}
           </CodeContent>
         )}
@@ -245,10 +268,7 @@ const markdownComponents = {
     </h2>
   ),
   h3: ({ children, id }: any) => (
-    <h3
-      id={id}
-      className="text-xl font-serif font-medium text-black mb-3 mt-8"
-    >
+    <h3 id={id} className="text-xl font-serif font-medium text-black mb-3 mt-8">
       {children}
     </h3>
   ),
@@ -364,7 +384,7 @@ const markdownComponents = {
   ),
   hr: () => <hr className="border-t border-gray-200 my-8" />,
   strong: ({ children }: any) => (
-    <strong className="font-medium text-black">{children}</strong>
+    <strong className="font-semibold text-black">{children}</strong>
   ),
   em: ({ children }: any) => <em className="italic">{children}</em>,
 };

@@ -3,7 +3,7 @@ title: Coding is the New Writing
 date: 2025-06-27
 description: Turns out I never liked coding all along
 categories:
-  - LLM
+  - LLMs
   - Personal Development
   - Agents
 authors:

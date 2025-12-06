@@ -4,7 +4,7 @@ date: 2024-06-30
 description: Some thoughts from the AI Engineering World Fair
 image: "/posts/ai-conf-2024.png"
 categories:
-  - AI Engineering
+  - Applied AI
   - LLMs
 authors:
   - ivanleomk

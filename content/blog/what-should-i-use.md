@@ -4,8 +4,8 @@ date: 2024-09-21
 description: Deciding on the right LLM framework for your application
 categories:
   - LLMs
-  - langchain
-  - instructor
+  - Langchain
+  - Instructor
 authors:
   - ivanleomk
 ---
