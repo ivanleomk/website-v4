@@ -809,7 +809,9 @@ Our inverted index would give us the following information
 | (o, l) | 2       | 10        | 10    |
 | (l, o) | 2       | 10        | 10    |
 
-Both `(l, l)` and `(o, l)` have a count of 10, but `(l, l)` wins the tie-break (lexicographical order). Using `pair_to_words[(l, l)]`, we instantly find only word 2 needs updating—skipping "letter" and "better" entirely. After the merge:
+Both `(l, l)` and `(o, l)` have a count of 10, but `(l, l)` wins the tie-break (lexicographical order). Using `pair_to_words[(l, l)]`, we instantly find only word 2 needs updating—skipping "letter" and "better" entirely.
+
+For word 2, we capture the old pairs `[(f,o), (o,l), (l,l), (l,o), (o,w)]`, perform the merge to get `[f, o, ll, o, w]`, then capture the new pairs `[(f,o), (o,ll), (ll,o), (o,w)]`. By comparing the two lists, we decrement counts for pairs that disappeared and increment counts for new ones:
 
 | Pair    | Word ID | Frequency | Count   |
 | ------- | ------- | --------- | ------- |
@@ -820,9 +822,14 @@ Both `(l, l)` and `(o, l)` have a count of 10, but `(l, l)` wins the tie-break (
 | (o, ll) | 2       | 10        | 10      |
 | (ll, o) | 2       | 10        | 10      |
 
-Here's the full implementation:
+Here's the implementation:
 
 ```py
+def get_word_pairs(word: list[bytes]) -> list[tuple[bytes, bytes]]:
+    """Get all adjacent pairs in a word."""
+    return [(word[i], word[i + 1]) for i in range(len(word) - 1)]
+
+
 def apply_merge(
     words: Words,
     word_freq: WordFreq,
@@ -830,91 +837,53 @@ def apply_merge(
     pair_counts: PairCounts,
     pair_to_words: PairToWords,
 ) -> None:
-    """Apply merge and incrementally update pair_counts and the inverted index."""
+    """Apply merge and update pair_counts and pair_to_words by comparing old/new pairs."""
     merged = pair[0] + pair[1]
-
-    # 1. Use the inverted index to find only the words that need updating
     affected_word_ids = pair_to_words.pop(pair, set())
     del pair_counts[pair]
 
     for word_id in affected_word_ids:
         word = words[word_id]
         freq = word_freq[word_id]
+
+        old_pairs = get_word_pairs(word)
+
         i = 0
         while i < len(word) - 1:
-            # Find the location of the pair to be merged
             if word[i] == pair[0] and word[i + 1] == pair[1]:
-                # 2. Decrement counts for pairs that will be broken by the merge
-                # Left-adjacent pair: (word[i-1], pair[0])
-                if i > 0:
-                    left_pair = (word[i - 1], pair[0])
-                    pair_counts[left_pair] -= freq
-                    pair_to_words[left_pair].discard(word_id)
-                    # Clean up if counts or sets become empty
-                    if pair_counts[left_pair] == 0:
-                        del pair_counts[left_pair]
-                        del pair_to_words[left_pair]
-
-                # Right-adjacent pair: (pair[1], word[i+2])
-                if i + 2 < len(word):
-                    right_pair = (pair[1], word[i + 2])
-                    pair_counts[right_pair] -= freq
-                    pair_to_words[right_pair].discard(word_id)
-                    if pair_counts[right_pair] == 0:
-                        del pair_counts[right_pair]
-                        del pair_to_words[right_pair]
-
-                # 3. Apply the actual merge in-place
                 word[i] = merged
                 del word[i + 1]
-
-                # 4. Increment counts for new pairs created by the merge
-                # New left pair: (word[i-1], merged)
-                if i > 0:
-                    new_left_pair = (word[i - 1], merged)
-                    pair_counts[new_left_pair] = pair_counts.get(new_left_pair, 0) + freq
-                    if new_left_pair not in pair_to_words:
-                        pair_to_words[new_left_pair] = set()
-                    pair_to_words[new_left_pair].add(word_id)
-
-                # New right pair: (merged, word[i+1])
-                if i + 1 < len(word):
-                    new_right_pair = (merged, word[i + 1])
-                    pair_counts[new_right_pair] = pair_counts.get(new_right_pair, 0) + freq
-                    if new_right_pair not in pair_to_words:
-                        pair_to_words[new_right_pair] = set()
-                    pair_to_words[new_right_pair].add(word_id)
-                # Continue scanning from the current position
             else:
                 i += 1
+
+        new_pairs = get_word_pairs(word)
+
+        for p in old_pairs:
+            if p == pair:
+                continue
+            pair_counts[p] -= freq
+            if pair_counts[p] == 0:
+                del pair_counts[p]
+                pair_to_words.pop(p, None)
+            else:
+                pair_to_words[p].discard(word_id)
+
+        for p in new_pairs:
+            pair_counts[p] = pair_counts.get(p, 0) + freq
+            if p not in pair_to_words:
+                pair_to_words[p] = set()
+            pair_to_words[p].add(word_id)
 ```
 
-When we run this new implementation, we get the following result which represents a roughly 10x speedup from the original naive implementation.
+This yields a roughly 8x speedup from the original naive implementation:
 
 ```bash
-Run 1/1: 0.1128s (vocab=500, merges=243)
-
 --- Results for bpe_inverted_index on corpus ---
-Runs: 1
-Mean: 0.1128s
-Min:  0.1128s
-Max:  0.1128s
-Run 1/1: 0.2827s (vocab=500, merges=243)
+Mean: 0.1271s
 
 --- Results for bpe_inverted_index on tinystory ---
-Runs: 1
-Mean: 0.2827s
-Min:  0.2827s
-Max:  0.2827s
+Mean: 0.3065s
 ```
-
-This implementation is much faster and more efficient than the original naive implementation.
-
-## Conclusion
-
-Of course! Here is a concluding section that incorporates your summary and sets the stage for the next article in the series.
-
----
 
 ## Conclusion
 
@@ -930,6 +899,6 @@ Here is a summary of the performance improvements we achieved at each stage, ben
 | **Parallel Pre-tokenization** | 2.0401s     | ~1.25x    | Utilized multiple CPU cores for initial counting     |
 | **In-place Memory Updates**   | 1.7873s     | ~1.43x    | Avoided recreating the word dictionary in each step  |
 | **Parallel + In-place**       | 1.2856s     | ~2.0x     | Combined the benefits of the first two optimizations |
-| **Inverted Index**            | **0.2827s** | **~9.0x** | Enabled efficient lookups and surgical updates       |
+| **Inverted Index**            | **0.3065s** | **~8.3x** | Enabled efficient lookups and surgical updates       |
 
 With our efficient tokenizer now complete, we have the first essential component of a Large Language Model. In the next article in the "LLMs From Scratch" series, we'll take this tokenizer and use it to build the core components of a transformer model. Stay tuned
