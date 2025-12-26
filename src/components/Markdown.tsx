@@ -4,7 +4,7 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { codeToHtml } from "shiki";
 
 interface MarkdownProps {
@@ -329,7 +329,7 @@ const markdownComponents = {
       </CodeBlock>
     );
   },
-  img: ({ src, alt }: any) => {
+  img: ({ src, alt, width, height }: any) => {
     if (!src) return null;
 
     let imageSrc = src;
@@ -355,14 +355,24 @@ const markdownComponents = {
       );
     }
 
+    const imgWidth = width ? parseInt(width, 10) : 800;
+    const imgHeight = height ? parseInt(height, 10) : 400;
+
     return (
+      <figure className="flex flex-col items-center">
       <Image
         src={imageSrc}
         alt={alt || ""}
-        width={800}
-        height={400}
+          width={imgWidth}
+          height={imgHeight}
         className="rounded-lg"
       />
+        {alt && (
+          <figcaption className="text-sm text-gray-500 mt-2 italic font-serif">
+            {alt}
+          </figcaption>
+        )}
+      </figure>
     );
   },
   table: ({ children }: any) => (
@@ -394,7 +404,7 @@ export function Markdown({ content }: MarkdownProps) {
     <div className="prose prose-lg max-w-none">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeSlug]}
+        rehypePlugins={[rehypeRaw, rehypeSlug]}
         components={markdownComponents}
       >
         {content}

@@ -11,7 +11,11 @@ authors:
 
 I joined Manus on July 27th. Just under five months later, on December 17th, we announced that we had crossed [$100M in ARR](https://manus.im/blog/manus-100m-arr) in 8 months after launch — the fastest startup to ever reach that milestone.
 
-Making this work has been intense. I've been in the office five days a week, often from 10 AM to midnight. And I've shipped more in this period than any other time in my life"
+Making this work has been intense. I've been in the office five days a week, often from 10 AM to midnight.
+
+<img src="/manus-desk.jpg" alt="The desk I've worked out of for the last few months" width="400" height="500" />
+
+But as a result I've shipped more in this period than any other time in my life. It's been really rewarding to say the least from
 
 - [Mail Manus](https://manus.im/features/mail)
 - File Suggestions
@@ -42,7 +46,7 @@ It's tempting to think your job is done once the feature is live. Code works, te
 
 When I shipped Mail Manus, I didn't just push code and walk away. I filmed a [demo video](https://www.youtube.com/watch?v=VU28Afcnm7U) showing the feature in action. I followed up with marketing to make sure the documentation was updated. I answered questions on Twitter when users ran into issues.
 
-When I was taked with building out a Stripe integration for Manus, I ran transactions with my actual credit card—not just test mode—to verify the production flow worked end to end when manus built a website with our integration.
+When building out the new Stripe integration , I put my own money on the line. Not test mode transactions—real charges on my personal credit card to verify that when Manus built a website with payments, actual money moved correctly.
 
 ![Stripe Integration](/stripe-integration.webp)
 
