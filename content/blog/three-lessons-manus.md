@@ -11,8 +11,6 @@ authors:
 
 I joined Manus on July 27th. Just under five months later, on December 17th, we announced that we had crossed [$100M in ARR](https://manus.im/blog/manus-100m-arr) in 8 months after launch — the fastest startup to ever reach that milestone.
 
-At Manus, a feature has to be 屌 (diào)—fucking sick or it doesn't ship. Any model with a basic harness can build a landing page. We're chasing the tasks that make you go "holy shit." High ceiling, complicated, the kind of thing that seems like it shouldn't work until it does.
-
 Making this work has been intense. I've been in the office five days a week, often from 10 AM to midnight. And I've shipped more in this period than any other time in my life"
 
 - [Mail Manus](https://manus.im/features/mail)
@@ -24,13 +22,21 @@ Making this work has been intense. I've been in the office five days a week, oft
 
 and a few more internal projects that I can't talk about
 
+## What is Manus?
+
+Manus is a general-purpose AI agent. You give it a task—research a topic, build a website, analyze a dataset, automate a workflow—and it figures out how to get it done across multiple steps, tools and domains without needing you to micromanage.
+
+At Manus, a feature has to be 屌 (diào)—fucking sick or it doesn't ship. Any model with a basic harness can build a landing page. We're chasing the tasks that make you go "holy shit." High ceiling, complicated, the kind of thing that seems like it shouldn't work until it does.
+
+## What I've Learnt
+
 When things move that fast, you learn a few things. Here are three lessons that I've learnt over the last few months.
 
 1. Your Responsibility Doesn't End When You Ship
 2. Prototypes over Plans
 3. Don't Pigeonhole Yourself
 
-## Your Responsibility doesn't end when you ship
+### Your Responsibility doesn't end when you ship
 
 It's tempting to think your job is done once the feature is live. Code works, tests pass, PR merged—time to move on. But that's only half the job.
 
@@ -46,7 +52,7 @@ As the developer, you know the system inside out—but someone in another depart
 
 Your responsibility extends from the first commit to the last user who touches the feature. The code is just the beginning.
 
-## Prototypes over Plans
+### Prototypes over Plans
 
 On my first day—a Friday—I was asked to build a demo for triggering Manus via email. My first instinct was to hack it together with a script. My boss, 潘潘, pushed back: if it's not real, what's the point?
 
@@ -66,7 +72,7 @@ Sometimes you find the model can't get the code exactly where you need it. So yo
 
 Too much scaffolding constrains what the model can do. Too little and it flails. Finding that balance is a huge part of AI engineering, and you can only find it by building prototypes fast and iterating quickly.
 
-## Don't Pidgeonhole Yourself
+### Don't Pidgeonhole Yourself
 
 About a week after file suggestions launched, we released an API for customers who wanted to automate their manus workflows.
 
