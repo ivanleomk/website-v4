@@ -10,6 +10,7 @@ export interface BlogPost {
   slug: string;
   image?: string;
   series?: string[];
+  draft?: boolean;
 }
 
 export async function parseMarkdown(markdownContent: string, slug: string): Promise<BlogPost> {
@@ -25,6 +26,7 @@ export async function parseMarkdown(markdownContent: string, slug: string): Prom
     slug,
     image: data.image,
     series: data.series || [],
+    draft: data.draft || false,
   };
 }
 
