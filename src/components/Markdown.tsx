@@ -4,7 +4,7 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, ReactNode } from "react";
+import { useState, useEffect } from "react";
 import { codeToHtml } from "shiki";
 
 interface MarkdownProps {
