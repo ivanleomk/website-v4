@@ -88,7 +88,7 @@ The broader point is this: your job title might be "AI engineer," but your actua
 
 There are no real boundaries to your responsibilities. You see a problem, you solve it. You see an opportunity, you take it. That's how it works at a company moving this fast.
 
-## What's Next
+## Join us!
 
 Working at Manus has been the most competitive, demanding, fulfilling experience of my career. The hours are long. But you ship constantly. You own what you build. You push the limits of what's possible with models that are genuinely capable.
 
