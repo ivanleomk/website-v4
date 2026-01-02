@@ -7,6 +7,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { codeToHtml } from "shiki";
+import { ChinesePoetryReverser } from "./ChinesePoetryReverser";
+import { LCSVisualization } from "./LCSVisualization";
+import { SFTPipelineDiagram } from "./diagrams/SFTPipelineDiagram";
+import { SFTResultsChart } from "./SFTResultsChart";
+import { RewardsDiagram } from "./diagrams/RewardsDiagram";
+import { RLPipelineDiagram } from "./diagrams/RLPipelineDiagram";
+
+const customComponents: Record<string, React.FC> = {
+  ChinesePoetryReverser,
+  // @ts-ignore
+  LCSVisualization,
+  SFTPipelineDiagram,
+  SFTResultsChart,
+  RewardsDiagram,
+  RLPipelineDiagram,
+};
 
 interface MarkdownProps {
   content: string;
@@ -161,7 +177,13 @@ function CodeBlock({
     });
 
     return (
-      <pre className="px-3 py-2 text-[11px] leading-4 bg-[#1a1a1a] text-gray-100 max-h-80 overflow-y-auto m-0 overflow-x-auto" style={{ fontFamily: "'SF Mono', 'Fira Code', 'JetBrains Mono', Menlo, monospace" }}>
+      <pre
+        className="px-3 py-2 text-[11px] leading-4 bg-[#1a1a1a] text-gray-100 max-h-80 overflow-y-auto m-0 overflow-x-auto"
+        style={{
+          fontFamily:
+            "'SF Mono', 'Fira Code', 'JetBrains Mono', Menlo, monospace",
+        }}
+      >
         {lines.map((line, index) => (
           <div key={index}>
             <span className="text-gray-100">{line}</span>
@@ -180,10 +202,12 @@ function CodeBlock({
   return (
     <div className="mb-6">
       <div
-          className={`rounded-lg overflow-hidden ${
-            isTerminal ? "border border-[#3a3a3a] w-3/4 mx-auto" : "border border-gray-200"
-          }`}
-        >
+        className={`rounded-lg overflow-hidden ${
+          isTerminal
+            ? "border border-[#3a3a3a] w-3/4 mx-auto"
+            : "border border-gray-200"
+        }`}
+      >
         <div
           className={`px-3 py-1.5 flex items-center justify-between ${
             isTerminal ? "bg-[#2a2a2a]" : "bg-gray-50"
@@ -361,13 +385,13 @@ const markdownComponents = {
 
     return (
       <figure className="flex flex-col items-center">
-      <Image
-        src={imageSrc}
-        alt={alt || ""}
+        <Image
+          src={imageSrc}
+          alt={alt || ""}
           width={imgWidth}
           height={imgHeight}
-        className="rounded-lg"
-      />
+          className="rounded-lg"
+        />
         {alt && (
           <figcaption className="text-sm text-gray-500 mt-2 italic font-serif">
             {alt}
@@ -400,7 +424,78 @@ const markdownComponents = {
   em: ({ children }: any) => <em className="italic">{children}</em>,
 };
 
+function parseProps(propsString: string): Record<string, string> {
+  const props: Record<string, string> = {};
+  const propPattern = /(\w+)="([^"]*)"/g;
+  let match;
+
+  while ((match = propPattern.exec(propsString)) !== null) {
+    props[match[1]] = match[2];
+  }
+
+  return props;
+}
+
+function parseContentWithComponents(content: string): ReactNode[] {
+  const componentPattern = /<(\w+)([^/>]*)\s*\/>/g;
+  const parts: ReactNode[] = [];
+  let lastIndex = 0;
+  let match;
+  let key = 0;
+
+  while ((match = componentPattern.exec(content)) !== null) {
+    const componentName = match[1];
+    const propsString = match[2];
+    const Component = customComponents[componentName];
+
+    if (Component) {
+      if (match.index > lastIndex) {
+        parts.push(
+          <ReactMarkdown
+            key={key++}
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw, rehypeSlug]}
+            components={markdownComponents}
+          >
+            {content.slice(lastIndex, match.index)}
+          </ReactMarkdown>
+        );
+      }
+      const props = parseProps(propsString);
+      parts.push(<Component key={key++} {...props} />);
+      lastIndex = match.index + match[0].length;
+    }
+  }
+
+  if (lastIndex < content.length) {
+    parts.push(
+      <ReactMarkdown
+        key={key++}
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw, rehypeSlug]}
+        components={markdownComponents}
+      >
+        {content.slice(lastIndex)}
+      </ReactMarkdown>
+    );
+  }
+
+  return parts;
+}
+
 export function Markdown({ content }: MarkdownProps) {
+  const hasCustomComponents =
+    /<(\w+)([^/>]*)\s*\/>/.test(content) &&
+    Object.keys(customComponents).some((name) => content.includes(`<${name}`));
+
+  if (hasCustomComponents) {
+    return (
+      <div className="prose prose-lg max-w-none">
+        {parseContentWithComponents(content)}
+      </div>
+    );
+  }
+
   return (
     <div className="prose prose-lg max-w-none">
       <ReactMarkdown

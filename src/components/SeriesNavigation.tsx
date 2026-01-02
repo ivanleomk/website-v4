@@ -20,9 +20,9 @@ export function SeriesNavigation({ seriesInfo }: SeriesNavigationProps) {
             Series
           </span>
         </div>
-        <h3 className="text-lg font-serif font-medium text-black mb-2">
+        <p className="text-lg font-serif font-medium text-black mb-2">
           {name}
-        </h3>
+        </p>
         <p className="text-sm text-gray-500 font-sans leading-relaxed">
           {description}
         </p>
