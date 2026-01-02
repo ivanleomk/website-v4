@@ -23,7 +23,7 @@ function computeRewards(rollout: typeof rollouts[0], partial: boolean) {
   }
   
   const charRewards = rollout.chars.map((char, i) => char === targetChars[i] ? 1 : 0);
-  const total = charRewards.reduce((a, b) => a + b, 0) / charRewards.length;
+  const total = charRewards.reduce((a: number, b: number) => a + b, 0) / charRewards.length;
   return { 
     charRewards, 
     total,

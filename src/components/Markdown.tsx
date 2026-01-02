@@ -5,7 +5,7 @@ import rehypeSlug from "rehype-slug";
 import rehypeRaw from "rehype-raw";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { codeToHtml } from "shiki";
 import { ChinesePoetryReverser } from "./ChinesePoetryReverser";
 import { LCSVisualization } from "./LCSVisualization";
@@ -16,7 +16,7 @@ import { RLPipelineDiagram } from "./diagrams/RLPipelineDiagram";
 
 const customComponents: Record<string, React.FC> = {
   ChinesePoetryReverser,
-  // @ts-ignore
+  // @ts-expect-error Type mismatch for component
   LCSVisualization,
   SFTPipelineDiagram,
   SFTResultsChart,
