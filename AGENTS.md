@@ -6,18 +6,18 @@ Configuration and commands for AI agents working on this project.
 
 | Command       | Purpose                                |
 | ------------- | -------------------------------------- |
-| `pnpm build`  | Build website (required before deploy) |
-| `pnpm dev`    | Start dev server                       |
-| `pnpm lint`   | Run ESLint                             |
-| `pnpm tc`     | TypeScript type check                  |
-| `pnpm deploy` | Deploy to Cloudflare                   |
+| `bun build`  | Build website (required before deploy) |
+| `bun dev`    | Start dev server                       |
+| `bun lint`   | Run ESLint                             |
+| `bun tc`     | TypeScript type check                  |
+| `bun deploy` | Deploy to Cloudflare                   |
 
 ## Requirements
 
-- Always run `pnpm build` before making PR or deploying
-- Run `pnpm lint` to check code quality
-- Run `pnpm tc` to check TypeScript types
-- Verify changes locally with `pnpm dev` first
+- Always run `bun build` before making PR or deploying
+- Run `bun lint` to check code quality
+- Run `bun tc` to check TypeScript types
+- Verify changes locally with `bun dev` first
 
 ## Key Directories
 
