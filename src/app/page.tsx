@@ -2,10 +2,32 @@ import { getAllPosts } from "@/lib/blog";
 import { Navigation } from "@/components/Navigation";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import seriesDefinitions from "@/data/series.json";
+import { existsSync, readFileSync } from "fs";
+import { join } from "path";
+
+export const dynamic = "force-dynamic";
+
+const isProduction = process.env.NODE_ENV === "production";
+
+async function getSeriesDefinitions(): Promise<Record<string, string>> {
+  if (isProduction) {
+    return import("@/data/series.json")
+      .then((m) => m.default)
+      .catch(() => ({}));
+  }
+
+  const seriesPath = join(process.cwd(), "content", "series.json");
+  if (!existsSync(seriesPath)) {
+    return {};
+  }
+
+  const seriesContent = readFileSync(seriesPath, "utf8");
+  return JSON.parse(seriesContent) as Record<string, string>;
+}
 
 export default async function Home() {
   const posts = await getAllPosts();
+  const seriesDefinitions = await getSeriesDefinitions();
 
   const sortedPosts = [...posts].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()

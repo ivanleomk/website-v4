@@ -3,6 +3,8 @@ import { Navigation } from "@/components/Navigation";
 import Link from "next/link";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
+
 function estimateReadTime(content: string): string {
   const wordsPerMinute = 200;
   const words = content.split(/\s+/).length;

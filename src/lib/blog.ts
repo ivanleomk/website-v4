@@ -1,5 +1,6 @@
 import { BlogPost } from './markdown';
 import { generateAllPosts } from './posts';
+import { unstable_noStore as noStore } from 'next/cache';
 
 let cachedPosts: BlogPost[] | null = null;
 
@@ -9,6 +10,7 @@ export async function getAllPosts(): Promise<BlogPost[]> {
   }
 
   if (process.env.NODE_ENV !== 'production') {
+    noStore();
     return generateAllPosts();
   }
 

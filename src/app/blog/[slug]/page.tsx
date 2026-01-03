@@ -11,6 +11,8 @@ import { getSeriesInfo } from "@/lib/series";
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 
+export const dynamic = "force-dynamic";
+
 interface BlogPageProps {
   params: Promise<{ slug: string }>;
 }
