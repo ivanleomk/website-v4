@@ -27,12 +27,6 @@ async function loadStaticPosts() {
     .catch(() => []);
 }
 
-async function loadStaticSeriesDefinitions() {
-  return import(`@/data/series.json`)
-    .then((m) => m.default)
-    .catch(() => ({}));
-}
-
 async function getPost(slug: string) {
   if (!isProduction) {
     return generatePost(slug);
@@ -49,20 +43,12 @@ async function getAllPosts() {
   return loadStaticPosts();
 }
 
-async function getSeriesDefinitionsForPost(): Promise<Record<string, string>> {
-  if (isProduction) {
-    return loadStaticSeriesDefinitions();
-  }
-
-  return getSeriesDefinitions();
-}
-
 export default async function BlogPage({ params }: BlogPageProps) {
   const { slug } = await params;
   const [post, allPosts, seriesDefinitions] = await Promise.all([
     getPost(slug),
     getAllPosts(),
-    getSeriesDefinitionsForPost(),
+    getSeriesDefinitions(),
   ]);
 
   if (!post) {
