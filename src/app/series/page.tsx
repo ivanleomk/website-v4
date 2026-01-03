@@ -1,56 +1,16 @@
-import { getAllPosts } from "@/lib/blog";
+import { estimateReadTime, getAllPosts } from "@/lib/blog";
+import { buildSeriesList, getSeriesDefinitions } from "@/lib/series";
 import { Navigation } from "@/components/Navigation";
 import Link from "next/link";
 import { ArrowRight, Layers, Clock } from "lucide-react";
-import { existsSync, readFileSync } from "fs";
-import { join } from "path";
 
 export const dynamic = "force-dynamic";
-
-const isProduction = process.env.NODE_ENV === "production";
-
-async function getSeriesDefinitions(): Promise<Record<string, string>> {
-  if (isProduction) {
-    return import("@/data/series.json")
-      .then((m) => m.default)
-      .catch(() => ({}));
-  }
-
-  const seriesPath = join(process.cwd(), "content", "series.json");
-  if (!existsSync(seriesPath)) {
-    return {};
-  }
-
-  const seriesContent = readFileSync(seriesPath, "utf8");
-  return JSON.parse(seriesContent) as Record<string, string>;
-}
-
-function estimateReadTime(content: string): string {
-  const wordsPerMinute = 200;
-  const words = content.split(/\s+/).length;
-  const minutes = Math.ceil(words / wordsPerMinute);
-  return `${minutes} min read`;
-}
 
 export default async function SeriesPage() {
   const posts = await getAllPosts();
   const seriesDefinitions = await getSeriesDefinitions();
 
-  const seriesList = Object.entries(seriesDefinitions).map(
-    ([name, description]) => {
-      const seriesPosts = posts
-        .filter((post) => post.series?.includes(name))
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-      return {
-        id: name.toLowerCase().replace(/\s+/g, "-"),
-        title: name,
-        description,
-        totalParts: seriesPosts.length,
-        status: "In Progress" as const,
-        posts: seriesPosts,
-      };
-    }
-  );
+  const seriesList = buildSeriesList(posts, seriesDefinitions);
 
   return (
     <div className="min-h-screen bg-white">
