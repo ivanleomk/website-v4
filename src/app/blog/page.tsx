@@ -28,14 +28,25 @@ export default async function BlogPage() {
       <Navigation />
 
       <main className="max-w-4xl mx-auto px-6 py-12 md:py-16">
-        <header className="mb-20 border-b border-gray-200 pb-12">
-          <h1 className="text-5xl md:text-6xl font-serif font-medium tracking-tight mb-6 text-black">
-            Articles
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-500 font-serif leading-relaxed max-w-2xl">
-            {posts.length} articles on language models, agents, and software
-            design.
-          </p>
+        <header id="blog-header" className="mb-20 border-b border-gray-200 pb-12">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h1 className="text-5xl md:text-6xl font-serif font-medium tracking-tight mb-6 text-black">
+                Articles
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-500 font-serif leading-relaxed max-w-2xl">
+                {posts.length} articles on language models, agents, and software
+                design.
+              </p>
+            </div>
+            <a
+              href="/rss.xml"
+              className="inline-flex items-center gap-2 text-sm font-sans text-gray-500 hover:text-black transition-colors"
+            >
+              RSS
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
         </header>
 
         {/* Category Filter */}
