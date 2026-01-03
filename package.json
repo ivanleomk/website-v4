@@ -7,7 +7,7 @@
     "dev:watch": "chokidar 'content/blog/**/*.md' -c 'node scripts/generate-static-data.js' --initial & next dev",
     "build": "node scripts/generate-static-data.js && next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "build:cloudflare": "node scripts/generate-static-data.js && opennextjs-cloudflare build",
     "preview": "node scripts/generate-static-data.js && opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "node scripts/generate-static-data.js && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
@@ -23,9 +23,9 @@
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.511.0",
-    "next": "15.1.8",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "next": "16.1.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
     "react-markdown": "^10.1.0",
     "rehype-highlight": "^7.0.2",
     "rehype-raw": "^7.0.0",
@@ -41,17 +41,20 @@
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
     "chokidar-cli": "^3.0.0",
     "eslint": "^9",
-    "eslint-config-next": "15.1.8",
+    "eslint-config-next": "16.1.1",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
     "wrangler": "^4.19.1"
   },
-  "packageManager": "yarn@4.5.3+sha512.3003a14012e2987072d244c720506549c1aab73ee728208f1b2580a9fd67b92d61ba6b08fe93f6dce68fd771e3af1e59a0afa28dd242dd0940d73b95fedd4e90"
+  "packageManager": "yarn@4.5.3+sha512.3003a14012e2987072d244c720506549c1aab73ee728208f1b2580a9fd67b92d61ba6b08fe93f6dce68fd771e3af1e59a0afa28dd242dd0940d73b95fedd4e90",
+  "overrides": {
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3"
+  }
 }
