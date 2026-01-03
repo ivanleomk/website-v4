@@ -94,10 +94,19 @@ export default async function BlogPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 py-8 mt-16">
+      <footer
+        id="blog-footer"
+        className="border-t border-gray-200 py-8 mt-16"
+      >
         <div className="max-w-4xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-sans text-gray-500">
           <p>© {new Date().getFullYear()} Ivan Leo. All rights reserved.</p>
           <div className="flex gap-6">
+            <a
+              href="/rss.xml"
+              className="hover:text-black transition-colors"
+            >
+              RSS
+            </a>
             <a
               href="https://twitter.com/ivanleomk"
               target="_blank"

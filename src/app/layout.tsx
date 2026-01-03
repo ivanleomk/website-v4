@@ -27,6 +27,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="Ivan Leo - Blog RSS"
+          href="/rss.xml"
+        />
+      </head>
       <body
         className={`${lato.variable} ${crimsonText.variable} antialiased`}
       >
