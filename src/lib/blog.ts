@@ -1,5 +1,6 @@
 import { BlogPost } from './markdown';
 import { generateAllPosts } from './posts';
+import { unstable_noStore as noStore } from 'next/cache';
 
 let cachedPosts: BlogPost[] | null = null;
 
@@ -7,20 +8,20 @@ export async function getAllPosts(): Promise<BlogPost[]> {
   if (cachedPosts) {
     return cachedPosts;
   }
-  
-  // Try to load from pre-generated static data first
-  try {
-    // Use dynamic import with assertion for JSON
-    const postsData = await import('../data/posts.json').then(m => m.default);
-    cachedPosts = postsData as BlogPost[];
-    return cachedPosts;
-  } catch {
-    // Fallback to file system (development only)
-    if (process.env.NODE_ENV === 'production') {
-      return [];
-    }
-    
-    cachedPosts = await generateAllPosts();
-    return cachedPosts;
+
+  if (process.env.NODE_ENV !== 'production') {
+    noStore();
+    return generateAllPosts();
   }
+
+  const postsData = await import('../data/posts.json')
+    .then((m) => m.default as BlogPost[])
+    .catch(() => null);
+
+  if (!postsData) {
+    return [];
+  }
+
+  cachedPosts = postsData;
+  return cachedPosts;
 }

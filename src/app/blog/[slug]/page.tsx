@@ -8,60 +8,63 @@ import { Navigation } from "@/components/Navigation";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getSeriesInfo } from "@/lib/series";
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { join } from "path";
+
+export const dynamic = "force-dynamic";
 
 interface BlogPageProps {
   params: Promise<{ slug: string }>;
 }
 
-async function getPost(slug: string) {
-  try {
-    const postData = await import(`@/data/posts/${slug}.json`).then(
-      (m) => m.default
-    );
-    return postData;
-  } catch {
-    if (process.env.NODE_ENV === "production") {
-      return null;
-    }
+const isProduction = process.env.NODE_ENV === "production";
 
-    return await generatePost(slug);
+async function loadStaticPost(slug: string) {
+  return import(`@/data/posts/${slug}.json`)
+    .then((m) => m.default)
+    .catch(() => null);
+}
+
+async function loadStaticPosts() {
+  return import(`@/data/posts.json`)
+    .then((m) => m.default)
+    .catch(() => []);
+}
+
+async function loadStaticSeriesDefinitions() {
+  return import(`@/data/series.json`)
+    .then((m) => m.default)
+    .catch(() => ({}));
+}
+
+async function getPost(slug: string) {
+  if (!isProduction) {
+    return generatePost(slug);
   }
+
+  return loadStaticPost(slug);
 }
 
 async function getAllPosts() {
-  try {
-    const postsData = await import(`@/data/posts.json`).then((m) => m.default);
-    return postsData;
-  } catch {
-    if (process.env.NODE_ENV === "production") {
-      return [];
-    }
-
-    return await generateAllPosts();
+  if (!isProduction) {
+    return generateAllPosts();
   }
+
+  return loadStaticPosts();
 }
 
 async function getSeriesDefinitions(): Promise<Record<string, string>> {
-  try {
-    const seriesData = await import(`@/data/series.json`).then(
-      (m) => m.default
-    );
-    return seriesData;
-  } catch {
-    if (process.env.NODE_ENV === "production") {
-      return {};
-    }
-
-    try {
-      const seriesPath = join(process.cwd(), "content", "series.json");
-      const seriesContent = readFileSync(seriesPath, "utf8");
-      return JSON.parse(seriesContent);
-    } catch {
-      return {};
-    }
+  if (isProduction) {
+    return loadStaticSeriesDefinitions();
   }
+
+  const seriesPath = join(process.cwd(), "content", "series.json");
+  if (!existsSync(seriesPath)) {
+    return {};
+  }
+
+  const seriesContent = readFileSync(seriesPath, "utf8");
+  return JSON.parse(seriesContent) as Record<string, string>;
 }
 
 export default async function BlogPage({ params }: BlogPageProps) {
