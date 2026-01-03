@@ -17,4 +17,4 @@ fi
 
 alias=$(echo "$alias" | cut -c1-40)
 
-printf '%s\n' "$alias" | tee .preview-alias
+printf '%s\n' "$alias"
