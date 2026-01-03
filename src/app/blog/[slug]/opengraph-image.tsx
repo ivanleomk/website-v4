@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { generatePost } from "@/lib/posts";
 
 export const alt = "Blog Post";
 export const size = {
@@ -8,15 +9,16 @@ export const size = {
 
 export const contentType = "image/png";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 async function getPost(slug: string) {
-  try {
-    const postData = await import(`@/data/posts/${slug}.json`).then(
-      (m) => m.default
-    );
-    return postData;
-  } catch {
-    return null;
+  if (!isProduction) {
+    return generatePost(slug);
   }
+
+  return import(`@/data/posts/${slug}.json`)
+    .then((m) => m.default)
+    .catch(() => null);
 }
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
