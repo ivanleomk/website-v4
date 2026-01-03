@@ -1,29 +1,8 @@
 import { getAllPosts } from "@/lib/blog";
+import { buildSeriesList, getSeriesDefinitions } from "@/lib/series";
 import { Navigation } from "@/components/Navigation";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { existsSync, readFileSync } from "fs";
-import { join } from "path";
-
-export const dynamic = "force-dynamic";
-
-const isProduction = process.env.NODE_ENV === "production";
-
-async function getSeriesDefinitions(): Promise<Record<string, string>> {
-  if (isProduction) {
-    return import("@/data/series.json")
-      .then((m) => m.default)
-      .catch(() => ({}));
-  }
-
-  const seriesPath = join(process.cwd(), "content", "series.json");
-  if (!existsSync(seriesPath)) {
-    return {};
-  }
-
-  const seriesContent = readFileSync(seriesPath, "utf8");
-  return JSON.parse(seriesContent) as Record<string, string>;
-}
 
 export default async function Home() {
   const posts = await getAllPosts();
@@ -33,21 +12,7 @@ export default async function Home() {
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
-  const seriesList = Object.entries(seriesDefinitions).map(
-    ([name, description]) => {
-      const seriesPosts = posts
-        .filter((post) => post.series?.includes(name))
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-      return {
-        id: name.toLowerCase().replace(/\s+/g, "-"),
-        title: name,
-        description,
-        totalParts: seriesPosts.length,
-        status: "In Progress" as const,
-        posts: seriesPosts,
-      };
-    }
-  );
+  const seriesList = buildSeriesList(posts, seriesDefinitions);
 
   return (
     <div className="min-h-screen bg-white">

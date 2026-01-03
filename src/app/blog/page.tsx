@@ -1,16 +1,7 @@
-import { getAllPosts } from "@/lib/blog";
+import { estimateReadTime, getAllPosts } from "@/lib/blog";
 import { Navigation } from "@/components/Navigation";
 import Link from "next/link";
 import { Suspense } from "react";
-
-export const dynamic = "force-dynamic";
-
-function estimateReadTime(content: string): string {
-  const wordsPerMinute = 200;
-  const words = content.split(/\s+/).length;
-  const minutes = Math.ceil(words / wordsPerMinute);
-  return `${minutes} min read`;
-}
 
 export default async function BlogPage() {
   const posts = await getAllPosts();

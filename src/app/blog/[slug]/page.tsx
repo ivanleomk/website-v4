@@ -7,11 +7,7 @@ import { BlogPostComponent } from "@/components/blog-post";
 import { Navigation } from "@/components/Navigation";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { getSeriesInfo } from "@/lib/series";
-import { existsSync, readFileSync } from "fs";
-import { join } from "path";
-
-export const dynamic = "force-dynamic";
+import { getSeriesDefinitions, getSeriesInfo } from "@/lib/series";
 
 interface BlogPageProps {
   params: Promise<{ slug: string }>;
@@ -31,12 +27,6 @@ async function loadStaticPosts() {
     .catch(() => []);
 }
 
-async function loadStaticSeriesDefinitions() {
-  return import(`@/data/series.json`)
-    .then((m) => m.default)
-    .catch(() => ({}));
-}
-
 async function getPost(slug: string) {
   if (!isProduction) {
     return generatePost(slug);
@@ -51,20 +41,6 @@ async function getAllPosts() {
   }
 
   return loadStaticPosts();
-}
-
-async function getSeriesDefinitions(): Promise<Record<string, string>> {
-  if (isProduction) {
-    return loadStaticSeriesDefinitions();
-  }
-
-  const seriesPath = join(process.cwd(), "content", "series.json");
-  if (!existsSync(seriesPath)) {
-    return {};
-  }
-
-  const seriesContent = readFileSync(seriesPath, "utf8");
-  return JSON.parse(seriesContent) as Record<string, string>;
 }
 
 export default async function BlogPage({ params }: BlogPageProps) {
