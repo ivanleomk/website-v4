@@ -8,10 +8,13 @@
     "build": "node scripts/generate-static-data.js && next build",
     "start": "next start",
     "lint": "eslint .",
+    "prebuild:cloudflare": "scripts/preview-alias.sh",
     "build:cloudflare": "node scripts/generate-static-data.js && opennextjs-cloudflare build",
     "preview": "node scripts/generate-static-data.js && opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "node scripts/generate-static-data.js && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "preview-alias": "scripts/preview-alias.sh",
+    "deploy:preview": "node scripts/generate-static-data.js && opennextjs-cloudflare build && wrangler versions upload --preview-alias \"$(scripts/preview-alias.sh)\""
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.2.1",
