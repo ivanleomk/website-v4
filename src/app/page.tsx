@@ -4,8 +4,6 @@ import { Navigation } from "@/components/Navigation";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-
 export default async function Home() {
   const posts = await getAllPosts();
   const seriesDefinitions = await getSeriesDefinitions();

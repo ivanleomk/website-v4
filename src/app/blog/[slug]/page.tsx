@@ -9,8 +9,6 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getSeriesDefinitions, getSeriesInfo } from "@/lib/series";
 
-export const dynamic = "force-dynamic";
-
 interface BlogPageProps {
   params: Promise<{ slug: string }>;
 }
