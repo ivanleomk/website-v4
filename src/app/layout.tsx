@@ -18,6 +18,11 @@ const crimsonText = Crimson_Text({
 export const metadata: Metadata = {
   title: "Ivan Leo - Blog",
   description: "Ivan rambles on about LLM reliability, evals and UX design",
+  alternates: {
+    types: {
+      "application/rss+xml": "/rss.xml",
+    },
+  },
 };
 
 export default function RootLayout({
