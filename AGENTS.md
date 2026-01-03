@@ -4,13 +4,15 @@ Configuration and commands for AI agents working on this project.
 
 ## Build Commands
 
-| Command       | Purpose                                |
-| ------------- | -------------------------------------- |
-| `bun build`  | Build website (required before deploy) |
-| `bun dev`    | Start dev server                       |
-| `bun lint`   | Run ESLint                             |
-| `bun tc`     | TypeScript type check                  |
-| `bun deploy` | Deploy to Cloudflare                   |
+| Command              | Purpose                                |
+| -------------------- | -------------------------------------- |
+| `bun build`          | Build website (required before deploy) |
+| `bun dev`            | Start dev server                       |
+| `bun dev:watch`      | Dev server with content watch          |
+| `bun lint`           | Run oxlint                             |
+| `bun lint:fix`       | Fix linting issues                     |
+| `bun deploy`         | Deploy to Cloudflare                   |
+| `bun preview`        | Preview Cloudflare build               |
 
 ## Requirements
 
@@ -27,7 +29,7 @@ Configuration and commands for AI agents working on this project.
 
 ## Tech Stack
 
-- Next.js 16
+- Next.js 15
 - React 19
 - Tailwind CSS
 - Cloudflare Workers (deployment)
