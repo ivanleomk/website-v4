@@ -286,11 +286,11 @@ Now that we've created our initial dataset, let's create our first verifiers env
 
 ### Using Verifiers
 
-If you're unfamiliar with [Verifiers](https://docs.primeintellect.ai/verifiers/source/overview), it's an open source library created by [Will Brown](https://x.com/willccbb) to define custom environments for reinforcement learning. It's particularly useful because we can define our training environment here for both evaluation and training during RL with many of the core primitives that they expose such as
+If you're unfamiliar with [Verifiers](https://docs.primeintellect.ai/verifiers/source/overview), it's an open source library created by [Will Brown](https://x.com/willccbb) to define custom environments for reinforcement learning. It's particularly useful because we can define our training environment here for both evaluation and training during RL, using many of the core primitives that Verifiers exposes—such as rubrics, parsers, and dataloaders.
 
 1. Rubrics: A set of reward functions to evaluate the LLM's performance which we can assign arbitrary weights to
 2. Parsers: These are simple components to parse out LLM's output from demarcated XML tags
-3. Dataloader : We can use the Hugging Face Dataset library to load and preprocess the data before providing it as
+3. Dataloader: We can use the Hugging Face Dataset library to load and preprocess the data before providing it as batches to the environment
 
 These are used together to form a single Environment which can be used to train and evaluate LLMs. You can find more documentation [here](https://docs.primeintellect.ai/verifiers/source/overview).
 
@@ -444,7 +444,7 @@ The key question we want to answer: **how much data does a model need to learn s
 
 To do so, we'll need to train a few different models. The easiest way to do so is to rent a cloud instance with a GPU, I used [Prime Intellect](https://primeintellect.ai/) to rent a couple of A6000s from Datacrunch and Hyperstack to do this over the holiday and paid roughly $0.50/hr for each GPU.
 
-Luckily for us, [Prime-RL](https://github.com/PrimeIntellect-ai/prime-rl/) is a great tool for this and provides an easy way for us to
+Luckily for us, [Prime-RL](https://github.com/PrimeIntellect-ai/prime-rl/) is a great tool for this and provides an easy way for us to run SFT at different data scales, log experiments, and evaluate checkpoints.
 
 ### Setting Up The GPU
 
