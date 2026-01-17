@@ -23,15 +23,15 @@ My first brush with machine learning in college had been a disaster. It took me 
 
 Then a friend showed me ChatGPT and how you could use a model to edit paragraphs and generate ideas. Granted this was GPT-3.5 and it was pretty stupid, but I felt like things were going to be shaken up.
 
-I started devouring online courses and sending links to @karpathy’s courses to my friends so we could work through them together—until they threatened to block me. Things really picked up when I stumbled upon the @latentspacepod podcast where @swyx mentioned an online paper club on Discord that met every week to discuss machine learning papers.
+I started devouring online courses and sending links to [@karpathy](https://twitter.com/karpathy)’s courses to my friends so we could work through them together—until they threatened to block me. Things really picked up when I stumbled upon the [@latentspacepod](https://twitter.com/latentspacepod) podcast where [@swyx](https://twitter.com/swyx) mentioned an online paper club on Discord that met every week to discuss machine learning papers.
 
 The only catch: it was at 3 AM every Wednesday for me in Singapore. But I figured I had nothing to lose and decided to set my alarm for six months and joined that 3 AM call whenever I could.
 
-I ended up making great friends like @vibhuuuus, @eugeneyan, @YoungPhlo_, and @FanaHOVA, and we worked through concepts I never could have figured out alone. I later ran an Asian edition for a while with @bryanblackbee, meeting more friends like @gabrielchua and @aimuggle.
+I ended up making great friends like [@vibhuuuus](https://twitter.com/vibhuuuus), [@eugeneyan](https://twitter.com/eugeneyan), [@YoungPhlo_](https://twitter.com/YoungPhlo_), and [@FanaHOVA](https://twitter.com/FanaHOVA), and we worked through concepts I never could have figured out alone. I later ran an Asian edition for a while with [@bryanblackbee](https://twitter.com/bryanblackbee), meeting more friends like [@gabrielchua](https://twitter.com/gabrielchua) and [@aimuggle](https://twitter.com/aimuggle).
 
 ## Open source
 
-At this point I really wanted to pivot to work with language models and a friend I spoke to told me to try working on open source software. After seeing @jxnlco speak at the @aiDotEngineer summit online, I learned about Instructor.
+At this point I really wanted to pivot to work with language models and a friend I spoke to told me to try working on open source software. After seeing [@jxnlco](https://twitter.com/jxnlco) speak at the [@aiDotEngineer](https://twitter.com/aiDotEngineer) summit online, I learned about Instructor.
 
 When Jason asked for help to build out the docs for Instructor, I immediately messaged him and offered to help write articles. That cold DM kicked off a stretch of nights where I would work my banking job from 9 to 6 writing React code, then come home and keep working until midnight to try to land my first PRs.
 
@@ -47,42 +47,42 @@ My parents honestly thought I was crazy—quitting a stable banking job to work 
 
 ## AI agents
 
-In early 2025, after attending the @aiDotEngineer conference in New York, I realized something had profoundly changed. The models were getting smarter and were evolving from brains in a vat to free agents that could interact with the world.
+In early 2025, after attending the [@aiDotEngineer](https://twitter.com/aiDotEngineer) conference in New York, I realized something had profoundly changed. The models were getting smarter and were evolving from brains in a vat to free agents that could interact with the world.
 
 Claude Code had just started to come out around then and was actually incredible. These models could now read files, call APIs, and work semi-reliably across long horizons.
 
 That’s when I knew I had to go all-in. The consulting work was great, but I wanted to be on the front lines, building agents at scale.
 
-During this whole time I had been active on Twitter, writing articles for Instructor and engaging with the community. A friend eventually connected me with a company called @manusai and I vibed with the CTO Pan instantly.
+During this whole time I had been active on Twitter, writing articles for Instructor and engaging with the community. A friend eventually connected me with a company called [@manusai](https://twitter.com/manusai) and I vibed with the CTO Pan instantly.
 
-We both believed that models shouldn’t be constrained like humans and that there was so much more that we could squeeze out of them. I ended up chatting again with @roxasorag and Lu Lu in another interview about my experience working on open source. I was sold honestly—the vibes were immaculate—but the product at that point was already pretty good.
+We both believed that models shouldn’t be constrained like humans and that there was so much more that we could squeeze out of them. I ended up chatting again with [@roxasorag](https://twitter.com/roxasorag) and Lu Lu in another interview about my experience working on open source. I was sold honestly—the vibes were immaculate—but the product at that point was already pretty good.
 
 I joined in July, and for the next few months, I worked from 9:30 AM to midnight nearly every day. At Manus things moved fast, a principle I experienced on my first day. I was tasked with building a demonstration for triggering Manus tasks via email. By the end of the day, a functional prototype was deployed to our test environment to play around with.
 
-I ended up building out other projects like Mail Manus, the Manus API, and our Stripe integration. When we announced our $100M ARR it felt like an amazing milestone in what was up to that point the most intense and rewarding period in my life working with @hidecloud, @peakji, and @gr00vyfairy.
+I ended up building out other projects like Mail Manus, the Manus API, and our Stripe integration. When we announced our $100M ARR it felt like an amazing milestone in what was up to that point the most intense and rewarding period in my life working with [@hidecloud](https://twitter.com/hidecloud), [@peakji](https://twitter.com/peakji), and [@gr00vyfairy](https://twitter.com/gr00vyfairy).
 
 ## Advice
 
-I was lucky to be in the right place at the right time, but I also made sure my work was visible. @aarondfrancis likes to talk about how luck is doing things × telling people about it, and I think it’s very true.
+I was lucky to be in the right place at the right time, but I also made sure my work was visible. [@aarondfrancis](https://twitter.com/aarondfrancis) likes to talk about how luck is doing things × telling people about it, and I think it’s very true.
 
 If you want to break into AI, you need to find a way to differentiate yourself when companies are receiving thousands of AI-generated resumes and have no idea what’s next.
 
 Here are some things you can do:
 
 - Get on Twitter and start finding your tribe of similar friends.
-- Build in public and showcase wild demos like what @zaidmukaddam did with Scira.
+- Build in public and showcase wild demos like what [@zaidmukaddam](https://twitter.com/zaidmukaddam) did with Scira.
 - Contribute to open source and build things that others want.
 
 The truth is that you just need to follow your curiosity and see what sparks joy. After all, the real challenge now isn’t just coding, it’s about learning how to steer the model.
 
-You should play with all of the models and any tool you can get your hands on. How is @cursor_ai different from @AmpCode? How are the Gemini models different from the Anthropic models? Why do we even care about function calling?
+You should play with all of the models and any tool you can get your hands on. How is [@cursor_ai](https://twitter.com/cursor_ai) different from [@AmpCode](https://twitter.com/AmpCode)? How are the Gemini models different from the Anthropic models? Why do we even care about function calling?
 
 The Chinese philosopher Wang Yangming spoke of the “unity of knowledge and action”—only the man who has been mauled by a tiger can truly understand what it means.
 
 By building a demonstrated history of work, you create stickiness. You send out a signal to people interested in the same weird things, and you make incredible friends.
 
-If you don’t have a local community, then build it. The hacker events I wanted didn’t exist in Singapore, so with @agrimsingh, @SherryYanJiang, @gabrielchua, @unprofeshme, and @aimuggle we created a little collective called 65Labs (@65labslah).
+If you don’t have a local community, then build it. The hacker events I wanted didn’t exist in Singapore, so with [@agrimsingh](https://twitter.com/agrimsingh), [@SherryYanJiang](https://twitter.com/SherryYanJiang), [@gabrielchua](https://twitter.com/gabrielchua), [@unprofeshme](https://twitter.com/unprofeshme), and [@aimuggle](https://twitter.com/aimuggle) we created a little collective called [65Labs](https://www.65labs.org/) ([@65labslah](https://twitter.com/65labslah)).
 
-Since then we’ve organized the largest Cursor Hackathon in the world (we even landed in the local news for it), another one with @GoogleDeepMind just yesterday which had almost 700 signups, and ran local coworking events with @posthog and @Zaltsman supporting us. We even appeared in the Straits Times.
+Since then we’ve organized the largest Cursor Hackathon in the world (we even landed in the local news for it), another one with [@GoogleDeepMind](https://twitter.com/GoogleDeepMind) just yesterday which had almost 700 signups, and ran local coworking events with [@posthog](https://twitter.com/posthog) and [@Zaltsman](https://twitter.com/Zaltsman) supporting us. We even appeared in the Straits Times.
 
 I’m just an API boy who got here by being curious and consistent. And if I can do it, so can you.
