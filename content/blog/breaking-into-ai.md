@@ -1,6 +1,6 @@
 ---
 title: How I Broke Into AI Without a Roadmap
-date: 2026-01-17
+date: 2026-01-12
 description: The messy, fast-changing path that took me from front-end engineering to LLMs.
 categories:
   - Reflections
