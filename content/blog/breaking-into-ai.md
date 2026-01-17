@@ -27,13 +27,15 @@ I started devouring online courses and sending links to [@karpathy](https://twit
 
 The only catch: it was at 3 AM every Wednesday for me in Singapore. But I figured I had nothing to lose and decided to set my alarm for six months and joined that 3 AM call whenever I could.
 
-I ended up making great friends like [@vibhuuuus](https://twitter.com/vibhuuuus), [@eugeneyan](https://twitter.com/eugeneyan), [@YoungPhlo_](https://twitter.com/YoungPhlo_), and [@FanaHOVA](https://twitter.com/FanaHOVA), and we worked through concepts I never could have figured out alone. I later ran an Asian edition for a while with [@bryanblackbee](https://twitter.com/bryanblackbee), meeting more friends like [@gabrielchua](https://twitter.com/gabrielchua) and [@aimuggle](https://twitter.com/aimuggle).
+I ended up making great friends like [@vibhuuuus](https://twitter.com/vibhuuuus), [@eugeneyan](https://twitter.com/eugeneyan), [@YoungPhlo\_](https://twitter.com/YoungPhlo_), and [@FanaHOVA](https://twitter.com/FanaHOVA), and we worked through concepts I never could have figured out alone. I later ran an Asian edition for a while with [@bryanblackbee](https://twitter.com/bryanblackbee), meeting more friends like [@gabrielchua](https://twitter.com/gabrielchua) and [@aimuggle](https://twitter.com/aimuggle).
 
 ## Open source
 
 At this point I really wanted to pivot to work with language models and a friend I spoke to told me to try working on open source software. After seeing [@jxnlco](https://twitter.com/jxnlco) speak at the [@aiDotEngineer](https://twitter.com/aiDotEngineer) summit online, I learned about Instructor.
 
 When Jason asked for help to build out the docs for Instructor, I immediately messaged him and offered to help write articles. That cold DM kicked off a stretch of nights where I would work my banking job from 9 to 6 writing React code, then come home and keep working until midnight to try to land my first PRs.
+
+![My first cold DM to Jason about writing for Instructor.](/jxnl.png)
 
 Three days later, I had my first PR merged into Instructor where I manually corrected and rewrote some docs. It was pure fun—working with new friends I met on the internet and reverse-engineering the API of every foundation lab to figure out how to force them to work with Instructor.
 
@@ -84,5 +86,7 @@ By building a demonstrated history of work, you create stickiness. You send out 
 If you don’t have a local community, then build it. The hacker events I wanted didn’t exist in Singapore, so with [@agrimsingh](https://twitter.com/agrimsingh), [@SherryYanJiang](https://twitter.com/SherryYanJiang), [@gabrielchua](https://twitter.com/gabrielchua), [@unprofeshme](https://twitter.com/unprofeshme), and [@aimuggle](https://twitter.com/aimuggle) we created a little collective called [65Labs](https://www.65labs.org/) ([@65labslah](https://twitter.com/65labslah)).
 
 Since then we’ve organized the largest Cursor Hackathon in the world (we even landed in the local news for it), another one with [@GoogleDeepMind](https://twitter.com/GoogleDeepMind) just yesterday which had almost 700 signups, and ran local coworking events with [@posthog](https://twitter.com/posthog) and [@Zaltsman](https://twitter.com/Zaltsman) supporting us. We even appeared in the Straits Times.
+
+![The Cursor Hackathon organizers featured in The Straits Times.](/st.png)
 
 I’m just an API boy who got here by being curious and consistent. And if I can do it, so can you.
