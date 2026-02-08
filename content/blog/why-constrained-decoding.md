@@ -1,5 +1,5 @@
 ---
-title: Pydantic to Regex: Compiling JSON Schemas for Structured Outputs
+title: "Pydantic to Regex: Compiling JSON Schemas for Structured Outputs"
 date: 2026-02-02
 description: Build a recursive JSON Schema-to-regex compiler from first principles
 categories:

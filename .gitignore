@@ -17,6 +17,11 @@
 /.next/
 /out/
 
+# generated static data
+/src/data/posts.json
+/src/data/posts/
+/src/data/series.json
+
 # production
 /build
 
