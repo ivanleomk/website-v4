@@ -14,7 +14,31 @@ If you've ever asked a LLM to output JSON, it might return markdown code blocks,
 
 This means that invalid outputs become impossible because the model never gets a chance to emit markdown fences, commenary text, missing fields or invalid syntax because those tokens simply have probability zero.
 
-In this series, we'll see how to do this by implementing a custom structured outputs implementation that's compatible with the `transformers` library using an older `mlx-community/Qwen1.5-0.5B-Chat-4bit` model which struggles with structured outputs.
+In this series, we'll build a simple package called `kosoku` that mimics structured outputs while intentionally supporting only a subset of the JSON Schema specification.
+
+We'll do this with an implementation that's compatible with the `transformers` library, using an older `mlx-community/Qwen1.5-0.5B-Chat-4bit` model that struggles with structured outputs.
+
+When we ask a smaller model to extract arguments for a more complex tool (for example a flight search with required fields like `origin`, `destination`, `passengers`, `cabin_class`, and `price_limit`), unconstrained decoding often returns the wrong JSON shape entirely.
+
+Here is a real unconstrained output from the model:
+
+```text
+Output:
+{
+  "flights": [
+    {
+      "flight_number": "JFK-THO",
+      "departure_date": "2025-03-15",
+      "arrival_date": "2025-03-16",
+      "price_per_person": "$3000"
+    }
+  ]
+}
+
+✗ Failed to parse as FlightSearch: 8 validation errors for FlightSearch
+```
+
+Instead of the expected argument object, it emits a different structure (`flights`), so the tool call fails validation.
 
 ## What are structured Outputs?
 
@@ -279,19 +303,11 @@ def _schema_to_regex(schema: dict, defs: dict) -> str:
     raise NotImplementedError(f"Schema type '{prop_type}' not supported.")
 ```
 
-One detail worth calling out is the lookahead implementation in the `object` branch.
-
-We build a regex for each property, and then add positive lookaheads for required keys:
-
-- `(?=.*"name"... )`
-- `(?=.*"age"... )`
-
-That gives us order-independent matching while still enforcing required fields.
+Here's a simple test for the object compiler:
 
 ```python
 def test_simple_object():
     assert matches(User, '{"name": "Ivan", "age": 29}')
-    assert matches(User, '{"age": 29 , "name": "Ivan"}')
     assert matches(User, '{"name": "Alice", "age": 0}')
 ```
 
@@ -326,9 +342,36 @@ There are a few important things happening here:
 
 1. The compiler sees `users` and maps that property to an array regex.
 2. It then sees `items` as a `$ref`, resolves `User` from `$defs`, and recurses.
-3. In object nodes, required fields are enforced with positive lookaheads, so we can validate required keys without depending on one fixed field order.
+3. In object nodes, key/value fragments are composed into a concrete JSON object pattern that can be validated with `re.fullmatch`.
 
 At this point we have a clean property-to-regex compiler that works for both flat schemas and nested schemas.
+
+## Structured Outputs from Scratch
+
+Educational constrained decoding pipeline built as explicit stages in `kosoku`.
+
+```python
+import kosoku
+
+regex = kosoku.from_json_schema(schema)  # JSON Schema -> regex
+nfa = kosoku.from_regex(regex)           # regex -> NFA
+dfa = kosoku.from_nfa(nfa)               # NFA -> DFA
+runtime = kosoku.from_dfa(dfa)           # cached runtime
+
+result = runtime.generate(model, tokenizer, prompt, output_type=MyModel)
+```
+
+```text
+JSON Schema -> Regex -> NFA -> DFA -> Token Masking -> Generation
+```
+
+1. `from_json_schema`: compiles a JSON Schema subset into regex.
+2. `from_regex`: parses regex into IR and compiles it into an epsilon-NFA.
+3. `from_nfa`: determinizes NFA closure states into a DFA API (`next_state`, `walk`, `is_final`).
+4. `from_dfa`: creates a reusable runtime that lazily builds token masks per DFA state.
+5. `generate`: masks invalid tokens at each decoding step and emits valid structured JSON.
+
+Note: this educational implementation is optimized for clarity, not full JSON Schema or regex parity. Current JSON object handling is an ordered-key subset (no lookahead-based unordered matching).
 
 ## Conclusion
 
