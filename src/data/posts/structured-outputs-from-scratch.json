@@ -1,0 +1,16 @@
+{
+  "title": "Structured Outputs From Scratch",
+  "date": "2026-02-01T00:00:00.000Z",
+  "description": "Implementing Constrained Decoding in under 300 lines",
+  "categories": [
+    "Reinforcement Learning"
+  ],
+  "authors": [
+    "ivanleomk"
+  ],
+  "content": "\nIf you've ever asked a LLM to output JSON, it might return markdown code blocks, hallucinate extra fields or produce invalid syntax.\n\nStructured Outputs solve this by making invalid outputs impossible at the token level. We've got [OpenAI's Constrained Decoding](https://openai.com/index/introducing-structured-outputs-in-the-api/) and [Outlines](https://github.com/dottxt-ai/outlines) an open source equivalent that's used in libraries like vLLM to ensure function calls are parsed as intended.\n\nFor modern day systems, structured outputs make it possible to integrate LLMs reliably into existing systems. In this article, we'll implement a\n\n## How Structured Outputs Work\n",
+  "slug": "structured-outputs-from-scratch",
+  "series": [
+    "LLMs From Scratch"
+  ]
+}

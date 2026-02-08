@@ -15,6 +15,11 @@ export interface BlogPost {
 
 export async function parseMarkdown(markdownContent: string, slug: string): Promise<BlogPost> {
   const { data, content } = matter(markdownContent);
+  const series = Array.isArray(data.series)
+    ? data.series
+    : data.series
+      ? [data.series]
+      : [];
   
   return {
     title: data.title || '',
@@ -25,7 +30,7 @@ export async function parseMarkdown(markdownContent: string, slug: string): Prom
     content: content, // Raw markdown content for react-markdown
     slug,
     image: data.image,
-    series: data.series || [],
+    series,
     draft: data.draft || false,
   };
 }
