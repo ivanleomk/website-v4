@@ -1,7 +1,7 @@
 ---
-title: Why Constrained Decoding
+title: Pydantic to Regex: Compiling JSON Schemas for Structured Outputs
 date: 2026-02-02
-description: Building our first Finite State Machine
+description: Build a recursive JSON Schema-to-regex compiler from first principles
 categories:
   - Reinforcement Learning
 authors:
