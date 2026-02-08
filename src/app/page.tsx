@@ -31,7 +31,7 @@ export default async function Home() {
             A collection of notes, essays, and technical deep dives by Ivan Leo.
           </p>
           <p className="text-base text-gray-500 font-sans">
-            Currently building general agents for knowledge work at{" "}
+            Previously built general agents for knowledge work at{" "}
             <a
               href="https://manus.im"
               target="_blank"
@@ -40,7 +40,7 @@ export default async function Home() {
             >
               Manus
             </a>
-            .
+            {" "}(acq by Meta). Embarking on a new adventure soon.
           </p>
         </section>
 
