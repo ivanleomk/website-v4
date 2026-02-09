@@ -2,8 +2,6 @@
 title: "Pydantic to Regex: Compiling JSON Schemas for Structured Outputs"
 date: 2026-02-02
 description: Build a recursive JSON Schema-to-regex compiler from first principles
-categories:
-  - Reinforcement Learning
 authors:
   - ivanleomk
 series:
@@ -12,7 +10,7 @@ series:
 
 If you've ever asked a LLM to output JSON, it might return markdown code blocks, hallucinate extra fields or produce invalid syntax. A common way to solve this is to handle this at a decoding level - the model still produces tokens one by one but before each token is sampled, we mask out anything that would violate a predefined structure.
 
-This means that invalid outputs become impossible because the model never gets a chance to emit markdown fences, commenary text, missing fields or invalid syntax because those tokens simply have probability zero.
+This means that invalid outputs become impossible because the model never gets a chance to emit markdown fences, commentary text, missing fields or invalid syntax because those tokens simply have zero probability.
 
 In this series, we'll build a simple package called `kosoku` that mimics structured outputs while intentionally supporting only a subset of the JSON Schema specification.
 
@@ -20,7 +18,7 @@ We'll do this with an implementation that's compatible with the `transformers` l
 
 > **Why this matters for tool calls:** when we ask a smaller model to extract arguments for a more complex tool (for example a flight search with required fields like `origin`, `destination`, `passengers`, `cabin_class`, and `price_limit`), unconstrained decoding often returns the wrong JSON shape entirely. Instead of the expected argument object, it may emit a different structure (like a `flights` list), which fails validation and makes the tool call unusable.
 
-## What are structured Outputs?
+## What are Structured Outputs?
 
 Typically if you've ever used any model provider, you normally get to define the functions you'd like to call using JSON Schema.
 
@@ -121,8 +119,6 @@ How does this work on a high level? How did we go from our JSON schema to a vali
 3. Once we've done this, we then compile this regex into a Finite State machine (FSM) which tells us given a prefix, what are the valid states from there. This is a **local lookup for us**.
 
 Once we've obtained our FSM, we then have an object we can lookup quickly to determine which tokens to mask at each step.
-
-Now that we understand what how the proccess works, let's see how we can implement a JSON Schema to Regex converter.
 
 ## Processing our JSON Schema
 
@@ -330,4 +326,6 @@ At this point we have a clean property-to-regex compiler that works for both fla
 
 At this stage, we can take a Pydantic model, convert it to JSON Schema, and compile that into one regex that describes every valid output string.
 
-That gives us a strong global validator, but it's still not enough for fast token-by-token decoding. This regex grows quickly with schema size, which is exactly why we don’t want to run it repeatedly at decode time. For this, we'll need a finite state machine (FSM), once we have the FSM, decoding will only require a fast lookup instead of repeated regex checks at each step.
+That gives us a strong global validator, but it's still not enough for fast token-by-token decoding. This regex grows quickly with schema size, so we don't want to run it repeatedly at decode time.
+
+In the next article, we'll introduce an intermediate representation (IR) for regex so we can turn patterns into explicit nodes like sequences, branches, repeats, and character classes. That IR is the bridge from "one big regex string" to a state-machine lookup that can answer what can legally come next.
