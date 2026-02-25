@@ -11,6 +11,8 @@ series:
   - Openclawd From Scratch
 ---
 
+> The code for this article is available [here](https://github.com/hugobowne/build-your-own-ai-assistant/tree/main/1%20-%20It's%20Alive).
+
 The difference between a chatbot and an agent is simple: agents can act. Think of this as our Frankenstein moment: it's alive, and it can use tools. For instance, let's say we wanted to find a great restaurant for dinner in Singapore, we might perform the following steps
 
 1. `search_web` : We'll first look up some popular restaurants in Singapore and have a small shortlist of websites to check out
