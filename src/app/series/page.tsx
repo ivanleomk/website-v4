@@ -30,27 +30,26 @@ export default async function SeriesPage() {
           {seriesList.map((s) => (
             <section key={s.id} id={s.id} className="group scroll-mt-24">
               {/* Series Header */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
-                <div className="md:col-span-4">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-sans font-bold uppercase tracking-widest text-gray-500">
-                      <Layers className="w-3 h-3" />
-                      {s.totalParts} Parts
-                    </span>
-                    <span className="w-1 h-1 rounded-full bg-gray-300" />
-                    <span className="text-xs font-sans font-bold uppercase tracking-widest text-amber-600">
-                      {s.status}
-                    </span>
-                  </div>
-                  <h2 className="text-3xl md:text-4xl font-serif font-medium leading-tight text-black">
-                    {s.title}
-                  </h2>
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-sans font-bold uppercase tracking-widest text-gray-500">
+                    <Layers className="w-3 h-3" />
+                    {s.totalParts} Parts
+                  </span>
+                  <span className="w-1 h-1 rounded-full bg-gray-300" />
+                  <span className="text-xs font-sans font-bold uppercase tracking-widest text-amber-600">
+                    {s.status}
+                  </span>
                 </div>
-                <div className="md:col-span-8 md:pt-10">
-                  <p className="text-lg text-gray-500 font-serif leading-relaxed">
-                    {s.description}
-                  </p>
-                </div>
+                <Link
+                  href={`/series/${s.id}`}
+                  className="text-2xl md:text-3xl font-serif font-medium leading-tight text-black hover:text-gray-600 transition-colors"
+                >
+                  <h2>{s.title}</h2>
+                </Link>
+                <p className="text-md text-gray-500 font-serif leading-relaxed mt-3">
+                  {s.description}
+                </p>
               </div>
 
               {/* Syllabus / Chapter List */}
@@ -93,7 +92,7 @@ export default async function SeriesPage() {
                 ))}
 
                 {/* Placeholder for future parts if series is in progress */}
-                {s.status === "In Progress" && (
+                {s.status !== "Completed" && (
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-4 py-6 items-baseline border-b border-dashed border-gray-200 opacity-50">
                     <div className="md:col-span-2 flex items-center gap-3">
                       <span className="font-mono text-sm text-gray-500">

@@ -1,7 +1,22 @@
 {
-  "Building an Agent": "A comprehensive series on building AI coding agents from scratch, covering everything from basic tool integration to advanced features like agentic search and subagents.",
-  "LLMs From Scratch": "Working through Stanford's CS336 and documenting what I learn at each step — from tokenization to training.",
-  "Openclawd From Scratch": "Build Your Own OpenClaw From Scratch is a hands-on series where we rebuild an OpenClaw-style agent from first principles. Starting from a blank file, we'll implement the core agent loop, tool use, sandboxed execution on Modal, persistent memory, and self-extending skills. By the end, you'll have an agent that can install what it needs, run real workflows, and evolve over time.",
-  "Reinforcement Learning From Scratch": "A series on building reinforcement learning agents from scratch, covering everything from basic concepts to advanced techniques.",
-  "Structured Outputs From Scratch": "Building a structured output parser from first principles — from JSON Schema to regex to FSM to constrained decoding."
+  "Building an Agent": {
+    "description": "A comprehensive series on building AI coding agents from scratch, covering everything from basic tool integration to advanced features like agentic search and subagents.",
+    "status": "completed"
+  },
+  "LLMs From Scratch": {
+    "description": "Working through Stanford's CS336 and documenting what I learn at each step — from tokenization to training.",
+    "status": "in-progress"
+  },
+  "Openclawd From Scratch": {
+    "description": "Build Your Own OpenClaw From Scratch is a hands-on series where we rebuild an OpenClaw-style agent from first principles. Starting from a blank file, we'll implement the core agent loop, tool use, sandboxed execution on Modal. By the end, you'll have an agent that can install what it needs, run real workflows, and evolve over time.",
+    "status": "in-progress"
+  },
+  "Reinforcement Learning From Scratch": {
+    "description": "A series on building reinforcement learning agents from scratch, covering everything from basic concepts to advanced techniques.",
+    "status": "in-progress"
+  },
+  "Structured Outputs From Scratch": {
+    "description": "Building a structured output parser from first principles — from JSON Schema to regex to FSM to constrained decoding.",
+    "status": "completed"
+  }
 }

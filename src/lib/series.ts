@@ -4,12 +4,19 @@ import { BlogPost } from './markdown';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+export type SeriesStatus = 'in-progress' | 'completed';
+
+export interface SeriesDefinition {
+  description: string;
+  status: SeriesStatus;
+}
+
 export interface SeriesListItem {
   id: string;
   title: string;
   description: string;
   totalParts: number;
-  status: 'In Progress';
+  status: 'In Progress' | 'Completed';
   posts: BlogPost[];
 }
 
@@ -20,10 +27,18 @@ export interface SeriesInfo {
   currentIndex: number;
 }
 
-export async function getSeriesDefinitions(): Promise<Record<string, string>> {
+function toSlug(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, '-');
+}
+
+function displayStatus(status: SeriesStatus): 'In Progress' | 'Completed' {
+  return status === 'completed' ? 'Completed' : 'In Progress';
+}
+
+export async function getSeriesDefinitions(): Promise<Record<string, SeriesDefinition>> {
   if (isProduction) {
     return import('@/data/series.json')
-      .then((m) => m.default)
+      .then((m) => m.default as unknown as Record<string, SeriesDefinition>)
       .catch(() => ({}));
   }
 
@@ -33,37 +48,62 @@ export async function getSeriesDefinitions(): Promise<Record<string, string>> {
   }
 
   const seriesContent = readFileSync(seriesPath, 'utf8');
-  return JSON.parse(seriesContent) as Record<string, string>;
+  return JSON.parse(seriesContent) as Record<string, SeriesDefinition>;
 }
 
 export function buildSeriesList(
   posts: BlogPost[],
-  seriesDefinitions: Record<string, string>
+  seriesDefinitions: Record<string, SeriesDefinition>
 ): SeriesListItem[] {
-  return Object.entries(seriesDefinitions).map(([name, description]) => {
+  return Object.entries(seriesDefinitions).map(([name, def]) => {
     const seriesPosts = posts
       .filter((post) => post.series?.includes(name))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     return {
-      id: name.toLowerCase().replace(/\s+/g, '-'),
+      id: toSlug(name),
       title: name,
-      description,
+      description: def.description,
       totalParts: seriesPosts.length,
-      status: 'In Progress' as const,
+      status: displayStatus(def.status),
       posts: seriesPosts,
     };
   });
 }
 
-export function getSeriesInfo(posts: BlogPost[], currentSlug: string, seriesDefinitions: Record<string, string>): SeriesInfo | null {
+export function getSeriesBySlug(
+  posts: BlogPost[],
+  seriesDefinitions: Record<string, SeriesDefinition>,
+  slug: string
+): SeriesListItem | null {
+  const entry = Object.entries(seriesDefinitions).find(
+    ([name]) => toSlug(name) === slug
+  );
+  if (!entry) return null;
+
+  const [name, def] = entry;
+  const seriesPosts = posts
+    .filter((post) => post.series?.includes(name))
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  return {
+    id: toSlug(name),
+    title: name,
+    description: def.description,
+    totalParts: seriesPosts.length,
+    status: displayStatus(def.status),
+    posts: seriesPosts,
+  };
+}
+
+export function getSeriesInfo(posts: BlogPost[], currentSlug: string, seriesDefinitions: Record<string, SeriesDefinition>): SeriesInfo | null {
   const currentPost = posts.find(post => post.slug === currentSlug);
   if (!currentPost?.series?.length) return null;
 
   const seriesName = currentPost.series[0]; // Use first series if multiple
-  const description = seriesDefinitions[seriesName];
+  const def = seriesDefinitions[seriesName];
   
-  if (!description) return null;
+  if (!def) return null;
 
   // Find all posts in this series, sorted by date
   const seriesPosts = posts
@@ -74,7 +114,7 @@ export function getSeriesInfo(posts: BlogPost[], currentSlug: string, seriesDefi
 
   return {
     name: seriesName,
-    description,
+    description: def.description,
     posts: seriesPosts,
     currentIndex
   };
