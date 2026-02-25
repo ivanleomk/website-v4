@@ -11,34 +11,39 @@ series:
   - Openclawd From Scratch
 ---
 
-The difference between a chatbot and an agent is simple: agents can act. Think of this as our Frankenstein moment: it's alive, and it can use tools.
+The difference between a chatbot and an agent is simple: agents can act. Think of this as our Frankenstein moment: it's alive, and it can use tools. For instance, let's say we wanted to find a great restaurant for dinner in Singapore, we might perform the following steps
 
-Once we've implemented a simple tool calling loop, we'll push it one step further and let it write its own tools similar to Pi so that capability isn't frozen to whatever we shipped on day one.
+1. `search_web` : We'll first look up some popular restaurants in Singapore and have a small shortlist of websites to check out
+2. `get_page`: For each website we would then get the content of the page, read what they have to say and then see if that's a restaurant we might want to go to
+3. `find_availability`: At this point, we would then check the availability of the restaurants that we'd shortlisted
+4. `make_reservation` : Finally, we would then make a reservation for the restaurant that we want
 
-Let's dive in and see how to get there.
+Because we were able to iteratively search for information and take actions (Eg. make a reservation ), we were able to achieve our task in the end. Similarly, agents need the right set of tools to be able to perform their job.
 
-## Our First Loop
+In this article, we'll implement a simple agent from scratch that has the ability to call tools in a loop and write its own tools to extend its functionality.
 
-If there's one thing that you take away from this entire series, it's that the main power of an agent is that it's able to iteratively understand what changes it needs to make so that it can complete its task.
+We'll be using the Gemini Python SDK in this series because I like the flash series of models. They're pretty good and at $3/1M tokens, relatively affordable for running something like this. We'll be using uv to manage our dependencies and you can [install it here](https://docs.astral.sh/uv/).
 
-Let's start by first defining a simple `read_file` tool for our agent.
+## The Tool Calling Loop
+
+For any agent, the tool calling loop roughly works like this
+
+1. `user_message` : The user sends a message
+2. `tool_call` : The model decides to call a tool
+3. `tool_response` : We execute the tool and then tell the model the result of executing the tool
+
+We then keep iterating until the model decides it doesn't need to call any tools anymore. This iterative process allows an agent to complete its task by either getting more information or making changes.
+
+Let's start by installing the `google-genai` python sdk and `rich` for nice printing/formatting.
+
+```bash
+uv pip install google-genai rich
+```
+
+then defining a `read_file` tool for our agent.
 
 ```py
 from google.genai import Client, types
-
-
-def read_file(path: str) -> str:
-    """Reads a text file and returns its contents."""
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return f.read()
-    except Exception as exc:
-        return f"Failed to read '{path}': {exc}"
-
-
-# 1. Setup
-print("Welcome to Amie! (Type 'exit' to quit)")
-client = Client()
 
 read_file_tool = types.Tool(
     function_declarations=[
@@ -57,130 +62,447 @@ read_file_tool = types.Tool(
 )
 ```
 
-We'll then extend on this logic by creating a function that represents a single "turn" for our agent.
+We can then call this tool by instantiating an instance of the `Client` and then providing a simple prompt to call the gemini models with. For Gemini, this uses the `generate_content` method as seen below.
 
 ```py
-def run(client: Client, conversation: list[types.Content]) -> types.Content | None:
-    """
-    Runs a single step of the agent.
-    Returns a tool response message if tools were called, or None if the agent is done.
-    """
-    # 1. Let the model think and generate a response
-    completion = client.models.generate_content(
+from google.genai import Client, types
+from rich import print
+
+read_file_tool = types.Tool(
+    function_declarations=[
+        types.FunctionDeclaration(
+            name="read_file",
+            description="Read a text file and return its contents.",
+            parameters=types.Schema(
+                type="OBJECT",
+                properties={
+                    "path": types.Schema(type="STRING", description="File path")
+                },
+                required=["path"],
+            ),
+        )
+    ]
+)
+
+client = Client()
+
+completion = client.models.generate_content(
+    model="gemini-3-flash-preview",
+    contents=[{"role": "user", "parts": [{"text": "Can u read the ./README.md file"}]}],
+    config=types.GenerateContentConfig(tools=[read_file_tool]),
+)
+
+print(completion)
+```
+
+This will output a pretty large object in its response. Let's break it down and see what we want.
+
+```py
+GenerateContentResponse(
+    sdk_http_response=HttpResponse(
+        headers={
+            'content-type': 'application/json; charset=UTF-8',
+            'vary': 'Origin, X-Origin, Referer',
+            'content-encoding': 'gzip',
+            'date': 'Wed, 25 Feb 2026 04:08:21 GMT',
+            'server': 'scaffolding on HTTPServer2',
+            'x-xss-protection': '0',
+            'x-frame-options': 'SAMEORIGIN',
+            'x-content-type-options': 'nosniff',
+            'server-timing': 'gfet4t7; dur=2181',
+            'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000',
+            'transfer-encoding': 'chunked'
+        },
+        body=None
+    ),
+    candidates=[
+        Candidate(
+            content=Content(
+                parts=[
+                    Part(
+                        media_resolution=None,
+                        code_execution_result=None,
+                        executable_code=None,
+                        file_data=None,
+                        function_call=FunctionCall(
+                            id=None,
+                            args={'path': './README.md'},
+                            name='read_file',
+                            partial_args=None,
+                            will_continue=None
+                        ),
+                        function_response=None,
+                        inline_data=None,
+                        text=None,
+                        thought=None,
+                        thought_signature="....some byte here",
+                        video_metadata=None
+                    )
+                ],
+                role='model'
+            ),
+            citation_metadata=None,
+            finish_message=None,
+            token_count=None,
+            finish_reason=<FinishReason.STOP: 'STOP'>,
+            avg_logprobs=None,
+            grounding_metadata=None,
+            index=0,
+            logprobs_result=None,
+            safety_ratings=None,
+            url_context_metadata=None
+        )
+    ],
+    create_time=None,
+    model_version='gemini-3-flash-preview',
+    prompt_feedback=None,
+    response_id='tXWead7OB-e8qfkPvM30oQ4',
+    usage_metadata=GenerateContentResponseUsageMetadata(
+        cache_tokens_details=None,
+        cached_content_token_count=None,
+        candidates_token_count=19,
+        candidates_tokens_details=None,
+        prompt_token_count=63,
+        prompt_tokens_details=[ModalityTokenCount(modality=<MediaModality.TEXT: 'TEXT'>, token_count=63)],
+        thoughts_token_count=29,
+        tool_use_prompt_token_count=None,
+        tool_use_prompt_tokens_details=None,
+        total_token_count=111,
+        traffic_type=None
+    ),
+    automatic_function_calling_history=None,
+    parsed=None
+)
+```
+
+Since we want to build an agent, what we want is to get the function calls of the model, which you can get from the `candidates` portion
+
+```text
+ candidates=[
+        Candidate(
+            content=Content(
+                parts=[
+                    Part(
+                        media_resolution=None,
+                        code_execution_result=None,
+                        executable_code=None,
+                        file_data=None,
+                        function_call=FunctionCall(
+                            id=None,
+                            args={'path': './README.md'},
+                            name='read_file',
+                            partial_args=None,
+                            will_continue=None
+                        ),
+                        function_response=None,
+                        inline_data=None,
+                        text=None,
+                        thought=None,
+                        thought_signature="....some byte here",
+                        video_metadata=None
+                    )
+                ],
+                role='model'
+            )
+ ]
+```
+
+We can see that in the `function_call` section, we have the `args` and the `name` of the tool to call. Tool calling enables us to know that when our model is executing its task, it will call a fixed set of potentials tools and that all the tools will have a guaranteed set of arguments.
+
+Let's now see how we might execute a tool and then append the result to the conversation history so that the model can process the result of a tool that it's calling.
+
+```py
+from google.genai import Client, types
+from rich import print
+
+read_file_tool = types.Tool(
+    function_declarations=[
+        types.FunctionDeclaration(
+            name="read_file",
+            description="Read a text file and return its contents.",
+            parameters=types.Schema(
+                type="OBJECT",
+                properties={
+                    "path": types.Schema(type="STRING", description="File path")
+                },
+                required=["path"],
+            ),
+        )
+    ]
+)
+
+
+def read_file(path: str) -> str:
+    """Reads a text file and returns its contents."""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return f.read()
+    except Exception as exc:
+        return f"Failed to read '{path}': {exc}"
+
+
+client = Client()
+
+contents = [
+    types.UserContent(
+        parts=[types.Part.from_text(text="Can u read the ./README.md file")]
+    )
+]
+
+completion = client.models.generate_content(
+    model="gemini-3-flash-preview",
+    contents=contents,
+    config=types.GenerateContentConfig(tools=[read_file_tool]),
+)
+
+fc = completion.candidates[0].content.parts[0].function_call
+
+if fc:
+    print(fc.name)
+    print(fc.args)
+    if fc.name == "read_file":
+        path = (fc.args or {}).get("path", "./README.md")
+        # Reuse model content to preserve function-call thought signatures.
+        contents.append(completion.candidates[0].content)
+        contents.append(
+            types.UserContent(
+                parts=[
+                    types.Part.from_function_response(
+                        name=fc.name,
+                        response={"path": path, "content": read_file(path)},
+                    )
+                ]
+            )
+        )
+
+completion = client.models.generate_content(
+    model="gemini-3-flash-preview",
+    contents=contents,
+    config=types.GenerateContentConfig(tools=[read_file_tool]),
+)
+print(completion)
+```
+
+Going back to just the candidates that are generated, we can then see that the model is able to determine that we need to read the README file when we say that `Can u read the ./README.md file` and that once we provide it with the content of the readme file, the response in its final response is as follows.
+
+```py
+Candidate(
+    content=Content(
+        parts=[
+            Part(
+                media_resolution=None,
+                code_execution_result=None,
+                executable_code=None,
+                file_data=None,
+                function_call=None,
+                function_response=None,
+                inline_data=None,
+                text='The `./README.md` file describes **Koroku**, a project designed to teach how to build a coding agent step by step. The repository is structured into four progressive stages:\n\n### Project Overview\n- **Stage 1: Building Our First Agent** - A minimal ...(rest of conten)',
+                thought=None,
+                thought_signature="....thought signature"
+                video_metadata=None
+            )
+        ],
+        role='model'
+    ),
+)
+```
+
+We can see that the response now only contains the `text` field which indicates that the model has chosen to respond with a text response.
+
+To summarise, the LLM tool calling loop is relatively straightforward. The model either decides to call one or more tools or respond with pure text. As long as we see functions being called, we should do another turn. If not, we can stop and return control to the user.
+
+## Cleaning up the code
+
+Now that we've manually run the logic above, let's extend our logic and create a function that represents a single `turn` for our agent.
+
+Since we'll be dealing with async functionality later down the line (Eg. Telegram), we'll make `run` an async function from the get go.
+
+```py
+import asyncio
+
+from google.genai import Client, types
+from rich import print
+from typing import Literal, TypeAlias, TypedDict
+
+read_file_tool = types.Tool(
+    function_declarations=[
+        types.FunctionDeclaration(
+            name="read_file",
+            description="Read a text file and return its contents.",
+            parameters=types.Schema(
+                type="OBJECT",
+                properties={
+                    "path": types.Schema(type="STRING", description="File path"),
+                },
+                required=["path"],
+            ),
+        )
+    ]
+)
+
+
+def read_file(path: str) -> str:
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return f.read()
+    except Exception as exc:
+        return f"Failed to read '{path}': {exc}"
+
+
+class FunctionResponseRunResult(TypedDict):
+    kind: Literal["function_response"]
+    message: types.UserContent
+
+
+RunResult: TypeAlias = None | FunctionResponseRunResult
+
+
+async def run(
+    client: Client, contents: list[types.Content]
+) -> tuple[types.Content, RunResult]:
+    completion = await client.aio.models.generate_content(
         model="gemini-3-flash-preview",
-        contents=conversation,
+        contents=contents,
         config=types.GenerateContentConfig(tools=[read_file_tool]),
     )
 
     message = completion.candidates[0].content
-    conversation.append(message)
 
-    # 2. Check for function calls
     function_calls = [
         part.function_call for part in message.parts if part.function_call
     ]
-
-    # 3. Base Case: The agent is done. Return None.
     if not function_calls:
-        text_parts = [part.text for part in message.parts if part.text]
-        print(f"Amie: {''.join(text_parts)}")
-        return None
+        return message, None
 
-    # 4. Action Case: Execute tools
     tool_responses: list[types.Part] = []
     for call in function_calls:
-        print(f"[Agent Action] Running '{call.name}' with args: {call.args}")
+        if not call or call.name != "read_file":
+            continue
 
-        # NOTE: If you wanted an approval queue, you could pause here!
-        if call.name == "read_file":
-            result = read_file(call.args.get("path", ""))
-
-            tool_responses.append(
-                types.Part.from_function_response(
-                    name=call.name,
-                    response={"result": result},
-                )
+        path = (call.args or {}).get("path", "")
+        print(f"[Agent Action] read_file(path={path!r})")
+        result = read_file(path)
+        tool_responses.append(
+            types.Part.from_function_response(
+                name=call.name,
+                response={"path": path, "content": result},
             )
+        )
 
-    # Return the formatted tool responses as a tool message
-    return types.Content(role="user", parts=tool_responses)
-```
+    if not tool_responses:
+        return message, None
+    return message, {
+        "kind": "function_response",
+        "message": types.UserContent(parts=tool_responses),
+    }
 
-The run function is the core of our agent's turn, encapsulating a single cycle of its logic. It sends the entire conversation history to the Gemini model, along with the read_file_tool to let the model know what capabilities it has. The function then inspects the model's response to see what it decided to do.
 
-This leads to two possibilities.
+async def main() -> None:
+    client = Client()
+    contents: list[types.Content] = []
 
-1. If the model provides a direct text answer, the agent's task is complete for now. The function prints this answer and returns None, signaling the main loop to stop.
-
-2. If the model asks to use a tool, the function executes the corresponding Python code, captures the result, and packages it into a special 'tool response' message.
-
-It then returns this message, which gets added back into the conversation, allowing the model to see the outcome of its chosen action and continue the process.
-
-Lastly, let's write it up together so that when the agent makes a tool call, we'll be able to allow it to make another call.
-
-```py
-conversation: list[types.Content] = []
-
-while True:
-    user_input = input("\nYou: ").strip()
-    if user_input.lower() in ["exit", "quit"]:
-        break
-
-    conversation.append(types.Content(role="user", parts=[types.Part(text=user_input)]))
-
-    # The Agent Loop is now beautifully simple
+    print("Type 'exit' or 'quit' to stop.")
     while True:
-        # Run one step of the agent
-        next_message = run(client, conversation)
-
-        # If it returns None, the agent has finished answering
-        if next_message is None:
+        user_input = input("\nYou: ").strip()
+        if user_input.lower() in {"exit", "quit"}:
             break
+        if not user_input:
+            continue
 
-        # Otherwise, it returned a tool result. Append it and loop!
-        conversation.append(next_message)
+        contents.append(
+            types.UserContent(parts=[types.Part.from_text(text=user_input)])
+        )
+        while True:
+            assistant_message, tool_result = await run(client, contents)
+            contents.append(assistant_message)
+            if tool_result is None:
+                for part in assistant_message.parts:
+                    if part.text:
+                        print(f"\nAssistant: {part.text}")
+                break
+            assert tool_result["kind"] == "function_response"
+            contents.append(tool_result["message"])
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
 
 Let's see some sample output below.
 
 ```text
-Welcome to Amie! (Type 'exit' to quit)
+You: hi there can you read what's in README.md?
+[Agent Action] read_file(path='README.md')
 
-You: hi there can u tell me what's in README.md?
-[Agent Action] Running 'read_file' with args: {'path': 'README.md'}
-Amie: The `README.md` file contains the following:
+Assistant: The `README.md` file describes **Koroku**, a workshop-style codebase for building a coding agent step-by-step. The repository is
+organized into four main stages:
 
-# Building a coding agent
-
-Here's a workshop on how to build up to a simple coding agent Amie!
+1.  **Building Our First Agent**: A minimal chat loop with Gemini and a basic `read_file` tool.
+2.  **Giving Our Agent Hands**: Introducing a reusable runtime, typed tool classes (Read, Write, Edit, Bash), and an async agent loop with
+hot-reloading.
+3.  **Integrating Telegram**: Exposing the agent via a FastAPI server and a Telegram bot....(rest of text)
 ```
 
 This is some pretty cool stuff! Now we've got an agent that's able to read files and answer questions in your code base.
 
-Right now if we type `readme` instead of `README.md` for instance, our agent isn't able to resolve the difference. We're going to need to give it more tools in order for it to be able to work it's magic.
+Right now if we type `readme` instead of `README.md` for instance, our agent isn't able to resolve the difference. We're going to need to give it more tools in order for it to be able to work its magic.
 
 ## Creating A Factory
 
 Now that we've seen tool calling in action, we'll now make it easier to define tools so that down the line our model can do it itself automatically.
 
-First let's define a simple Pydantic base model to generate a valid tool call definition.
+We'll define a few types first to make our lives easier in an `agent_tools.py` file which will only store tool specific logic.
+
+1. `AgentContext` : Since we'll be sharing dependencies between different tools, we'll store them inside an AgentContext object that's accessible inside every single execute call
+
+2. `ToolResult` : We'll also define a simple ToolResult that makes it easy for us to instantiate and store the result of the tool call in it. Let's see this in action.
 
 ```py
+from abc import ABC, abstractmethod
+from typing import Any, Awaitable
 from pydantic import BaseModel
 from google.genai import types
 import os
+import subprocess
+
+# Empty for now
+class AgentContext:
+    pass
 
 
-class AgentTool(BaseModel):
+class ToolResult(BaseModel):
+    error: bool
+    name: str
+    response: dict[str, Any]
+
+    model_config = {"arbitrary_types_allowed": True}
+
+    def to_genai_message(self):
+        return types.Part.from_function_response(name=self.name, response=self.response)
+```
+
+We'll now create a base `AgentTool` class which implements most of the basic methods that we'll need to handle tool calling
+
+```py
+class AgentTool(BaseModel, ABC):
+    @classmethod
+    def tool_name(cls) -> str:
+        return cls.__name__
+
+    def tool_result(self, *, error: bool, response: dict[str, Any]) -> ToolResult:
+        return ToolResult(error=error, name=self.__class__.tool_name(), response=response)
+
     @classmethod
     def to_genai_schema(cls):
         json_schema = cls.model_json_schema()
+        tool_name = cls.tool_name()
         return types.Tool(
             function_declarations=[
                 types.FunctionDeclaration(
-                    name=json_schema["title"],
+                    name=tool_name,
                     description=json_schema.get(
-                        "description", f"Call the {json_schema['title']} tool"
+                        "description", f"Call the {tool_name} tool"
                     ),
                     parameters=types.Schema(
                         type="OBJECT",
@@ -191,36 +513,61 @@ class AgentTool(BaseModel):
             ]
         )
 
-    def execute(self):
+    @abstractmethod
+    def execute(self, _context: AgentContext) -> Awaitable[ToolResult]:
         """Override this in subclasses to define tool logic."""
-        raise NotImplementedError(
-            f"Execute not implemented for {self.__class__.__name__}"
-        )
+        raise NotImplementedError
+```
 
+We can then rewrite our original `readFile` tool here to use this `AgentTool` class
 
+```py
 class ReadFile(AgentTool):
     path: str
 
-    def execute(self, **kwargs):
+    async def execute(self, _context: AgentContext) -> ToolResult:
         if not os.path.exists(self.path) or not os.path.isfile(self.path):
-            return {"ok": False, "error": f"Path does not exist: {self.path}"}
+            return self.tool_result(error=True, response={"error": "File does not exist"})
 
         try:
             with open(self.path, "r", encoding="utf-8") as f:
-                return {"ok": True, "result": f.read()}
-        except Exception as e:
-            return {"ok": False, "error": f"Failed to read '{self.path}': {e}"}
+                return self.tool_result(
+                    error=False,
+                    response={
+                        "file_content": f"""
+File {self.path} was read
 
+<content>
+{f.read()}
+</content>
+"""
+                    },
+                )
+
+        except Exception as e:
+            return self.tool_result(
+                error=True,
+                response={"error": f"Failed to read '{self.path}': {e}"},
+            )
+
+TOOLS = [ReadFile]
 ```
 
-We can then define a simple `AgentRuntime` here which will register a set of given tools and their execution methods
+We can then define an `AgentRuntime` class in our main `agent.py` file so that it's easy for us to easily manage the tools that we have on hand. This will act like a tool registry that the model can use to reload/add new tools as needed as you'll see in the next section.
 
 ```py
+from agent_tools import TOOLS, AgentTool, ToolResult, AgentContext
+from typing import Any, Literal, Type, TypeAlias, TypedDict
+from google.genai import types, Client
+import asyncio
+
+
 class AgentRuntime:
     """Minimal runtime that exposes registered tools for the model."""
 
-    def __init__(self):
-        self.tools: dict[str, Type[AgentTool]] = {}
+    def __init__(self, context: AgentContext):
+        self.tools: dict[str, type[AgentTool]] = {tool.__name__: tool for tool in TOOLS}
+        self.context = context
 
     def get_tools(self) -> list[types.Tool]:
         return [tool_cls.to_genai_schema() for tool_cls in self.tools.values()]
@@ -228,64 +575,109 @@ class AgentRuntime:
     def register_tool(self, tool_cls: Type[AgentTool]):
         self.tools[tool_cls.__name__] = tool_cls
 
-    def execute_tool(self, tool_name: str, args: dict):
+    async def execute_tool(
+        self, tool_name: str, args: dict[str, Any]
+    ) -> ToolResult | types.Part:
         tool_cls = self.tools.get(tool_name)
         if tool_cls is None:
-            return {"ok": False, "error": f"Unknown tool: {tool_name}"}
+            return ToolResult(
+                error=True,
+                name=tool_name,
+                response={"Error": f"Unknown tool: {tool_name}"},
+            )
+
         try:
-            tool_input = tool_cls.model_validate(args or {})
-            return tool_input.execute()
+            tool_input = tool_cls.model_validate(args)
+            return await tool_input.execute(self.context)
         except Exception as exc:
-            return {"ok": False, "error": str(exc)}
+            return ToolResult(
+                error=True,
+                name=tool_name,
+                response={"error": str(exc)},
+            )
 ```
 
-We can then instantiate our previous readFile to be part of the list of tools as seen below
+Now let's update our existing `run` function so that we now use this Runtime that we've defined.
 
 ```py
-def get_default_runtime():
-    default_runtime = AgentRuntime()
-    default_runtime.register_tool(ReadFile)
-    return default_runtime
+async def run(
+    client: Client, contents: list[types.Content], runtime: AgentRuntime
+) -> tuple[types.Content, RunResult]:
+    completion = await client.aio.models.generate_content(
+        model="gemini-3-flash-preview",
+        contents=contents,
+        config=types.GenerateContentConfig(tools=runtime.get_tools()),
+    )
+
+    message = completion.candidates[0].content
+
+    function_calls = [
+        part.function_call for part in message.parts if part.function_call
+    ]
+    if not function_calls:
+        return message, None
+
+    tool_responses: list[types.Part] = []
+    for call in function_calls:
+        result = await runtime.execute_tool(call.name, call.args)
+        print(f"Tool Call: [{call.name}:{call.args}]\n:{result.response}")
+        tool_responses.append(result.to_genai_message())
+
+    if not tool_responses:
+        return message, None
+    return message, {
+        "kind": "function_response",
+        "message": types.UserContent(parts=tool_responses),
+    }
 ```
 
-Once we've done this, we can then plug it into our original agent code with a few modifications.
+We can then update our `main` function so that we intialise the runtime and the context as needed
 
 ```py
-conversation: list[types.Content] = []
-client = Client()
+async def main() -> None:
+    client = Client()
+    contents: list[types.Content] = []
+    context = AgentContext()
+    runtime = AgentRuntime(context=context)
 
-# We now need to have this runtime here
-runtime = get_default_runtime()
-while True:
-    user_input = input("\nYou: ").strip()
-    if user_input.lower() in ["exit", "quit"]:
-        break
-
-    conversation.append(types.Content(role="user", parts=[types.Part(text=user_input)]))
-
-    # The Agent Loop is now beautifully simple
+    print("Type 'exit' or 'quit' to stop.")
     while True:
-        # Run one step of the agent and pass the runtime in
-        next_message = run(client, conversation, runtime=runtime)
-
-        # If it returns None, the agent has finished answering
-        if next_message is None:
+        user_input = input("\nYou: ").strip()
+        if user_input.lower() in {"exit", "quit"}:
             break
+        if not user_input:
+            continue
 
-        # Otherwise, it returned a tool result. Append it and loop!
-        conversation.append(next_message)
+        contents.append(
+            types.UserContent(parts=[types.Part.from_text(text=user_input)])
+        )
+        while True:
+            assistant_message, tool_result = await run(client, contents, runtime)
+            contents.append(assistant_message)
+            if tool_result is None:
+                for part in assistant_message.parts:
+                    if part.text:
+                        print(f"\nAssistant: {part.text}")
+                break
+            assert tool_result["kind"] == "function_response"
+            contents.append(tool_result["message"])
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
 
 ```
 
-Now let's add in a few more tools - the same that Pi has for its coding agents. These will be `Write` , `Bash` and `Edit`.
+### Adding More Tools
+
+Now that we've got this in place, let's see how easy it is to add new tools. We'll be adding in the same tools that Pi has for its coding agents. These will be `Write` , `Bash` and `Edit`. To do so, we'll create three new classes that inherit from the `AgentTool` class.
 
 ```py
-
 class Write(AgentTool):
     path: str
     content: str
 
-    def execute(self, **kwargs):
+    async def execute(self, _context: AgentContext) -> ToolResult:
         try:
             parent = os.path.dirname(self.path)
             if parent:
@@ -294,9 +686,15 @@ class Write(AgentTool):
             with open(self.path, "w", encoding="utf-8") as f:
                 f.write(self.content)
 
-            return {"ok": True, "result": f"Wrote {len(self.content)} chars to {self.path}"}
+            return self.tool_result(
+                error=False,
+                response={"result": f"successfully wrote content to {self.path}"},
+            )
         except Exception as e:
-            return {"ok": False, "error": f"Failed to write '{self.path}': {e}"}
+            return self.tool_result(
+                error=True,
+                response={"error": f"Failed to write '{self.path}': {e}"},
+            )
 
 
 class Edit(AgentTool):
@@ -305,28 +703,38 @@ class Edit(AgentTool):
     new_str: str
     replace_all: bool = False
 
-    def execute(self, **kwargs):
+    async def execute(self, _context: AgentContext) -> ToolResult:
         if not os.path.exists(self.path) or not os.path.isfile(self.path):
-            return {"ok": False, "error": f"Path does not exist: {self.path}"}
+            return self.tool_result(
+                error=True,
+                response={"error": f"Path does not exist: {self.path}"},
+            )
 
         try:
             with open(self.path, "r", encoding="utf-8") as f:
                 original = f.read()
         except Exception as e:
-            return {"ok": False, "error": f"Failed to read '{self.path}': {e}"}
+            return self.tool_result(
+                error=True,
+                response={"error": f"Failed to read '{self.path}': {e}"},
+            )
 
         if self.old_str not in original:
-            return {"ok": False, "error": f"old_str not found in {self.path}"}
+            return self.tool_result(
+                error=True,
+                response={"error": f"old_str not found in {self.path}"},
+            )
 
         occurrences = original.count(self.old_str)
         if not self.replace_all and occurrences > 1:
-            return {
-                "ok": False,
-                "error": (
-                    "old_str appears multiple times; set replace_all=True "
-                    "or provide a more specific old_str"
-                ),
-            }
+            return self.tool_result(
+                error=True,
+                response={
+                    "error": (
+                        "old_str appears multiple times; set replace_all=True or provide a more specific old_str"
+                    )
+                },
+            )
 
         if self.replace_all:
             updated = original.replace(self.old_str, self.new_str)
@@ -338,9 +746,15 @@ class Edit(AgentTool):
         try:
             with open(self.path, "w", encoding="utf-8") as f:
                 f.write(updated)
-            return {"ok": True, "result": f"Applied {replacements} edit(s) to {self.path}"}
+            return self.tool_result(
+                error=False,
+                response={"result": f"Applied {replacements} edit(s) to {self.path}"},
+            )
         except Exception as e:
-            return {"ok": False, "error": f"Failed to write '{self.path}': {e}"}
+            return self.tool_result(
+                error=True,
+                response={"error": f"Failed to write '{self.path}': {e}"},
+            )
 
 
 class Bash(AgentTool):
@@ -348,12 +762,18 @@ class Bash(AgentTool):
     working_dir: str = "."
     timeout_seconds: int = 30
 
-    def execute(self, **kwargs):
+    async def execute(self, _context: AgentContext) -> ToolResult:
         if self.timeout_seconds <= 0:
-            return {"ok": False, "error": "timeout_seconds must be > 0"}
+            return self.tool_result(
+                error=True,
+                response={"error": "timeout_seconds must be > 0"},
+            )
 
         if not os.path.isdir(self.working_dir):
-            return {"ok": False, "error": f"Invalid working directory: {self.working_dir}"}
+            return self.tool_result(
+                error=True,
+                response={"error": f"Invalid working directory: {self.working_dir}"},
+            )
 
         try:
             completed = subprocess.run(
@@ -365,21 +785,32 @@ class Bash(AgentTool):
                 timeout=self.timeout_seconds,
                 check=False,
             )
-            return {
-                "ok": True,
-                "result": {
-                    "exit_code": completed.returncode,
-                    "stdout": completed.stdout,
-                    "stderr": completed.stderr,
+            return self.tool_result(
+                error=False,
+                response={
+                    "result": (
+                        "Executed command successfully\n\n"
+                        "<output>\n"
+                        f"{completed.stdout}{completed.stderr}"
+                        "</output>"
+                    )
                 },
-            }
+            )
         except subprocess.TimeoutExpired:
-            return {
-                "ok": False,
-                "error": f"Command timed out after {self.timeout_seconds}s",
-            }
+            return self.tool_result(
+                error=True,
+                response={
+                    "error": f"Command timed out after {self.timeout_seconds}s",
+                },
+            )
         except Exception as e:
-            return {"ok": False, "error": f"Bash execution failed: {e}"}
+            return self.tool_result(
+                error=True,
+                response={"error": f"Bash execution failed: {e}"},
+            )
+
+
+TOOLS = [ReadFile, Write, Edit, Bash]
 ```
 
 With this we've got a working coding agent that can make changes, run unrestricted bash commands and then go wild.
@@ -388,39 +819,59 @@ With this we've got a working coding agent that can make changes, run unrestrict
 
 One of the coolest things I like about the `pi` coding agent is that it has the ability to define its own tools. It can then reload them as needed.
 
-We'll implement something similar and use the last modified time of the agent_tools file to determine whether we should reload it.
+We'll implement something similar and use the last modified time of the agent_tools file to determine whether we should reload it. Since we previously implemented our `AgentRuntime` class we can simply fold this into `get_tools` and `execute_tool` — checking the `mtime` of `agent_tools.py` before each call.
 
 ```py
-import importlib
-from pathlib import Path
+class AgentRuntime:
+    """Minimal runtime that exposes registered tools for the model."""
 
-import agent_tools
-from google.genai import Client, types
+    def __init__(self, context: AgentContext):
+        self._agent_tools_module = agent_tools
+        self._tools_file = Path(self._agent_tools_module.__file__).resolve()
+        self._last_modified = self._tools_file.stat().st_mtime
+        self.tools: dict[str, type[AgentTool]] = {
+            tool.__name__: tool for tool in self._agent_tools_module.TOOLS
+        }
+        self.context = context
 
+    def maybe_reload_runtime(self) -> None:
+        current = self._tools_file.stat().st_mtime
+        if current == self._last_modified:
+            return
 
-TOOLS_FILE = Path(agent_tools.__file__).resolve()
+        self._agent_tools_module = importlib.reload(self._agent_tools_module)
+        self._tools_file = Path(self._agent_tools_module.__file__).resolve()
+        self.tools = {tool.__name__: tool for tool in self._agent_tools_module.TOOLS}
+        self._last_modified = self._tools_file.stat().st_mtime
 
+    def get_tools(self) -> list[types.Tool]:
+        self.maybe_reload_runtime()
+        return [tool_cls.to_genai_schema() for tool_cls in self.tools.values()]
 
-def mtime(path: str | Path) -> float:
-    return Path(path).stat().st_mtime
+    def register_tool(self, tool_cls: Type[AgentTool]):
+        self.tools[tool_cls.__name__] = tool_cls
 
+    async def execute_tool(
+        self, tool_name: str, args: dict[str, Any]
+    ) -> ToolResult | types.Part:
+        self.maybe_reload_runtime()
+        tool_cls = self.tools.get(tool_name)
+        if tool_cls is None:
+            return ToolResult(
+                error=True,
+                name=tool_name,
+                response={"Error": f"Unknown tool: {tool_name}"},
+            )
 
-runtime = agent_tools.get_default_runtime()
-last_modified = mtime(TOOLS_FILE)
-
-
-def maybe_reload_runtime() -> bool:
-    global runtime, last_modified, agent_tools, TOOLS_FILE
-
-    current = mtime(TOOLS_FILE)
-    if current != last_modified:
-        agent_tools = importlib.reload(agent_tools)
-        TOOLS_FILE = Path(agent_tools.__file__).resolve()
-        runtime = agent_tools.get_default_runtime()
-        last_modified = mtime(TOOLS_FILE)
-        return True
-
-    return False
+        try:
+            tool_input = tool_cls.model_validate(args)
+            return await tool_input.execute(self.context)
+        except Exception as exc:
+            return ToolResult(
+                error=True,
+                name=tool_name,
+                response={"error": str(exc)},
+            )
 ```
 
 The logic here is relatively straightforward
@@ -432,12 +883,11 @@ The logic here is relatively straightforward
 And it works relatively well, see below an example below where the model wrote its own tool to generate timestamped txt files containg the word `hello world`
 
 ```text
-...other stuff above
-[Agent Action] Running 'Edit' with args: {'new_str': '    default_runtime.register_tool(Edit)\n    default_runtime.register_tool(Bash)\n    default_runtime.register_tool(GenerateTimestamp)\n    return default_runtime\n', 'path': '2 - Giving Our Agent Hands/agent_tools.py', 'old_str': '    default_runtime.register_tool(Edit)\n    default_runtime.register_tool(Bash)\n    return default_runtime\n'}
-[Agent Action] Running 'GenerateTimestamp' with args: {}
-[Agent Action] Running 'Bash' with args: {'command': 'ls "2 - Giving Our Agent Hands/"'}
-[Agent Action] Running 'GenerateTimestamp' with args: {}
-Amie: The tool is now available and I've successfully generated another timestamped file. Let me know what else you'd like to do!
+{'result': "Applied 1 edit(s) to 1 - It's Alive/agent_tools.py"}
+Tool Call: [TimestampHello:{}]
+{'result': 'Created hello_20260225_193542.txt'}
+Tool Call: [Bash:{'command': 'ls hello_*.txt'}]
+{'result': 'Executed command successfully\n\n<output>\nhello_20260225_193542.txt\n</output>'}
 ```
 
 ## Wrapping Up
@@ -448,6 +898,8 @@ Let's take a step back and see what we've accomplished.
 2. **A tool factory**: We created an `AgentTool` base class and an `AgentRuntime` that makes defining new tools as simple as writing a Pydantic model with an `execute` method.
 3. **Self-extension**: We gave the agent the ability to write its own tools and hot-reload them — capability is no longer frozen at deploy time.
 
-In the next post, we'll clean up the logic in `run` and our runtime into a single `Agent` class.
+If you look at our code right now though, you'll notice that observability is hardcoded — we `print` tool calls inline, we `print` the assistant's reply, and that's it. If we wanted to log tool calls to a database, send a Telegram message when the agent finishes, or pause execution to ask the user for approval before running a dangerous bash command, we'd have to crack open `run` and scatter that logic everywhere.
 
-This will make it simple to add hooks — like sending Telegram notifications when the agent finishes a task — and set us up for the more interesting problems ahead: planning, error recovery, and keeping the agent on track.
+What we really want is a way to say "whenever X happens, run this callback(s)" without touching the core loop. That's exactly what hooks give us — a clean extension point for things like approval gates, audit logging, notification systems, and progress tracking.
+
+In the next post, we'll add in support for hooks and build in our first telegram integration for our little Koroku agent.
