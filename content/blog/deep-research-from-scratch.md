@@ -1,7 +1,7 @@
 ---
 title: Deep Research From Scratch
 date: 2026-03-11
-description: Breaking down what deep research systems do and the roadmap for building one from scratch
+description: Why you need subagents
 authors:
   - ivanleomk
 categories:
@@ -11,149 +11,354 @@ series:
   - Deep Research From Scratch
 ---
 
-Deep research is quickly becoming one of the most useful agent patterns. Instead of giving you a fast answer based on whatever happens to already be in the model's weights, it goes out, gathers evidence, follows leads, keeps track of open threads and then comes back with a synthesized response.
+Deep research is the textbook use case for subagents. When generating long, dense reports, subagents keep the main agent's context window clean and focused. It is a pattern that scales beautifully.
 
-That sounds fancy, but the underlying system is actually not that mystical.
+In this series, we are building a deep research system from scratch. We will start simple using a single API call with zero tools—and scale up to a complete system featuring a tool runtime, managed state, lifecycle hooks, subagents, and dynamically swapped tools.
 
-In this series, we're going to build a deep research agent from scratch. We'll start with the core loop first and then progressively add the pieces that make these systems feel robust in practice.
+Each step introduces just one new concept. While this won't be production-ready code out of the box, it provides the foundation you need for your own use case. But before we write any code, let's break down the anatomy of a deep research system.
 
-Before we write any code, it's worth breaking down what a deep research system actually is.
+## What is an Agent?
 
-## What is an Agent
+A chatbot receives a prompt and returns an answer. An agent receives a prompt, decides what to do, uses tools, inspects the results, and then decides its next move. The difference lies in the ability to take action and adapt a plan based on new information.
 
-At the simplest level, an agent is just a model that can do work in a loop.
+A deep research model relies on this same core loop. When a user asks a complex question, the model iteratively explores the topic. It starts with an initial plan, refines it, and hunts down the necessary context.
 
-A chatbot receives one prompt and returns one answer. An agent receives a prompt, decides what to do next, uses tools, inspects the results, and then decides what to do after that. The important difference is not "intelligence" in the abstract. It's the ability to take actions and update its plan based on what it learns.
+The process generally follows these steps:
+1. **Deconstruct:** Break down the user's query and ask clarifying follow-up questions.
+2. **Gather:** Read relevant pages, files, and sources.
+3. **Investigate:** Track unresolved threads and dig deeper for missing information.
+4. **Synthesize:** Compile the findings into a cohesive report.
 
-For deep research, those actions usually look like this:
+The hard part isn't generating the first answer. The hard part is keeping the model organized long enough to produce a great one.
 
-1. Search for sources
-2. Open and read useful pages
-3. Extract facts or quotes
-4. Ask follow-up questions
-5. Keep track of unresolved threads
-6. Synthesize the findings into a report
+## From Completion to Tool Calling
 
-That means a deep research agent is not a fundamentally different species from a coding agent. It's the same core pattern with a different set of tools and a different output. Instead of editing files and running tests, it searches, reads, verifies and writes.
+To understand why tool calling matters, let's look at a naive approach: asking a model to read a file using a standard API call.
 
-The hard part is not getting the first answer. The hard part is getting the model to stay organized long enough to produce a good one.
+```python
+from google.genai import Client
+from rich import print
 
-## How Deep Research Usually Works
+client = Client()
 
-When a user asks a deep research question, the system should almost never jump straight to the final response.
+response = client.models.generate_content(
+    model="gemini-3-flash-preview",
+    contents="Please read the README.md file.",
+)
 
-Let's say the user asks:
-
-> Compare the best ways for a small B2B SaaS company to expand into Japan in 2026.
-
-A naive system might search once, read two pages and then bluff the rest. A better system will first turn the request into a plan.
-
-That plan might look something like this:
-
-1. Understand the scope of the question
-2. Identify the major areas to research
-3. Search for high quality sources for each area
-4. Read and summarize the best sources
-5. Notice what is still unclear
-6. Generate follow-up questions
-7. Repeat until the important gaps are closed
-8. Synthesize the result into a final report
-
-The key idea is that research is iterative. Good researchers don't just search once. They search, read, realize they are missing context, then branch into narrower questions.
-
-In practice, a strong setup often uses two different model roles:
-
-1. A stronger model creates and revises the research plan
-2. A cheaper and dumber model executes narrower follow-up searches and extraction tasks
-
-This split matters because a lot of research work is repetitive. Once the high-level planner decides that we need data on pricing norms, distribution channels, local compliance requirements and case studies, the individual sub-questions are often straightforward:
-
-- "Find current documentation on Japanese invoicing requirements for foreign SaaS companies"
-- "Summarize pricing expectations for SMB software in Japan"
-- "Look for examples of foreign B2B SaaS companies entering Japan successfully"
-
-You do not need your most expensive model deciding how to search for every one of these. A simpler model can execute many of these follow-up steps cheaply, then return its findings to the main planner.
-
-That gives us a loop that looks more like this:
-
-```text
-user query
--> planner creates research plan
--> executor searches and reads sources
--> planner reviews findings
--> planner generates follow-up questions
--> executor investigates those questions
--> planner synthesizes final answer
+print(response.text)
 ```
 
-This is what makes deep research feel different from ordinary search. It is not just retrieval. It is retrieval guided by an evolving plan.
+This fails. No matter how capable the model is, standard text completion cannot interact with your local environment. Run this, and you will get a polite refusal:
 
-## Todos Keep The Agent Honest
+```text
+I'd be happy to help you read the README.md file! However, I don't have
+direct access to your file system. Could you please share the contents
+of the README.md file with me, and I'll help you review it?
+```
 
-The easiest way for a model to fail a long task is to lose track of what it still needs to do.
+The model is limited to generating text based on its training data and prompt. It cannot reach out into the real world. That is the fundamental gap between a chatbot and an agent. The way to solve this is tool calling.
 
-This is why todos matter.
+### Declaring a Tool
 
-A todo list gives the model an external working memory for the task at hand. Instead of forcing it to remember every outstanding thread in its hidden state, we let it write those threads down explicitly.
+Tool Calling is simply telling the model to generate a JSON object with a predictable shape. This is done by providing a schema detailing the tool we does want and the exact arguments that it requires, passing in a schema alongside our request.
 
-A good todo list for deep research might include items like:
+```python
+from google.genai import Client, types
 
-1. Find recent market entry case studies
-2. Verify tax and invoicing constraints
-3. Compare direct sales vs reseller distribution
-4. Check whether pricing expectations differ by segment
-5. Draft final comparison table
+read_file_tool = types.Tool(
+    function_declarations=[
+        types.FunctionDeclaration(
+            name="read_file",
+            description="Read a text file and return its contents.",
+            parameters=types.Schema(
+                type="OBJECT",
+                properties={
+                    "path": types.Schema(
+                        type="STRING",
+                        description="Path to a UTF-8 text file.",
+                    )
+                },
+                required=["path"],
+            ),
+        )
+    ]
+)
 
-As the agent works, it should be able to create, update and complete these items. That does two useful things.
+client = Client()
 
-Firstly, it keeps the task grounded. The model can look at the todo list and ask "what is unresolved?" instead of drifting into premature synthesis.
+completion = client.models.generate_content(
+    model="gemini-3-flash-preview",
+    contents=[
+        types.UserContent(
+            parts=[types.Part.from_text(text="Please read the README.md file.")]
+        )
+    ],
+    config=types.GenerateContentConfig(tools=[read_file_tool]),
+)
 
-Secondly, it creates a natural control surface for orchestration. If an item is still open, the planner knows there is more work to do. If the important items are done, it can move on to writing.
+message = completion.candidates[0].content
+function_calls = [part.function_call for part in message.parts if part.function_call]
 
-Without todos, long research runs often look impressive while quietly skipping half the task.
+if function_calls:
+    for call in function_calls:
+        print(f"- {call.name}")
+        print(call.args)
+```
 
-With todos, the system has a crude but effective notion of progress.
-
-## Subagents Are Just Tool Calls
-
-There's a tendency to describe subagents as if they are a magical new primitive.
-
-They're not.
-
-A subagent is usually just a tool call that delegates a narrower task to another model with its own prompt, context and allowed tools.
-
-For example, our main planner might call a tool like this:
+Instead of a conversational apology, the model now returns a structured request:
 
 ```json
 {
-  "tool": "run_research_subagent",
-  "task": "Find 3 credible sources on Japanese B2B SaaS pricing expectations and summarize them",
-  "success_criteria": [
-    "At least 3 sources",
-    "Include publication dates",
-    "Highlight disagreements between sources"
-  ]
+  "name": "read_file",
+  "args": {
+    "path": "README.md"
+  }
 }
 ```
+This predictability makes agentic applications possible. Because the output follows a strict schema, we can write code to inspect it, route it to the right logic and then execute the action. If the model simply replied with, *"Please read the README.md file,"* we would have to rely on fragile natural language processing to extract the intent. Structured tool calls eliminate that guesswork.
 
-Under the hood, that tool might spin up another model call with a more specific system prompt, a smaller context window and a limited tool set such as `search_web` and `open_page`.
+But we haven't actually *done* anything yet. The model requested a tool call, and we just printed it. To close the loop, we need to execute the tool and feed the result back.
 
-That is all a subagent really is: scoped delegation.
+### Closing the loop
 
-This framing is useful because it keeps the architecture simple. You do not need a special metaphysical theory of multi-agent systems. You just need:
+Here's the full round trip. We take the function call from the model, run the tool ourselves, and send the result back so the model can generate a final response.
 
-1. A parent agent that knows when to delegate
-2. A tool interface for launching delegated tasks
-3. A structured result that comes back from the delegated run
+```python
+from pathlib import Path
+from google.genai import Client, types
 
-Once you see subagents this way, they become much easier to reason about. They are not replacing the main agent. They are just another tool it can use when the task is easier to solve in isolation.
 
-## What We'll Build
+def read_file(path: str) -> str:
+    return Path(path).read_text(encoding="utf-8")
 
-In this series, we'll build a minimal deep research system from scratch.
 
-We'll start with a planner that can turn a broad question into a concrete sequence of tasks. Then we'll add web search, page reading, todos, delegated subagents and a final synthesis step that turns all that raw evidence into something useful.
+read_file_tool = types.Tool(
+    function_declarations=[
+        types.FunctionDeclaration(
+            name="read_file",
+            description="Read a text file and return its contents.",
+            parameters=types.Schema(
+                type="OBJECT",
+                properties={
+                    "path": types.Schema(
+                        type="STRING",
+                        description="Path to a UTF-8 text file.",
+                    )
+                },
+                required=["path"],
+            ),
+        )
+    ]
+)
 
-The goal is not to build the most bloated research stack possible. The goal is to understand the smallest set of ideas that make deep research work reliably.
+client = Client()
 
-Once we have that, we can add the fancy parts later.
+contents: list[types.Content] = [
+    types.UserContent(
+        parts=[types.Part.from_text(text="Please read the README.md file.")]
+    )
+]
+
+completion = client.models.generate_content(
+    model="gemini-3-flash-preview",
+    contents=contents,
+    config=types.GenerateContentConfig(tools=[read_file_tool]),
+)
+
+message = completion.candidates[0].content
+function_calls = [part.function_call for part in message.parts if part.function_call]
+call = function_calls[0]
+
+# Execute the tool and send the result back
+contents.append(message)
+contents.append(
+    types.UserContent(
+        parts=[
+            types.Part.from_function_response(
+                name=call.name,
+                response={
+                    "path": call.args["path"],
+                    "content": read_file(call.args["path"]),
+                },
+            )
+        ]
+    )
+)
+
+follow_up = client.models.generate_content(
+    model="gemini-3-flash-preview",
+    contents=contents,
+    config=types.GenerateContentConfig(tools=[read_file_tool]),
+)
+
+print(follow_up.candidates[0].content)
+```
+
+This is the first complete round trip. The model asks to read a file, we read it, the model uses the contents to produce a real answer. Every agent you've ever used — coding agents, research agents, all of them — is doing some version of this.
+
+But look at how much manual wiring there is. We're checking the function call name, pulling out arguments, building the response by hand. 
+
+With one tool this is fine. With two it's tedious. With ten it's **unmanageable**.
+
+### Building the Tool Runtime
+
+Hand-wiring tool schemas and routing logic gets messy fast. To fix this, we abstract the boilerplate into a lightweight runtime. 
+
+We encapsulate the tool's name, description, expected arguments (via Pydantic), and execution logic inside a single `Tool` dataclass. The runtime takes over the heavy lifting of schema generation, dispatch, and validation.
+
+```python
+# tools.py
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Awaitable, Callable, TypeVar
+
+from google.genai import types
+from pydantic import BaseModel
+
+ArgsT = TypeVar("ArgsT", bound=BaseModel)
+ToolHandler = Callable[[ArgsT], Awaitable[dict[str, Any]]]
+
+@dataclass(slots=True)
+class Tool:
+    name: str
+    description: str
+    args_model: type[BaseModel]
+    handler: ToolHandler
+
+    def to_genai_tool(self) -> types.Tool:
+        schema = self.args_model.model_json_schema()
+        return types.Tool(
+            function_declarations=[
+                types.FunctionDeclaration(
+                    name=self.name,
+                    description=self.description,
+                    parameters=types.Schema(
+                        type="OBJECT",
+                        properties=schema["properties"],
+                        required=schema.get("required", []),
+                    ),
+                )
+            ]
+        )
+
+class ReadFileArgs(BaseModel):
+    path: str
+
+async def read_file(args: ReadFileArgs) -> dict[str, Any]:
+    return {
+        "path": args.path,
+        "content": Path(args.path).read_text(encoding="utf-8"),
+    }
+
+READ_FILE_TOOL = Tool(
+    name="read_file",
+    description="Read a UTF-8 text file and return its contents.",
+    args_model=ReadFileArgs,
+    handler=read_file,
+)
+```
+
+By pushing the complexity into the `Tool` class, the agent's core job shrinks to one thing: run a loop. The runtime handles dispatch, validation, and error reporting. If the model hallucinates a tool name or passes the wrong argument types, we catch it and feed the error back as an observation — just like a developer reading a stack trace, the model can read the message and try again.
+
+```python
+# agent.py
+import asyncio
+from typing import Any
+
+from google.genai import Client, types
+from tools import READ_FILE_TOOL, Tool
+
+
+class AgentRuntime:
+    def __init__(self, tools: list[Tool]) -> None:
+        self.tools = {tool.name: tool for tool in tools}
+
+    def get_tools(self) -> list[types.Tool]:
+        return [tool.to_genai_tool() for tool in self.tools.values()]
+
+    async def execute_tool_call(
+        self,
+        call: types.FunctionCall,
+    ) -> dict[str, Any]:
+        tool = self.tools.get(call.name)
+        if tool is None:
+            return {"name": call.name, "response": f"Unknown tool: {call.name}"}
+
+        if call.args is None:
+            return {
+                "name": call.name,
+                "response": f"Tool '{call.name}' did not include arguments.",
+            }
+
+        try:
+            args = tool.args_model.model_validate(call.args)
+            response = await tool.handler(args)
+            return {"name": call.name, "response": response}
+        except Exception as e:
+            return {"name": call.name, "response": f"Error: {e}"}
+```
+
+That gives us clean tool execution. But the piece that actually makes this an agent is the loop. Instead of calling the model once and hoping for the best, we keep going until the model stops requesting tools:
+
+```python
+async def main() -> None:
+    client = Client()
+    runtime = AgentRuntime([READ_FILE_TOOL])
+
+    contents: list[types.Content] = [
+        types.UserContent(
+            parts=[types.Part.from_text(text="Please read the README.md file.")]
+        )
+    ]
+
+    while True:
+        completion = await client.aio.models.generate_content(
+            model="gemini-3-flash-preview",
+            contents=contents,
+            config=types.GenerateContentConfig(tools=runtime.get_tools()),
+        )
+
+        message = completion.candidates[0].content
+        contents.append(message)
+
+        # Extract function calls from the response
+        function_calls = [
+            part.function_call for part in message.parts if part.function_call
+        ]
+
+        # If the model didn't request any tools, it's done
+        if not function_calls:
+            print(message)
+            break
+
+        # Execute each tool call and send results back
+        tool_parts: list[types.Part] = []
+        for call in function_calls:
+            result = await runtime.execute_tool_call(call)
+            tool_parts.append(
+                types.Part.from_function_response(
+                    name=result["name"],
+                    response=result["response"],
+                )
+            )
+
+        contents.append(types.UserContent(parts=tool_parts))
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+This is the entire agent. The `while True` loop is doing the same thing we did by hand in the previous step — call the model, check for tool requests, execute them, send results back — but now it keeps going for as many rounds as needed. The model decides when to stop by responding with text instead of a tool call.
+
+That's all an agent loop is. There's no scheduler, no planner, no orchestration framework. Just a model in a loop with tools, running until it's done.
+
+## What Comes Next
+
+We've gone from a model that can only talk to a model that can act in a loop, backed by a simple runtime that makes adding new tools trivial. 
+
+But a deep research agent needs more than this. Right now the agent has no memory between iterations beyond the raw conversation history. It can't track what it's already investigate and there's no way to intercept the loop for logging or safety checks. 
+
+In the next articles, we'll add those pieces one at a time: run state, context, lifecycle hooks, subagents, and a planning phase.Each one earns its place by solving a problem we can no longer ignore.
+
