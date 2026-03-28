@@ -760,6 +760,21 @@ We've covered a lot of ground in this post. Our agent now has:
 2. **Context compaction**: When the conversation gets too long, we summarise it into a single compaction event and write the summary to a `memory.md` file for future reference.
 3. **Tool call guardrails**: A simple budget system that prevents the agent from spiralling into endless tool call loops.
 
+Before we move on, there's one practical upgrade worth calling out: search.
+
+Right now we persist everything, but retrieval is still mostly "load history and hope the model finds the right bit." A simple next step is to expose a `RunSQL` tool and let the model query conversation history directly. For a single-user assistant, this is a very practical tradeoff: less engineering overhead, faster iteration, and surprisingly good recall quality when your schema is clean.
+
+The pattern we found useful is:
+
+1. Store messages as append-only rows.
+2. Index searchable text with SQLite FTS.
+3. Let the model issue free-form SQL for retrieval.
+4. Keep writes in application code, not in model SQL.
+
+You can still keep this safe enough for production by opening a **read-only sqlite connection** for this tool, adding a query timeout, and logging every executed query. That keeps the "model writes SQL" developer experience while avoiding accidental data corruption.
+
+If you want to go even further, aggregate messages into chat-level documents and chunk those for indexing (instead of strict per-message chunks). In practice that tends to produce better recall because most useful facts span a few adjacent turns, not a single line.
+
 None of these are particularly complex on their own, but together they transform our agent from a stateless chatbot into something that feels much more like a persistent assistant.
 
 So far though, we've been running everything locally. That's fine for development, but our Telegram bot needs to be online 24/7 — not just when our laptop is open. In the next post, we'll deploy the whole thing to [Modal](https://modal.com) so it runs in the cloud with persistent storage, automatic restarts, and zero infrastructure to manage. We'll see how to package up our agent, mount the SQLite database, and get a production-ready deployment with just a few lines of config.
