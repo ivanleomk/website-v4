@@ -11,6 +11,8 @@ series:
   - Deep Research From Scratch
 ---
 
+> The code for this series is available on [GitHub](https://github.com/hugobowne/build-your-own-deep-research-agent). You can also watch the [livestream](https://www.youtube.com/watch?v=LUfqQgz1-Os) where we build it step by step.
+
 Deep research is the textbook use case for subagents. When generating long, dense reports, subagents keep the main agent's context window clean and focused. It is a pattern that scales beautifully.
 
 In this series, we are building a deep research system from scratch. We will start simple using a single API call with zero tools—and scale up to a complete system featuring a tool runtime, managed state, lifecycle hooks, subagents, and dynamically swapped tools.
